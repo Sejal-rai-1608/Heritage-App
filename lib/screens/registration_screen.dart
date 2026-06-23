@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
-import 'home_screen.dart';
-import 'registration_screen.dart';
-import 'forgot_password_screen.dart';
+import 'otp_verification_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final Color primaryNavy = const Color(0xFF00005C);
-  bool _obscurePassword = true;
+  bool _obscureCreate = true;
+  bool _obscureConfirm = true;
 
   @override
   Widget build(BuildContext context) {
-    // Access the localization provider
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Light background matching design
+      backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -33,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Top Icon and Title
+                // Top Icon and Title (same as Login)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -68,9 +66,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Mobile Number
+                      // Screen Title
+                      Center(
+                        child: Text(
+                          languageProvider.getText('create_account'),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: primaryNavy,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Email
                       Text(
-                        languageProvider.getText('mobile_number'),
+                        languageProvider.getText('email'),
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -78,15 +89,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        keyboardType: TextInputType.phone,
+                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          prefixText: '+91  ',
-                          prefixStyle: const TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                          hintText: languageProvider.getText('enter_mobile'),
+                          hintText: languageProvider.getText('enter_email'),
                           hintStyle: TextStyle(
                             color: Colors.grey.shade400,
                             fontSize: 14,
@@ -107,9 +112,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Password
+                      // Phone Number
                       Text(
-                        languageProvider.getText('password'),
+                        languageProvider.getText('phone_number'),
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
@@ -117,9 +122,50 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        obscureText: _obscurePassword,
+                        keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
-                          hintText: languageProvider.getText('enter_password'),
+                          prefixText: '+91  ',
+                          prefixStyle: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          hintText: languageProvider.getText('enter_phone'),
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 14,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Create Password
+                      Text(
+                        languageProvider.getText('create_password'),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        obscureText: _obscureCreate,
+                        decoration: InputDecoration(
+                          hintText: languageProvider.getText(
+                            'enter_new_password',
+                          ),
                           hintStyle: TextStyle(
                             color: Colors.grey.shade400,
                             fontSize: 14,
@@ -130,14 +176,62 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword
+                              _obscureCreate
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                               color: Colors.grey.shade600,
                             ),
                             onPressed: () {
                               setState(() {
-                                _obscurePassword = !_obscurePassword;
+                                _obscureCreate = !_obscureCreate;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Confirm Password
+                      Text(
+                        languageProvider.getText('confirm_password'),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        obscureText: _obscureConfirm,
+                        decoration: InputDecoration(
+                          hintText: languageProvider.getText(
+                            'enter_confirm_password',
+                          ),
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 14,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirm
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.grey.shade600,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirm = !_obscureConfirm;
                               });
                             },
                           ),
@@ -153,17 +247,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Login Button
+                      // Register Button
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
+                            Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => const HomeScreen(),
+                                builder: (_) => const OtpVerificationScreen(),
                               ),
-                              (route) => false,
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -174,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             elevation: 0,
                           ),
                           child: Text(
-                            languageProvider.getText('login'),
+                            languageProvider.getText('register'),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -185,75 +278,37 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Forgot Password
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ForgotPasswordScreen(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            languageProvider.getText('forgot_password'),
-                            style: TextStyle(
-                              color: primaryNavy,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ),
-
+                      // Already have an account? Login here
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.0),
                         child: Divider(),
                       ),
-
-                      // New Here
                       Center(
-                        child: Container(
-                          transform: Matrix4.translationValues(0.0, -16.0, 0.0),
-                          color: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            languageProvider.getText('new_here'),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Register Button (simple outlined, no hover effect)
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const RegistrationScreen(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              languageProvider.getText('already_have_account'),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
                               ),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: primaryNavy, width: 1.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
                             ),
-                            splashFactory: NoSplash.splashFactory,
-                          ),
-                          child: Text(
-                            languageProvider.getText('register_new'),
-                            style: TextStyle(
-                              color: primaryNavy,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                languageProvider.getText('login_here'),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: primaryNavy,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ],
@@ -261,7 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Language Selector Section
+                // Language Selector (same as Login)
                 Text(
                   languageProvider.getText('preferred_language'),
                   style: const TextStyle(
@@ -272,7 +327,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // Toggle Buttons for Language
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -283,7 +337,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Expanded(
                         child: _buildLanguageTab(
-                          context: context,
                           label: 'English',
                           code: 'en',
                           provider: languageProvider,
@@ -291,7 +344,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Expanded(
                         child: _buildLanguageTab(
-                          context: context,
                           label: 'ગુજરાતી',
                           code: 'gu',
                           provider: languageProvider,
@@ -299,7 +351,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Expanded(
                         child: _buildLanguageTab(
-                          context: context,
                           label: 'हिन्दी',
                           code: 'hi',
                           provider: languageProvider,
@@ -331,7 +382,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLanguageTab({
-    required BuildContext context,
     required String label,
     required String code,
     required LanguageProvider provider,

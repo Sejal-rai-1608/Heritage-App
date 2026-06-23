@@ -24,7 +24,11 @@ class HeritageCoreScreen extends StatelessWidget {
         actions: [
           TextButton.icon(
             onPressed: () {},
-            icon: const Icon(Icons.volunteer_activism, color: primaryNavy, size: 20),
+            icon: const Icon(
+              Icons.volunteer_activism,
+              color: primaryNavy,
+              size: 20,
+            ),
             label: const Text(
               'Support',
               style: TextStyle(
@@ -48,15 +52,17 @@ class HeritageCoreScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.0),
                   child: Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                    ),
+                    decoration: BoxDecoration(color: Colors.grey[200]),
                     child: Image.asset(
                       'assets/images/image1.jpeg', // Provided image
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Center(
-                        child: Text('Hands Image Placeholder', style: TextStyle(color: Colors.grey)),
-                      ),
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Center(
+                            child: Text(
+                              'Hands Image Placeholder',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
                     ),
                   ),
                 ),
@@ -173,10 +179,10 @@ class HeritageCoreScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

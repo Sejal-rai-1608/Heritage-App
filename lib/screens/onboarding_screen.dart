@@ -75,7 +75,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   },
                 ),
               ),
-              
+
               const SizedBox(height: 32),
 
               // Pagination Dots
@@ -150,14 +150,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             borderRadius: BorderRadius.circular(16.0),
             child: Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-              ),
+              decoration: BoxDecoration(color: Colors.grey[200]),
               child: Image.asset(
-                'assets/images/onboarding_people.jpg', 
+                'assets/images/onboarding_people.jpg',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Text('Please save the image as\n"onboarding_people.jpg"\nin the assets/images/ folder', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                  child: Text(
+                    'Please save the image as\n"onboarding_people.jpg"\nin the assets/images/ folder',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ),
             ),
@@ -199,14 +201,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             borderRadius: BorderRadius.circular(16.0),
             child: Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-              ),
+              decoration: BoxDecoration(color: Colors.grey[200]),
               child: Image.asset(
                 'assets/images/image2.jpeg',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Text('Image 2 Placeholder', style: TextStyle(color: Colors.grey)),
+                  child: Text(
+                    'Image 2 Placeholder',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ),
             ),
@@ -259,14 +262,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             borderRadius: BorderRadius.circular(16.0),
             child: Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-              ),
+              decoration: BoxDecoration(color: Colors.grey[200]),
               child: Image.asset(
                 'assets/images/image3.png',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Text('Image 3 Placeholder', style: TextStyle(color: Colors.grey)),
+                  child: Text(
+                    'Image 3 Placeholder',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ),
             ),
@@ -315,9 +319,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: primaryNavy.withOpacity(0.05),
+            color: primaryNavy.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: primaryNavy.withOpacity(0.1)),
+            border: Border.all(color: primaryNavy.withValues(alpha: 0.1)),
           ),
           child: Icon(iconData, color: primaryNavy, size: 28),
         ),
@@ -326,7 +330,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: primaryNavy.withOpacity(0.8),
+            color: primaryNavy.withValues(alpha: 0.8),
             fontWeight: FontWeight.w500,
           ),
         ),
