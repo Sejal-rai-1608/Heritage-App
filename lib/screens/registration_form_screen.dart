@@ -694,6 +694,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFFAFAFC),
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -1364,29 +1365,33 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     String hint, {
     Color? borderColor,
     Widget? prefixIcon,
+    TextInputType? keyboardType,
+    TextInputAction? textInputAction,
   }) {
     return TextField(
       controller: controller,
-      textInputAction: TextInputAction.next,
+      keyboardType: keyboardType ?? TextInputType.text,
+      textInputAction: textInputAction ?? TextInputAction.next,
+      enableInteractiveSelection: true,
       style: const TextStyle(fontSize: 14, color: Color(0xFF191C21)),
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(color: borderColor ?? Colors.grey.shade300),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(color: borderColor ?? Colors.grey.shade300),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.8),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(color: Color(0xFFE5A93C), width: 1.8),
         ),
       ),
     );
