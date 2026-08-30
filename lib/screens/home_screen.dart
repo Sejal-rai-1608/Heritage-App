@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Share your exclusive community referral link to invite family & friends to Heritage App:',
+              'Share your exclusive community referral link to invite family & friends to SWAJAN:',
               style: TextStyle(fontSize: 13.5, color: Color(0xFF4A4E57), height: 1.4),
             ),
             const SizedBox(height: 14),
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      'https://heritageapp.com/invite?ref=COMMUNITY2024',
+                      'https://swajanapp.com/invite?ref=COMMUNITY2024',
                       style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF8B6B00)),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Icon(Icons.share_rounded, color: Color(0xFFE5A93C), size: 26),
             SizedBox(width: 10),
             Text(
-              'Share Heritage App',
+              'Share SWAJAN App',
               style: TextStyle(fontFamily: 'Serif', fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ],
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Help expand our Gujarati community network! Share the Heritage App download link with your contacts:',
+              'Help expand our Gujarati community network! Share the SWAJAN download link with your contacts:',
               style: TextStyle(fontSize: 13.5, color: Color(0xFF4A4E57), height: 1.4),
             ),
             const SizedBox(height: 14),
@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      'https://heritageapp.com/download',
+                      'https://swajanapp.com/download',
                       style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF8B6B00)),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -571,16 +571,33 @@ class _HomeScreenState extends State<HomeScreen> {
           tooltip: 'Open Menu',
         ),
 
-        // Center: Heritage App Title
-        const Text(
-          'Heritage App',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Serif',
-            fontSize: 21,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E232D),
-          ),
+        // Center: SWAJAN App Title & Logo
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.asset(
+                'assets/images/swajan_logo.png',
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => const SizedBox(),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'SWAJAN',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Serif',
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E232D),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
 
         // Top Right: Notification Bell + Profile Picture Avatar
@@ -1880,7 +1897,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Consumer<LanguageProvider>(
               builder: (context, lang, child) {
                 return Text(
-                  lang.currentLanguage == 'gu' ? 'હેરિટેજ એપ વર્ઝન ૧.૨.૦' : 'HERITAGE APP V1.2.0',
+                  lang.currentLanguage == 'gu' ? 'સ્વજન એપ વર્ઝન ૧.૨.૦' : 'SWAJAN APP V1.2.0',
                   style: const TextStyle(
                     color: Color(0xFF94A3B8),
                     fontSize: 11,

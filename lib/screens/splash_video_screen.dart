@@ -16,7 +16,7 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('assets/videos/great_perfectkeep_as_it_is_j.mp4')
+    _controller = VideoPlayerController.asset('assets/videos/app_launch_video.mp4')
       ..initialize().then((_) {
         // Ensure the first frame is shown and play the video
         if (mounted) setState(() {});

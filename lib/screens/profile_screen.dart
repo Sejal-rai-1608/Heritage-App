@@ -818,7 +818,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
         title: Text(
-          _activeTab == 1 ? (isGu ? 'પ્રોફાઇલ વિગતો' : 'Profile Details') : (isGu ? 'હેરિટેજ એપ' : 'Heritage App'),
+          _activeTab == 1 ? (isGu ? 'પ્રોફાઇલ વિગતો' : 'Profile Details') : (isGu ? 'સ્વજન એપ' : 'SWAJAN'),
           style: const TextStyle(
             color: Color(0xFF1E232D),
             fontFamily: 'Serif',
@@ -2495,7 +2495,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            'Heritage Core',
+                            'SWAJAN',
                             style: TextStyle(
                               fontFamily: 'Serif',
                               fontSize: 22,
@@ -2889,7 +2889,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         children: [
                           Text(
-                            isGu ? 'હેરિટેજ એપ વર્ઝન ૨.૪.૦' : 'HERITAGE V2.4.0',
+                            isGu ? 'સ્વજન એપ વર્ઝન ૨.૪.૦' : 'SWAJAN V2.4.0',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -2899,7 +2899,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           SizedBox(height: 3),
                           Text(
-                            '© 2024 Heritage Core Professional Network',
+                            '© 2024 Swajan Professional Network',
                             style: TextStyle(
                               fontSize: 10,
                               color: Color(0xFF94A3B8),

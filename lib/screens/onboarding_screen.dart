@@ -144,7 +144,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
                   child: Text(
-                    'Heritage Community',
+                    'Swajan Community',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -165,7 +165,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 12),
         const Text(
-          'Discover family members, matrimony & heritage',
+          'Discover family members, matrimony & culture',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
@@ -194,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
                   child: Text(
-                    'Heritage Traditions',
+                    'Swajan Traditions',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -215,7 +215,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 32),
         Text(
-          'Preserving Heritage',
+          'Preserving Culture',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24,

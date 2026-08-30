@@ -14,7 +14,7 @@ class HeritageCoreScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Heritage Core',
+          'SWAJAN',
           style: TextStyle(
             color: primaryNavy,
             fontWeight: FontWeight.bold,

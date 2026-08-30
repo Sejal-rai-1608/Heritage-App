@@ -160,8 +160,8 @@ class SupportScreen extends StatelessWidget {
                       answer: 'You can tap "Call Support" or use "Send Message To Admin" on the Support screen to reach out to our administration.',
                     ),
                     _FaqTile(
-                      question: 'What is Heritage Core Community membership?',
-                      answer: 'Heritage Core is an exclusive network for verified Gujarati community members to connect, network, and access premium benefits.',
+                      question: 'What is Swajan Community membership?',
+                      answer: 'Swajan is an exclusive network for verified Gujarati community members to connect, network, and access premium benefits.',
                     ),
                   ],
                 ),
@@ -533,7 +533,7 @@ class SupportScreen extends StatelessWidget {
               // Footer
               Center(
                 child: Text(
-                  'HERITAGE CORE COMMUNITY SUPPORT V1.4.2',
+                  'SWAJAN COMMUNITY SUPPORT V1.4.2',
                   style: const TextStyle(
                     color: Color(0xFF94A3B8),
                     fontSize: 11,

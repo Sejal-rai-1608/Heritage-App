@@ -376,9 +376,9 @@ class LanguageProvider extends ChangeNotifier {
   final Map<String, Map<String, String>> _dictionary = {
     // --- General ---
     'heritage_core': {
-      'en': 'Heritage Core',
-      'gu': 'હેરિટેજ કોર',
-      'hi': 'हेरिटेज कोर',
+      'en': 'SWAJAN',
+      'gu': 'સ્વજન',
+      'hi': 'स्वजन',
     },
     'support': {'en': 'Support', 'gu': 'સહાય', 'hi': 'सहायता'},
     'help_center': {
@@ -393,11 +393,11 @@ class LanguageProvider extends ChangeNotifier {
     },
     'help_subtitle': {
       'en':
-          'We are here to ensure the Gujarati Heritage Core community stays connected and supported.',
+          'We are here to ensure the Gujarati Swajan community stays connected and supported.',
       'gu':
-          'ગુજરાતી હેરિટેજ કોર સમુદાય જોડાયેલ અને સહાયભૂત રહે તે સુનિશ્ચિત કરવા માટે અમે અહીં છીએ.',
+          'ગુજરાતી સ્વજન સમુદાય જોડાયેલ અને સહાયભૂત રહે તે સુનિશ્ચિત કરવા માટે અમે અહીં છીએ.',
       'hi':
-          'हम यहाँ यह सुनिश्चित करने के लिए हैं कि गुजराती हेरिटेज कोर समुदाय जुड़ा रहे और उसे सहायता मिलती रहे।',
+          'हम यहाँ यह सुनिश्चित करने के लिए हैं कि गुजराती स्वजन समुदाय जुड़ा रहे और उसे सहायता मिलती रहे।',
     },
     'call': {'en': 'Call', 'gu': 'કૉલ કરો', 'hi': 'कॉल करें'},
     'send_message_admin': {
@@ -422,9 +422,9 @@ class LanguageProvider extends ChangeNotifier {
       'hi': '१०,०००+ सदस्यों द्वारा विश्वसनीय',
     },
     'support_footer': {
-      'en': 'Heritage Core Community Support v1.4.2',
-      'gu': 'હેરિટેજ કોર સમુદાય સપોર્ટ v1.4.2',
-      'hi': 'हेरिटेज कोर कम्युनिटी सपोर्ट v1.4.2',
+      'en': 'Swajan Community Support v1.4.2',
+      'gu': 'સ્વજન સમુદાય સપોર્ટ v1.4.2',
+      'hi': 'स्वजन कम्युनिटी सपोर्ट v1.4.2',
     },
 
     // --- Login Screen ---
@@ -462,9 +462,9 @@ class LanguageProvider extends ChangeNotifier {
       'hi': 'पसंदीदा भाषा',
     },
     'copyright': {
-      'en': '© 2024 Heritage Core Community. All rights reserved.',
-      'gu': '© 2024 હેરિટેજ કોર કોમ્યુનિટી. સર્વાધિકાર સુરક્ષિત.',
-      'hi': '© 2024 हेरिटेज कोर कम्युनिटी। सर्वाधिकार सुरक्षित।',
+      'en': '© 2024 Swajan Community. All rights reserved.',
+      'gu': '© 2024 સ્વજન કોમ્યુનિટી. સર્વાધિકાર સુરક્ષિત.',
+      'hi': '© 2024 स्वजन कम्युनिटी। सर्वाधिकार सुरक्षित।',
     },
 
     // --- OTP Screen ---
@@ -798,9 +798,9 @@ class LanguageProvider extends ChangeNotifier {
     },
     'view_all': {'en': 'View All', 'gu': 'બધા જુઓ', 'hi': 'सभी देखें'},
     'welcome_heritage': {
-      'en': 'Welcome to Heritage App',
-      'gu': 'હેરિટેજ એપમાં આપનું સ્વાગત છે',
-      'hi': 'हेरिटेज ऐप में आपका स्वागत है',
+      'en': 'Welcome to Swajan App',
+      'gu': 'સ્વજન એપમાં આપનું સ્વાગત છે',
+      'hi': 'स्वजन ऐप में आपका स्वागत है',
     },
     'complete_registration': {
       'en': 'Complete Registration',

@@ -44,7 +44,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _middleNameController = TextEditingController(text: details['middleName'] ?? 'Aaditya');
       _surnameController = TextEditingController(text: details['familySurname'] ?? 'More');
       _phoneController = TextEditingController(text: details['phone'] ?? '8010594617');
-      _emailController = TextEditingController(text: details['email'] ?? 'soham.more@heritage.org');
+      _emailController = TextEditingController(text: details['email'] ?? 'soham.more@swajan.org');
       _birthDateController = TextEditingController(text: details['birthDate'] ?? lang.userBirthDate.ifEmpty('24 May 2005'));
       _nativePlaceController = TextEditingController(text: details['nativePlace'] ?? lang.userNativePlace.ifEmpty('Satara Road'));
       _cityController = TextEditingController(text: details['city'] ?? 'Thane');
