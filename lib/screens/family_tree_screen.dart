@@ -310,8 +310,8 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                   border: Border.all(color: const Color(0xFFD9B854), width: 3),
                 ),
                 child: ClipOval(
-                  child: widget.profileImagePath != null && File(widget.profileImagePath!).existsSync()
-                      ? Image.file(File(widget.profileImagePath!), fit: BoxFit.cover)
+                  child: (widget.profileImagePath ?? Provider.of<LanguageProvider>(context).profileImageUrl) != null && File((widget.profileImagePath ?? Provider.of<LanguageProvider>(context).profileImageUrl)!).existsSync()
+                      ? Image.file(File((widget.profileImagePath ?? Provider.of<LanguageProvider>(context).profileImageUrl)!), fit: BoxFit.cover)
                       : Image.asset(
                           'assets/images/image1.jpeg',
                           fit: BoxFit.cover,
@@ -447,7 +447,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           children: [
             _buildTreeNodeItem(
               name: isGu ? 'સોહમ મોરે' : 'Soham More',
-              imagePath: widget.profileImagePath ?? 'assets/images/image1.jpeg',
+              imagePath: widget.profileImagePath ?? Provider.of<LanguageProvider>(context).profileImageUrl ?? 'assets/images/image1.jpeg',
               directionIcon: Icons.arrow_downward,
               isHighlight: true,
               onTap: () {},
@@ -525,7 +525,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           children: [
             _buildTreeNodeItem(
               name: isGu ? 'સોહમ મોરે' : 'Soham More',
-              imagePath: widget.profileImagePath ?? 'assets/images/image1.jpeg',
+              imagePath: widget.profileImagePath ?? Provider.of<LanguageProvider>(context).profileImageUrl ?? 'assets/images/image1.jpeg',
               directionIcon: Icons.arrow_downward,
               isHighlight: true,
               hasBadge: true,
@@ -630,10 +630,12 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                 alignment: Alignment.center,
                 children: [
                   if (imagePath != null && imagePath.isNotEmpty)
-                    (File(imagePath).existsSync()
-                        ? Image.file(File(imagePath), fit: BoxFit.cover, width: double.infinity, height: double.infinity)
-                        : Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity, height: double.infinity,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 40, color: Color(0xFFCBD5E1))))
+                    (imagePath.startsWith('http')
+                        ? Image.network(imagePath, fit: BoxFit.cover, width: double.infinity, height: double.infinity)
+                        : (File(imagePath).existsSync()
+                            ? Image.file(File(imagePath), fit: BoxFit.cover, width: double.infinity, height: double.infinity)
+                            : Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity, height: double.infinity,
+                                errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 40, color: Color(0xFFCBD5E1)))))
                   else
                     const Icon(Icons.person_outline, size: 44, color: Color(0xFFCBD5E1)),
 

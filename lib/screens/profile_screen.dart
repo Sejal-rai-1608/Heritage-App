@@ -762,6 +762,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<LanguageProvider>(context);
+    if (_selectedImage == null && lang.profileImageUrl != null) {
+      _selectedImage = lang.profileImageUrl;
+    }
     final bool isGu = lang.currentLanguage == 'gu';
     final String displayName = (widget.userName != null && widget.userName!.isNotEmpty)
         ? widget.userName!
