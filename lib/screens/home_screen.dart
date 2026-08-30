@@ -415,6 +415,22 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  
+  String _getGujaratiName(String name) {
+    if (name.isEmpty) return name;
+    if (name.contains('Soham') || name.contains('soham')) return name.contains('More') ? 'સોહમ આદિત્ય મોરે' : 'સોહમ';
+    if (name.contains('Aaditya') || name.contains('Aditya')) return name.contains('More') ? 'આદિત્ય શાંતનુ મોરે' : 'આદિત્ય';
+    if (name.contains('Vaishali')) return 'વૈશાલી આદિત્ય મોરે';
+    if (name.contains('Riya')) return 'રીયા આદિત્ય મોરે';
+    if (name.contains('Shantaram')) return 'શાંતારામ ગોવિંદ મોરે';
+    if (name.contains('Shantanu')) return 'શાંતનુ મોરે';
+    if (name.contains('Sanjay')) return 'સંજય પટેલ';
+    if (name.contains('Ramesh')) return 'રમેશ પરીખ';
+    if (name.contains('More')) return name.replaceAll('More', 'મોરે');
+    if (name.contains('Patel')) return name.replaceAll('Patel', 'પટેલ');
+    return name;
+  }
+
   Widget _buildHomeBody() {
     final lang = Provider.of<LanguageProvider>(context);
 
@@ -432,8 +448,8 @@ class _HomeScreenState extends State<HomeScreen> {
             // --- Greeting ---
             Text(
               lang.currentLanguage == 'gu'
-                  ? 'નમસ્તે, ${lang.registeredFirstName.isNotEmpty ? (lang.registeredFirstName == 'Soham' ? 'સોહમ' : lang.registeredFirstName) : (widget.userName != null && widget.userName!.isNotEmpty ? (widget.userName == 'Soham' ? 'સોહમ' : widget.userName) : 'સોહમ')}!'
-                  : 'Namaste, ${lang.registeredFirstName.isNotEmpty ? lang.registeredFirstName : (widget.userName != null && widget.userName!.isNotEmpty ? widget.userName : 'Soham')}!',
+                  ? 'નમસ્તે, ${_getGujaratiName(lang.registeredFirstName.isNotEmpty ? lang.registeredFirstName : (widget.userName != null && widget.userName!.isNotEmpty ? widget.userName! : 'Soham'))}!'
+                  : 'Namaste, ${lang.registeredFirstName.isNotEmpty ? lang.registeredFirstName : (widget.userName != null && widget.userName!.isNotEmpty ? widget.userName! : 'Soham')}!',
               style: const TextStyle(
                 fontFamily: 'Serif',
                 fontSize: 30,
@@ -1621,11 +1637,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : 'Sanjay Patel');
               
               if (isGu) {
-                if (rawName.toLowerCase().contains('soham')) {
-                  rawName = 'સોહમ જી';
-                } else if (rawName.toLowerCase().contains('sanjay')) {
-                  rawName = 'સંજય પટેલ';
-                }
+                rawName = _getGujaratiName(rawName);
               }
 
               final String displayName = rawName;
