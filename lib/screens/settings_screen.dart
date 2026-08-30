@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
-import 'community_directory_screen.dart';
 import 'login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -12,326 +11,578 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  static const Color primaryNavy = Color(0xFF00005C);
+  final String _selectedCommunity = 'Patel';
 
-  @override
-  Widget build(BuildContext context) {
-    final lang = Provider.of<LanguageProvider>(context);
-
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: primaryNavy),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          lang.getText('settings'),
-          style: const TextStyle(
-            color: primaryNavy,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.description_outlined, color: primaryNavy),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // --- Select Language Card ---
-              Card(
-                color: Colors.white,
-                elevation: 0.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.grey.shade200),
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDC2626),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        lang.getText('select_language'),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                      Container(
+                        width: 54,
+                        height: 54,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEE2E2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.logout_rounded,
+                          color: Color(0xFFDC2626),
+                          size: 26,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 16,
-                        runSpacing: 8,
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Serif',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Are you sure you want to log out of your Heritage Luxe account?',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 13.5,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
                         children: [
-                          _buildLanguageRadio(lang, 'English', 'en'),
-                          _buildLanguageRadio(lang, 'हिन्दी', 'hi'),
-                          _buildLanguageRadio(lang, 'ગુજરાતી', 'gu'),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'CANCEL',
+                                style: TextStyle(
+                                  color: Color(0xFF64748B),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                final lang = Provider.of<LanguageProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                                lang.setLoggedIn(false);
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginScreen(),
+                                  ),
+                                  (route) => false,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFDC2626),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 11),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: const Text(
+                                'LOGOUT',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-              // --- Community Profile Card ---
-              Card(
-                color: Colors.white,
-                elevation: 0.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.grey.shade200),
+  void _showChangeCommunityDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            'Community Profile',
+            style: TextStyle(
+              color: Color(0xFF0F172A),
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Serif',
+            ),
+          ),
+          content: const Text(
+            'Current Community: Patel\n\nTo change your community profile, please contact community admin or update your profile registration.',
+            style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFCD34D),
+                foregroundColor: const Color(0xFF0F172A),
+              ),
+              child: const Text('OK', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final langProvider = Provider.of<LanguageProvider>(context);
+    final String currentLang = langProvider.currentLanguage;
+    final bool isGu = currentLang == 'gu';
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leadingWidth: 90,
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            padding: const EdgeInsets.only(left: 12),
+            child: Row(
+              children: [
+                const Icon(Icons.arrow_back, color: Color(0xFF0F172A), size: 18),
+                const SizedBox(width: 4),
+                Text(
+                  isGu ? 'પાછા' : 'Back',
+                  style: const TextStyle(
+                    color: Color(0xFF0F172A),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+              ],
+            ),
+          ),
+        ),
+        title: Text(
+          isGu ? 'સેટિંગ્સ' : 'Settings',
+          style: const TextStyle(
+            color: Color(0xFF0F172A),
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Serif',
+          ),
+        ),
+        centerTitle: true,
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundImage: AssetImage('assets/images/sanjay_profile.png'),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 1. SELECT LANGUAGE Section
+            Text(
+              isGu ? 'ભાષા પસંદ કરો' : 'SELECT LANGUAGE',
+              style: const TextStyle(
+                color: Color(0xFF64748B),
+                fontSize: 12,
+                letterSpacing: 1.2,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                // English Option
+                GestureDetector(
+                  onTap: () => langProvider.changeLanguage('en'),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              lang.getText('community_profile'),
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              lang.selectedCommunity.isEmpty
-                                  ? 'No Community Selected'
-                                  : lang.selectedCommunity,
-                              style: const TextStyle(
-                                color: primaryNavy,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: currentLang == 'en'
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFCBD5E1),
+                            width: 2,
+                          ),
                         ),
+                        child: currentLang == 'en'
+                            ? Center(
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF0F172A),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
                       const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const CommunityDirectoryScreen(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryNavy,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text(
-                          lang.selectedCommunity.isEmpty
-                              ? lang.getText('select_community')
-                              : 'Change',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
+                      const Text(
+                        'English',
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(width: 32),
 
-              // --- Actions list ---
-              Card(
-                color: Colors.white,
-                elevation: 0.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.grey.shade200),
-                ),
-                child: Column(
-                  children: [
-                    _buildSettingsTile(
-                      icon: Icons.logout,
-                      title: lang.getText('logout'),
-                      color: Colors.red,
-                      onTap: () {
-                        lang.setLoggedIn(false);
-                        lang.setSelectedCommunity('');
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
+                // Gujarati Option (ગુજરાતી)
+                GestureDetector(
+                  onTap: () => langProvider.changeLanguage('gu'),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: currentLang == 'gu'
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFCBD5E1),
+                            width: 2,
                           ),
-                          (route) => false,
-                        );
-                      },
-                    ),
-                    const Divider(height: 1, indent: 56),
-                    _buildSettingsTile(
-                      icon: Icons.storage,
-                      title: lang.getText('storage_usage'),
-                      color: primaryNavy,
-                      onTap: () {},
-                    ),
-                    const Divider(height: 1, indent: 56),
-                    _buildSettingsTile(
-                      icon: Icons.description,
-                      title: lang.getText('terms_of_service'),
-                      color: primaryNavy,
-                      onTap: () {},
-                    ),
-                  ],
+                        ),
+                        child: currentLang == 'gu'
+                            ? Center(
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF0F172A),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              )
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'ગુજરાતી',
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 36),
+
+            // 2. Community Profile Section
+            Text(
+              isGu ? 'સમુદાય પ્રોફાઇલ' : 'Community Profile',
+              style: const TextStyle(
+                color: Color(0xFF64748B),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              isGu ? 'પટેલ' : _selectedCommunity,
+              style: const TextStyle(
+                color: Color(0xFF0F172A),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Serif',
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => _showChangeCommunityDialog(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFCD34D), // Warm light gold
+                foregroundColor: const Color(0xFF0F172A),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              const SizedBox(height: 24),
+              child: Text(
+                isGu ? 'બદલો' : 'Change',
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
 
-              // --- Monument Image with bottom fade ---
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  height: 180,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey.shade200),
+            // 3. Settings Menu Items
+            // Logout
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(
+                Icons.logout_rounded,
+                color: Color(0xFFDC2626),
+                size: 22,
+              ),
+              title: Text(
+                isGu ? 'લોગઆઉટ' : 'Logout',
+                style: const TextStyle(
+                  color: Color(0xFFDC2626),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: const Icon(
+                Icons.chevron_right,
+                color: Color(0xFF64748B),
+                size: 20,
+              ),
+              onTap: () => _showLogoutDialog(context),
+            ),
+            const SizedBox(height: 8),
+
+            // Storage Usage
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(
+                Icons.dns_outlined,
+                color: Color(0xFF0F172A),
+                size: 22,
+              ),
+              title: Text(
+                isGu ? 'સંગ્રહ વપરાશ' : 'Storage Usage',
+                style: const TextStyle(
+                  color: Color(0xFF0F172A),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: const Icon(
+                Icons.chevron_right,
+                color: Color(0xFF64748B),
+                size: 20,
+              ),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isGu ? 'સ્ટોરેજ વપરાશ: ૧૪.૨ MB વપરાયેલ' : 'Storage Usage: 14.2 MB used',
+                    ),
+                    backgroundColor: const Color(0xFF0F172A),
                   ),
-                  child: ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.black, Colors.transparent],
-                        stops: [0.7, 1.0],
-                      ).createShader(
-                        Rect.fromLTRB(0, 0, rect.width, rect.height),
-                      );
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Image.asset(
-                      'assets/images/settings_monument.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        debugPrint('Image load error: $error');
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Error: $error',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.red, fontSize: 12),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+
+            // Terms of Service
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(
+                Icons.description_outlined,
+                color: Color(0xFF0F172A),
+                size: 22,
+              ),
+              title: Text(
+                isGu ? 'સેવાની શરતો' : 'Terms of Service',
+                style: const TextStyle(
+                  color: Color(0xFF0F172A),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: const Icon(
+                Icons.chevron_right,
+                color: Color(0xFF64748B),
+                size: 20,
+              ),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    title: Text(
+                      isGu ? 'સેવાની શરતો' : 'Terms of Service',
+                      style: const TextStyle(
+                        fontFamily: 'Serif',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Text(
+                        isGu
+                            ? 'હેરિટેજ લક્સમાં આપનું સ્વાગત છે. અમારા પ્લેટફોર્મનો ઉપયોગ કરીને, તમે તમામ સમુદાય માર્ગદર્શિકાઓ અને ગોપનીયતા શરતોનું પાલન કરવા માટે સંમત થાઓ છો.'
+                            : 'Welcome to Heritage Luxe. By using our platform, you agree to comply with all community guidelines and privacy terms.',
+                        style: const TextStyle(fontSize: 13.5, height: 1.4),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          isGu ? 'બંધ કરો' : 'CLOSE',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 36),
+
+            // 4. Faded Cultural Legacy Image Component
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    height: 220,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        // Soft faded image using Opacity & BlendMode
+                        Opacity(
+                          opacity: 0.35,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(18),
+                            child: Image.asset(
+                              'assets/images/settings_monument.png',
+                              width: double.infinity,
+                              height: 220,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        );
-                      },
+                        ),
+                        // Gradient Overlay for smooth edge fading
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFFF8FAFC).withValues(alpha: 0.8),
+                                Colors.transparent,
+                                const Color(0xFFF8FAFC).withValues(alpha: 0.85),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                        ),
+                        // Centered Overlay Text
+                        Positioned(
+                          bottom: 24,
+                          child: Text(
+                            isGu ? 'સાંસ્કૃતિક વારસો' : 'CULTURAL LEGACY',
+                            style: const TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
-              // --- Footer ---
-              const Center(
-                child: Text(
-                  'App Version : 10.16',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                  // App Version Footer
+                  Text(
+                    isGu ? 'એપ વર્ઝન : ૧૦.૧૬' : 'App Version : 10.16',
+                    style: const TextStyle(
+                      color: Color(0xFF94A3B8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Center(
-                child: Text(
-                  'Heritage Core Community © 2026',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(height: 4),
+                  Text(
+                    isGu ? 'હેરિટેજ કોર કોમ્યુનિટી © ૨૦૨૪' : 'Heritage Core Community © 2024',
+                    style: const TextStyle(
+                      color: Color(0xFF94A3B8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                ],
               ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageRadio(LanguageProvider lang, String label, String code) {
-    final bool isSelected = lang.currentLanguage == code;
-    return InkWell(
-      onTap: () {
-        lang.changeLanguage(code);
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Radio<String>(
-            value: code,
-            groupValue: lang.currentLanguage,
-            activeColor: primaryNavy,
-            onChanged: (value) {
-              if (value != null) {
-                lang.changeLanguage(value);
-              }
-            },
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? primaryNavy : Colors.black87,
-              fontSize: 14,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingsTile({
-    required IconData icon,
-    required String title,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: color),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: color == Colors.red ? Colors.red : Colors.black87,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
+          ],
         ),
       ),
-      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-      onTap: onTap,
     );
   }
 }

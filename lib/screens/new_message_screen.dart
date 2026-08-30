@@ -1,238 +1,141 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
-import 'image_picker_dialog.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NewMessageScreen extends StatefulWidget {
-  final String? initialType;
-  const NewMessageScreen({super.key, this.initialType});
+  const NewMessageScreen({super.key});
 
   @override
   State<NewMessageScreen> createState() => _NewMessageScreenState();
 }
 
 class _NewMessageScreenState extends State<NewMessageScreen> {
-  static const Color primaryNavy = Color(0xFF00005C);
+  String _selectedMessageType = 'General';
+  String _visibilityStatus = 'Open';
+  String? _attachedImagePath;
 
-  final TextEditingController _contentController = TextEditingController();
+  final TextEditingController _detailsController = TextEditingController();
   final TextEditingController _whatsappController = TextEditingController();
 
-  String? _selectedImagePath;
-
-  String _selectedMessageType = 'General';
-  String _messageVisibility = 'Open';
-
   final List<String> _messageTypes = [
+    'General',
     'Job',
     'Property',
     'Commercial',
-    'Death',
-    'New Born',
-    'New Marriage',
-    'Engagement',
-    'Social',
-    'Regional',
-    'Buy-Sell',
-    'Congratulation',
-    'Thank you',
-    'Condolence',
-    'Birthday',
-    'Marriage Anniversary',
-    'Punya Tithi',
-    'Academic',
-    'Medical',
-    'General',
-    'Donation',
-    'Samuhik Vivah',
+    'Death / Obituary',
+    'Event',
+    'Business',
+    'Matrimonial',
+    'Seva / Support',
+    'Other',
   ];
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.initialType != null &&
-        _messageTypes.contains(widget.initialType)) {
-      _selectedMessageType = widget.initialType!;
-    }
-  }
-
-  @override
   void dispose() {
-    _contentController.dispose();
+    _detailsController.dispose();
     _whatsappController.dispose();
     super.dispose();
   }
 
-  void _onSendMessage() {
-    final content = _contentController.text.trim();
-    final whatsapp = _whatsappController.text.trim();
+  Future<void> _pickAttachmentImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() {
+          _attachedImagePath = image.path;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
 
-    if (content.isEmpty) {
+  void _sendMessage() {
+    if (_detailsController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter message content')),
+        const SnackBar(
+          content: Text('Please enter message details!'),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
 
-    final lang = Provider.of<LanguageProvider>(context, listen: false);
-    lang.addPost(
-      _selectedMessageType,
-      content,
-      whatsapp,
-      imagePath: _selectedImagePath,
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Message Posted Successfully!'),
+        backgroundColor: Colors.green,
+      ),
     );
 
-    final bool isDeathRelated = [
-      'Death',
-      'Condolence',
-      'Punya Tithi',
-    ].contains(_selectedMessageType);
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Row(
-            children: [
-              Icon(Icons.hourglass_bottom, color: Colors.blue, size: 28),
-              SizedBox(width: 8),
-              Text(
-                'Verification Pending',
-                style: TextStyle(
-                  color: primaryNavy,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Once approved, this message will be publicly visible.',
-                style: TextStyle(fontSize: 14, color: Colors.black87),
-              ),
-              if (isDeathRelated) ...[
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.red.shade200),
-                  ),
-                  child: const Text(
-                    'Note: Death-related announcements are prioritized and approved swiftly.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Pop dialog
-                Navigator.pop(context); // Pop screen
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryNavy,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'OK',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isDeathRelated = [
-      'Death',
-      'Condolence',
-      'Punya Tithi',
-    ].contains(_selectedMessageType);
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: primaryNavy,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'New Message',
           style: TextStyle(
-            color: Colors.white,
+            fontFamily: 'Serif',
+            color: Colors.black87,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
           ),
         ),
-        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.black87),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Message Type dropdown
-                      const Text(
-                        'Message Type',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Message Type Label & Dropdown
+                      _buildLabel('Message Type'),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
+                          color: const Color(0xFFF0F4FF),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: _selectedMessageType,
                             isExpanded: true,
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Colors.grey,
-                            ),
-                            items: _messageTypes.map((type) {
-                              return DropdownMenuItem(
-                                value: type,
-                                child: Text(type),
-                              );
-                            }).toList(),
+                            icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF64748B)),
                             onChanged: (val) {
                               if (val != null) {
                                 setState(() {
@@ -240,290 +143,184 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                                 });
                               }
                             },
+                            items: _messageTypes.map((type) {
+                              return DropdownMenuItem<String>(
+                                value: type,
+                                child: Text(
+                                  type,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF1E293B),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      // Message Details field
-                      const Text(
-                        'Message Details',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
+                      // Message Details Label & Multi-line TextArea
+                      _buildLabel('Message Details'),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: _contentController,
-                        maxLines: 6,
+                        controller: _detailsController,
+                        maxLines: 7,
                         decoration: InputDecoration(
                           hintText: 'Enter Message Content',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 15,
-                          ),
+                          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                          fillColor: const Color(0xFFF0F4FF),
+                          filled: true,
                           contentPadding: const EdgeInsets.all(16),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(
-                              color: primaryNavy,
-                              width: 1.5,
-                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      // WhatsApp Number field
-                      const Text(
-                        'WhatsApp Number(Not Necessary)',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
+                      // WhatsApp Number Label & Input
+                      _buildLabel('WhatsApp Number (Not Necessary)'),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _whatsappController,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
-                          hintText: 'Enter WhatsApp Number (optional)',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 15,
+                          prefixIcon: const Icon(
+                            Icons.chat_bubble_outline,
+                            color: Color(0xFF64748B),
+                            size: 20,
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+                          hintText: '+1 234 567 890',
+                          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                          fillColor: const Color(0xFFF0F4FF),
+                          filled: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(
-                              color: primaryNavy,
-                              width: 1.5,
-                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-
-                      // Notice warning at bottom for death posts
-                      if (isDeathRelated) ...[
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.red.shade100),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.priority_high_rounded,
-                                color: Colors.red.shade700,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Death-related announcements will be approved first and quickly.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.red.shade900,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-
-                      // Cropped image preview
-                      if (_selectedImagePath != null) ...[
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Selected Image',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Stack(
-                          children: [
-                            Container(
-                              height: 200,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  _selectedImagePath!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Center(
-                                        child: Icon(
-                                          Icons.broken_image,
-                                          size: 48,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedImagePath = null;
-                                  });
-                                },
-                                child: CircleAvatar(
-                                  radius: 14,
-                                  backgroundColor: Colors.black.withValues(
-                                    alpha: 0.6,
-                                  ),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
                     ],
                   ),
                 ),
               ),
+            ),
 
-              // Bottom Toolbar (Shield, Open Dropdown, Gallery Add, Send Button)
-              const Divider(height: 32),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.shield_outlined,
-                    color: primaryNavy,
-                    size: 24,
+            // Bottom Action Footer Bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 8,
+                    offset: Offset(0, -2),
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 100,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _messageVisibility,
-                        icon: const Icon(Icons.keyboard_arrow_down, size: 18),
-                        items: ['Open', 'Closed'].map((v) {
-                          return DropdownMenuItem(
-                            value: v,
-                            child: Text(
-                              v,
-                              style: const TextStyle(fontSize: 13),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left Visibility Dropdown (Open ˅)
+                  PopupMenuButton<String>(
+                    onSelected: (val) {
+                      setState(() {
+                        _visibilityStatus = val;
+                      });
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(value: 'Open', child: Text('Open')),
+                      const PopupMenuItem(value: 'Members Only', child: Text('Members Only')),
+                      const PopupMenuItem(value: 'Private', child: Text('Private')),
+                    ],
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0F4FF),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.verified_user_outlined, size: 16, color: Color(0xFF1E293B)),
+                          const SizedBox(width: 6),
+                          Text(
+                            _visibilityStatus,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1E293B),
                             ),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() {
-                              _messageVisibility = val;
-                            });
-                          }
-                        },
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.keyboard_arrow_down, size: 18, color: Color(0xFF1E293B)),
+                        ],
                       ),
                     ),
                   ),
-                  const Spacer(),
-                  // Gallery + icon
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await showDialog<String>(
-                        context: context,
-                        builder: (context) => const CustomImagePickerDialog(
-                          isProfilePhoto: false,
-                        ),
-                      );
-                      if (result != null) {
-                        setState(() {
-                          _selectedImagePath = result;
-                        });
-                      }
-                    },
+
+                  // Middle Attachment Icon Box (Image picker with gold plus badge)
+                  InkWell(
+                    onTap: _pickAttachmentImage,
                     child: Stack(
+                      clipBehavior: Clip.none,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          width: 48,
+                          height: 48,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Colors.grey.shade300),
+                            image: _attachedImagePath != null
+                                ? DecorationImage(
+                                    image: FileImage(File(_attachedImagePath!)),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
-                          child: Icon(
-                            Icons.image_outlined,
-                            color: Colors.grey.shade700,
-                            size: 24,
-                          ),
+                          child: _attachedImagePath == null
+                              ? const Icon(Icons.image_outlined, color: Color(0xFF64748B), size: 24)
+                              : null,
                         ),
                         Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: CircleAvatar(
-                            radius: 7,
-                            backgroundColor: _selectedImagePath != null
-                                ? Colors.green
-                                : Colors.blue,
-                            child: Icon(
-                              _selectedImagePath != null
-                                  ? Icons.check
-                                  : Icons.add,
-                              size: 10,
-                              color: Colors.white,
+                          top: -4,
+                          right: -4,
+                          child: Container(
+                            width: 18,
+                            height: 18,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFEAB308),
+                              shape: BoxShape.circle,
                             ),
+                            child: const Icon(Icons.add, color: Colors.black, size: 14),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  // Send circle button
+
+                  // Right Send Button
                   GestureDetector(
-                    onTap: _onSendMessage,
+                    onTap: _sendMessage,
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      width: 52,
+                      height: 52,
                       decoration: const BoxDecoration(
-                        color: primaryNavy,
+                        color: Color(0xFF0F172A),
                         shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
                       ),
                       child: const Icon(
                         Icons.send,
@@ -534,9 +331,21 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontFamily: 'Serif',
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF1E293B),
       ),
     );
   }

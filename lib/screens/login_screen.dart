@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
-import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -189,10 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ForgotPasswordScreen(),
-                              ),
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Forgot Password clicked (Ready for new UI)')),
                             );
                           },
                           child: Text(

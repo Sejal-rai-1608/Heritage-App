@@ -1,697 +1,683 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
+import 'home_screen.dart';
 
 class CoupleRegistrationScreen extends StatefulWidget {
-  const CoupleRegistrationScreen({super.key});
+  final String? userName;
+
+  const CoupleRegistrationScreen({super.key, this.userName});
 
   @override
   State<CoupleRegistrationScreen> createState() => _CoupleRegistrationScreenState();
 }
 
 class _CoupleRegistrationScreenState extends State<CoupleRegistrationScreen> {
-  static const Color primaryNavy = Color(0xFF00005C);
-
-  // Form Key for validation
   final _formKey = GlobalKey<FormState>();
 
-  // Text Controllers - Groom
-  final _groomNameCtrl = TextEditingController();
-  final _groomDobCtrl = TextEditingController();
-  final _groomOccCtrl = TextEditingController();
-  final _groomVillageCtrl = TextEditingController();
-  final _groomPhoneCtrl = TextEditingController();
-  String? _selectedGroomEducation;
+  // Groom Controllers
+  final _groomNameController = TextEditingController();
+  final _groomDobController = TextEditingController();
+  final _groomMobileController = TextEditingController();
+  String? _groomEducation;
+  final _groomOccupationController = TextEditingController();
+  final _groomVillageController = TextEditingController();
 
-  // Text Controllers - Bride
-  final _brideNameCtrl = TextEditingController();
-  final _brideDobCtrl = TextEditingController();
-  final _brideOccCtrl = TextEditingController();
-  final _brideVillageCtrl = TextEditingController();
-  final _bridePhoneCtrl = TextEditingController();
-  String? _selectedBrideEducation;
+  // Bride Controllers
+  final _brideNameController = TextEditingController();
+  final _brideDobController = TextEditingController();
+  final _brideMobileController = TextEditingController();
+  String? _brideEducation;
+  final _brideOccupationController = TextEditingController();
+  final _brideVillageController = TextEditingController();
 
-  // Family Info
-  final _groomFatherCtrl = TextEditingController();
-  final _brideFatherCtrl = TextEditingController();
+  // Family Controllers
+  final _groomFatherController = TextEditingController();
+  final _brideFatherController = TextEditingController();
 
-  // Document Upload Mock States
-  String? _uploadedIdName;
-  String? _uploadedAgeProofName;
+  // Document Upload States
+  bool _identityProofUploaded = false;
+  bool _ageProofUploaded = false;
 
-  final List<String> _educationLevels = [
-    'Primary School',
-    'Secondary School (10th)',
-    'Higher Secondary (12th)',
-    'Graduate / Bachelor Degree',
-    'Post Graduate / Master Degree',
-    'Doctorate / PhD',
-    'Other / Diploma',
+  final List<String> _educationOptions = [
+    'શિક્ષણ પસંદ કરો',
+    'હાઇસ્કૂલ / ૧૦મું-૧૨મું',
+    'સ્નાતક (B.A. / B.Sc / B.Com)',
+    'એન્જિનિયરિંગ (B.E. / B.Tech)',
+    'મેડિકલ (M.B.B.S.)',
+    'અનુસ્નાતક (M.A. / M.Sc / MBA)',
+    'અન્ય',
   ];
-
-  @override
-  void dispose() {
-    _groomNameCtrl.dispose();
-    _groomDobCtrl.dispose();
-    _groomOccCtrl.dispose();
-    _groomVillageCtrl.dispose();
-    _groomPhoneCtrl.dispose();
-    _brideNameCtrl.dispose();
-    _brideDobCtrl.dispose();
-    _brideOccCtrl.dispose();
-    _brideVillageCtrl.dispose();
-    _bridePhoneCtrl.dispose();
-    _groomFatherCtrl.dispose();
-    _brideFatherCtrl.dispose();
-    super.dispose();
-  }
 
   Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1950),
-      lastDate: DateTime(2010),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: primaryNavy,
-              onPrimary: Colors.white,
-              onSurface: primaryNavy,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      initialDate: DateTime(1998, 1, 1),
+      firstDate: DateTime(1960),
+      lastDate: DateTime.now(),
     );
     if (picked != null) {
       setState(() {
-        controller.text = "${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}/${picked.year}";
+        controller.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       });
     }
   }
 
-  void _simulateUpload(String docType) {
-    setState(() {
-      if (docType == 'id') {
-        _uploadedIdName = 'aadhaar_card_scan.pdf';
-      } else {
-        _uploadedAgeProofName = 'birth_certificate_scan.jpg';
-      }
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${docType == 'id' ? "Identity Proof" : "Age Proof"} uploaded successfully!'),
-        backgroundColor: Colors.green,
+  void _handleSubmit() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDCFCE7),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle_rounded,
+                    color: Color(0xFF16A34A),
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'અરજી સફળતાપૂર્વક સબમિટ થઈ!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Serif',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E232D),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'સમૂહ લગ્ન ૨૦૨૪ માટે તમારી દંપતી નોંધણી મળી છે. અમારી હેરિટેજ સમિતિ તમારા દસ્તાવેજોની સમીક્ષા કરશે અને ટૂંક સમયમાં સંપર્ક કરશે.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF64748B),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => HomeScreen(userName: widget.userName),
+                        ),
+                        (route) => false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0F172A),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                    child: const Text(
+                      'હોમ પેજ પર પાછા જાઓ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF8FAFC),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Color(0xFF1E232D)),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'સમૂહ લગ્ન',
+          style: TextStyle(
+            fontFamily: 'Serif',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E232D),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFD9B854), width: 1.5),
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/sanjay_profile.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // Header Icon & Title
+              Center(
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFEF9C3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Color(0xFF856404),
+                    size: 28,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'દંપતી તરીકે નોંધણી કરો',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Serif',
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E232D),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'સમુદાયના સમૂહ લગ્ન સમારોહમાં જોડાઓ. તમારી પવિત્ર યાત્રા શરૂ કરવા માટે કૃપા કરીને ચોક્કસ વિગતો ભરો.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF64748B),
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // SECTION 1: GROOM'S DETAILS
+              _buildSectionHeader(
+                icon: Icons.person_outlined,
+                title: "વરરાજાની વિગતો",
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'પૂરું નામ',
+                hint: "વરરાજાનું પૂરું નામ દાખલ કરો",
+                controller: _groomNameController,
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDateField(
+                      label: 'જન્મ તારીખ',
+                      controller: _groomDobController,
+                      onTap: () => _selectDate(context, _groomDobController),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      label: 'મોબાઈલ નંબર',
+                      hint: '૦૦૦૦૦ ૦૦૦૦૦',
+                      controller: _groomMobileController,
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              _buildDropdownField(
+                label: 'શિક્ષણનું સ્તર',
+                value: _groomEducation,
+                onChanged: (val) => setState(() => _groomEducation = val),
+              ),
+              const SizedBox(height: 14),
+              _buildTextField(
+                label: 'વ્યવસાય',
+                hint: 'દા.ત. સોફ્ટવેર એન્જિનિયર, ખેડૂત',
+                controller: _groomOccupationController,
+              ),
+              const SizedBox(height: 14),
+              _buildTextField(
+                label: 'વતન ગામ',
+                hint: 'ગામનું નામ',
+                controller: _groomVillageController,
+              ),
+              const SizedBox(height: 32),
+
+              // SECTION 2: BRIDE'S DETAILS
+              _buildSectionHeader(
+                icon: Icons.person_outlined,
+                title: "કન્યાની વિગતો",
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: 'પૂરું નામ',
+                hint: "કન્યાનું પૂરું નામ દાખલ કરો",
+                controller: _brideNameController,
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDateField(
+                      label: 'જન્મ તારીખ',
+                      controller: _brideDobController,
+                      onTap: () => _selectDate(context, _brideDobController),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      label: 'મોબાઈલ નંબર',
+                      hint: '૦૦૦૦૦ ૦૦૦૦૦',
+                      controller: _brideMobileController,
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              _buildDropdownField(
+                label: 'શિક્ષણનું સ્તર',
+                value: _brideEducation,
+                onChanged: (val) => setState(() => _brideEducation = val),
+              ),
+              const SizedBox(height: 14),
+              _buildTextField(
+                label: 'વ્યવસાય',
+                hint: 'દા.ત. શિક્ષક, ડિઝાઈનર',
+                controller: _brideOccupationController,
+              ),
+              const SizedBox(height: 14),
+              _buildTextField(
+                label: 'વતન ગામ',
+                hint: 'ગામનું નામ',
+                controller: _brideVillageController,
+              ),
+              const SizedBox(height: 32),
+
+              // SECTION 3: FAMILY DETAILS
+              _buildSectionHeader(
+                icon: Icons.groups_outlined,
+                title: 'કુટુંબની વિગતો',
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                label: "વરરાજાના પિતાનું નામ",
+                hint: 'પૂરું નામ',
+                controller: _groomFatherController,
+              ),
+              const SizedBox(height: 14),
+              _buildTextField(
+                label: "કન્યાના પિતાનું નામ",
+                hint: 'પૂરું નામ',
+                controller: _brideFatherController,
+              ),
+              const SizedBox(height: 32),
+
+              // SECTION 4: DOCUMENT UPLOADS
+              _buildSectionHeader(
+                icon: Icons.article_outlined,
+                title: 'દસ્તાવેજ અપલોડ',
+              ),
+              const SizedBox(height: 16),
+              _buildUploadBox(
+                title: 'ઓળખનો પુરાવો',
+                subtitle: 'આધાર, વોટર આઈડી, અથવા ડીએલ',
+                isUploaded: _identityProofUploaded,
+                onTap: () {
+                  setState(() => _identityProofUploaded = true);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('ઓળખનો પુરાવો સફળતાપૂર્વક અપલોડ થયો')),
+                  );
+                },
+              ),
+              const SizedBox(height: 14),
+              _buildUploadBox(
+                title: 'ઉંમરનો પુરાવો',
+                subtitle: 'જન્મ પ્રમાણપત્ર અથવા ૧૦મી માર્કશીટ',
+                isUploaded: _ageProofUploaded,
+                onTap: () {
+                  setState(() => _ageProofUploaded = true);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('ઉંમરનો પુરાવો સફળતાપૂર્વક અપલોડ થયો')),
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'મહત્તમ ફાઇલ કદ ૫MB. ફોર્મેટ: PDF, JPEG, અથવા PNG.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // SECTION 5: VERIFICATION PROTOCOL BOX
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF111827),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: const [
+                        Icon(Icons.verified, color: Color(0xFFFDE047), size: 20),
+                        SizedBox(width: 10),
+                        Text(
+                          'ચકાસણી પ્રોટોકોલ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFFDE047),
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'તમારી અરજીની હેરિટેજ સમિતિ દ્વારા ઔપચારિક સમીક્ષા કરવામાં આવશે. કૃપા કરીને ખાતરી કરો કે બધા અપલોડ કરેલા દસ્તાવેજો વાંચી શકાય તેવા છે. નોંધણી સમારોહ સ્પોન્સરશિપ, કાનૂની સુવિધા અને લગ્ન પછીના સામુદાયિક સમર્થનની ઍક્સેસ પ્રદાન કરે છે.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF94A3B8),
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // SUBMIT BUTTON
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _handleSubmit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0F172A),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'નોંધણી સબમિટ કરો',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      if (_uploadedIdName == null || _uploadedAgeProofName == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please upload all required scanned documents.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // Show success dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            title: Row(
-              children: const [
-                Icon(Icons.check_circle, color: Colors.green, size: 28),
-                SizedBox(width: 8),
-                Text(
-                  'Registration Submitted',
-                  style: TextStyle(color: primaryNavy, fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Your registration request has been submitted for Community Verification.',
-                  style: TextStyle(fontSize: 13, height: 1.4),
-                ),
-                const SizedBox(height: 16),
-                const Divider(),
-                const SizedBox(height: 12),
-                _buildConfirmRow('Groom:', _groomNameCtrl.text),
-                const SizedBox(height: 6),
-                _buildConfirmRow('Bride:', _brideNameCtrl.text),
-                const SizedBox(height: 6),
-                _buildConfirmRow('Reference No:', 'REG-${DateTime.now().millisecondsSinceEpoch.toString().substring(6)}'),
-                const SizedBox(height: 16),
-                const Text(
-                  'The Heritage Core Community Council will verify the documents and contact you within 3 business days.',
-                  style: TextStyle(fontSize: 11, color: Colors.grey, fontStyle: FontStyle.italic),
-                ),
-              ],
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // dismiss dialog
-                  Navigator.of(context).pop(); // pop registration screen
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryNavy,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                child: const Text('Back to Events'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  Widget _buildConfirmRow(String label, String val) {
+  Widget _buildSectionHeader({required IconData icon, required String title}) {
     return Row(
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 13),
-        ),
+        Icon(icon, color: const Color(0xFF856404), size: 20),
         const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            val,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: primaryNavy, fontSize: 13),
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Serif',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E232D),
           ),
         ),
       ],
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final lang = Provider.of<LanguageProvider>(context);
-
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: primaryNavy),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          lang.getText('samuhik_vivah_title'),
-          style: const TextStyle(
-            color: primaryNavy,
-            fontWeight: FontWeight.w800,
-            fontSize: 20,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                // Top Header Heart Icon Box
-                Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: primaryNavy.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.favorite,
-                          color: primaryNavy,
-                          size: 32,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Register as Couple',
-                        style: TextStyle(
-                          color: primaryNavy,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Text(
-                          'Join the community mass marriage ceremony. Please fill in the details accurately.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 13,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // CARD 1: Groom's Details
-                _buildFormSectionCard(
-                  title: "Groom's Details",
-                  icon: Icons.person_outline,
-                  children: [
-                    _buildLabel('Full Name'),
-                    _buildTextField(_groomNameCtrl, 'Enter groom\'s full name'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Date of Birth'),
-                    _buildDateField(_groomDobCtrl),
-                    const SizedBox(height: 16),
-                    _buildLabel('Education Level'),
-                    _buildDropdownField(
-                      _selectedGroomEducation,
-                      (val) => setState(() => _selectedGroomEducation = val),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Occupation'),
-                    _buildTextField(_groomOccCtrl, 'e.g. Software Engineer, Farmer, Business'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Native Village'),
-                    _buildTextField(_groomVillageCtrl, 'Enter village name'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Mobile Number'),
-                    _buildPhoneField(_groomPhoneCtrl),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // CARD 2: Bride's Details
-                _buildFormSectionCard(
-                  title: "Bride's Details",
-                  icon: Icons.person_outline,
-                  children: [
-                    _buildLabel('Full Name'),
-                    _buildTextField(_brideNameCtrl, 'Enter bride\'s full name'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Date of Birth'),
-                    _buildDateField(_brideDobCtrl),
-                    const SizedBox(height: 16),
-                    _buildLabel('Education Level'),
-                    _buildDropdownField(
-                      _selectedBrideEducation,
-                      (val) => setState(() => _selectedBrideEducation = val),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Occupation'),
-                    _buildTextField(_brideOccCtrl, 'e.g. Teacher, Nurse, Business'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Native Village'),
-                    _buildTextField(_brideVillageCtrl, 'Enter village name'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Mobile Number'),
-                    _buildPhoneField(_bridePhoneCtrl),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // CARD 3: Family & Documents
-                _buildFormSectionCard(
-                  title: "Family & Documents",
-                  icon: Icons.account_tree_outlined,
-                  children: [
-                    _buildLabel('Groom\'s Father\'s Name'),
-                    _buildTextField(_groomFatherCtrl, 'Father\'s full name'),
-                    const SizedBox(height: 16),
-                    _buildLabel('Bride\'s Father\'s Name'),
-                    _buildTextField(_brideFatherCtrl, 'Father\'s full name'),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Required Documents (Scanned Copies)',
-                      style: TextStyle(
-                        color: primaryNavy,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Identity Proof (Aadhaar/ID)'),
-                    const SizedBox(height: 8),
-                    _buildUploadBox(
-                      isUploaded: _uploadedIdName != null,
-                      fileName: _uploadedIdName,
-                      buttonText: 'Upload ID',
-                      onTap: () => _simulateUpload('id'),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLabel('Age Proof (Birth Certificate)'),
-                    const SizedBox(height: 8),
-                    _buildUploadBox(
-                      isUploaded: _uploadedAgeProofName != null,
-                      fileName: _uploadedAgeProofName,
-                      buttonText: 'Upload Age Proof',
-                      onTap: () => _simulateUpload('age'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Community Verification Banner
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: primaryNavy,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.verified_outlined,
-                          color: Colors.amber,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Community Verification',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'All registrations are reviewed by the Heritage Core Community Council to ensure validity and support for the couples.',
-                              style: TextStyle(
-                                color: Color(0xFFFFF0F5),
-                                fontSize: 11.5,
-                                height: 1.35,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Submit Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryNavy,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          'Submit Registration',
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(Icons.send, size: 16),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFormSectionCard({
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
+  Widget _buildTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
   }) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.01),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E232D),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: primaryNavy, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: primaryNavy,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+            filled: true,
+            fillColor: const Color(0xFFEFF6FF),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
             ),
-            const SizedBox(height: 8),
-            const Divider(),
-            const SizedBox(height: 12),
-            ...children,
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Colors.grey.shade800,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
+  Widget _buildDateField({
+    required String label,
+    required TextEditingController controller,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E232D),
+          ),
         ),
-      ),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: onTap,
+          child: IgnorePointer(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: 'દિ/મહિના/વર્ષ',
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                filled: true,
+                fillColor: const Color(0xFFEFF6FF),
+                suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18, color: Color(0xFF64748B)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildTextField(TextEditingController ctrl, String hint) {
-    return TextFormField(
-      controller: ctrl,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+  Widget _buildDropdownField({
+    required String label,
+    required String? value,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E232D),
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade200),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEFF6FF),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: value ?? _educationOptions[0],
+              isExpanded: true,
+              icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF64748B)),
+              items: _educationOptions.map((opt) {
+                return DropdownMenuItem<String>(
+                  value: opt,
+                  child: Text(
+                    opt,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: opt == 'શિક્ષણ પસંદ કરો' ? Colors.grey.shade400 : const Color(0xFF1E232D),
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: onChanged,
+            ),
+          ),
         ),
-      ),
-      style: const TextStyle(fontSize: 14, color: Colors.black87),
-      validator: (val) {
-        if (val == null || val.trim().isEmpty) {
-          return 'This field is required';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildDateField(TextEditingController ctrl) {
-    return TextFormField(
-      controller: ctrl,
-      readOnly: true,
-      onTap: () => _selectDate(context, ctrl),
-      decoration: InputDecoration(
-        hintText: 'mm/dd/yyyy',
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade200),
-        ),
-        suffixIcon: const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-      ),
-      style: const TextStyle(fontSize: 14, color: Colors.black87),
-      validator: (val) {
-        if (val == null || val.trim().isEmpty) {
-          return 'This field is required';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildDropdownField(String? selectedVal, ValueChanged<String?> onChanged) {
-    return DropdownButtonFormField<String>(
-      value: selectedVal,
-      onChanged: onChanged,
-      hint: Text(
-        'Select Education',
-        style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-      ),
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade200),
-        ),
-      ),
-      items: _educationLevels.map((lvl) {
-        return DropdownMenuItem<String>(
-          value: lvl,
-          child: Text(lvl, style: const TextStyle(fontSize: 14, color: Colors.black87)),
-        );
-      }).toList(),
-      validator: (val) {
-        if (val == null) {
-          return 'Please select an education level';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildPhoneField(TextEditingController ctrl) {
-    return TextFormField(
-      controller: ctrl,
-      keyboardType: TextInputType.phone,
-      decoration: InputDecoration(
-        hintText: '+91 00000 00000',
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: Colors.grey.shade200),
-        ),
-      ),
-      style: const TextStyle(fontSize: 14, color: Colors.black87),
-      validator: (val) {
-        if (val == null || val.trim().isEmpty) {
-          return 'This field is required';
-        }
-        return null;
-      },
+      ],
     );
   }
 
   Widget _buildUploadBox({
+    required String title,
+    required String subtitle,
     required bool isUploaded,
-    required String? fileName,
-    required String buttonText,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: double.infinity,
-        height: 60,
-        decoration: BoxDecoration(
-          color: isUploaded ? Colors.green.shade50 : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isUploaded ? Colors.green.shade400 : Colors.grey.shade300,
-            style: isUploaded ? BorderStyle.solid : BorderStyle.solid,
-          ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isUploaded ? const Color(0xFFF0FDF4) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isUploaded ? const Color(0xFF86EFAC) : const Color(0xFFE2E8F0),
+          style: BorderStyle.solid,
         ),
-        child: isUploaded
-            ? Row(
-                children: [
-                  const SizedBox(width: 16),
-                  const Icon(Icons.check_circle, color: Colors.green),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      fileName ?? '',
-                      style: const TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const Icon(Icons.refresh, color: Colors.grey),
-                  const SizedBox(width: 16),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.upload_file_outlined, color: primaryNavy, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    buttonText,
-                    style: const TextStyle(
-                      color: primaryNavy,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: isUploaded ? const Color(0xFFDCFCE7) : const Color(0xFFDBEAFE),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isUploaded ? Icons.check : Icons.upload_outlined,
+              color: isUploaded ? const Color(0xFF16A34A) : const Color(0xFF2563EB),
+              size: 22,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            isUploaded ? '$title અપલોડ થયો' : title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E232D),
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton(
+            onPressed: onTap,
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: isUploaded ? const Color(0xFF16A34A) : const Color(0xFF1E232D)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(
+              isUploaded ? 'ફાઈલ બદલો' : 'ફાઈલ અપલોડ કરો',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isUploaded ? const Color(0xFF16A34A) : const Color(0xFF1E232D),
               ),
+            ),
+          ),
+        ],
       ),
     );
   }

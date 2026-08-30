@@ -10,7 +10,7 @@ class SplashVideoScreen extends StatefulWidget {
 }
 
 class _SplashVideoScreenState extends State<SplashVideoScreen> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   bool _navigated = false;
 
   @override
@@ -19,14 +19,16 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
     _controller = VideoPlayerController.asset('assets/videos/great_perfectkeep_as_it_is_j.mp4')
       ..initialize().then((_) {
         // Ensure the first frame is shown and play the video
-        setState(() {});
-        _controller.play();
+        if (mounted) setState(() {});
+        _controller?.play();
       });
 
-    _controller.addListener(() {
-      if (_controller.value.isInitialized &&
-          !_controller.value.isPlaying &&
-          _controller.value.position >= _controller.value.duration &&
+    _controller?.addListener(() {
+      final controller = _controller;
+      if (controller != null &&
+          controller.value.isInitialized &&
+          !controller.value.isPlaying &&
+          controller.value.position >= controller.value.duration &&
           !_navigated) {
         _navigated = true;
         // Navigate to the onboarding screen when the video finishes
@@ -39,19 +41,20 @@ class _SplashVideoScreenState extends State<SplashVideoScreen> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = _controller;
     return Scaffold(
       backgroundColor: Colors.black, // Typical background for a video splash
       body: Center(
-        child: _controller.value.isInitialized
+        child: (controller != null && controller.value.isInitialized)
             ? AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
+                aspectRatio: controller.value.aspectRatio,
+                child: VideoPlayer(controller),
               )
             : const CircularProgressIndicator(color: Colors.white), // Loading state
       ),
