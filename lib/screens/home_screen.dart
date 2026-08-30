@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
@@ -608,7 +609,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: Border.all(color: const Color(0xFFE5A93C), width: 1.5),
                       image: hasImage
                           ? DecorationImage(
-                              image: NetworkImage(lang.profileImageUrl!),
+                              image: lang.profileImageUrl!.startsWith('http')
+                                  ? NetworkImage(lang.profileImageUrl!) as ImageProvider
+                                  : (File(lang.profileImageUrl!).existsSync()
+                                      ? FileImage(File(lang.profileImageUrl!))
+                                      : const AssetImage('assets/images/sanjay_profile.png') as ImageProvider),
                               fit: BoxFit.cover,
                             )
                           : null,
@@ -1646,7 +1651,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: const Color(0xFF191C21),
                         image: hasImage
                             ? DecorationImage(
-                                image: NetworkImage(lang.profileImageUrl!),
+                                image: lang.profileImageUrl!.startsWith('http')
+                                    ? NetworkImage(lang.profileImageUrl!) as ImageProvider
+                                    : (File(lang.profileImageUrl!).existsSync()
+                                        ? FileImage(File(lang.profileImageUrl!))
+                                        : const AssetImage('assets/images/sanjay_profile.png') as ImageProvider),
                                 fit: BoxFit.cover,
                               )
                             : null,
@@ -1675,7 +1684,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 border: Border.all(color: Colors.white, width: 2),
                                 image: hasImage
                                     ? DecorationImage(
-                                        image: NetworkImage(lang.profileImageUrl!),
+                                        image: lang.profileImageUrl!.startsWith('http')
+                                            ? NetworkImage(lang.profileImageUrl!) as ImageProvider
+                                            : (File(lang.profileImageUrl!).existsSync()
+                                                ? FileImage(File(lang.profileImageUrl!))
+                                                : const AssetImage('assets/images/sanjay_profile.png') as ImageProvider),
                                         fit: BoxFit.cover,
                                       )
                                     : null,
