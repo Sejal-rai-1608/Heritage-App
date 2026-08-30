@@ -516,9 +516,7 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isGu ? 'વ્યાવસાયિક
-ડિરેક્ટરી' : 'Professional
-Directory',
+                    isGu ? 'વ્યાવસાયિક\nડિરેક્ટરી' : 'Professional\nDirectory',
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -1132,7 +1130,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                               content: Text(
                                 isGu
                                     ? '$name ની પ્રોફાઇલ ખોલી રહ્યા છીએ...'
-                                    : 'Opening $name's profile...',
+                                    : "Opening $name's profile...",
                               ),
                               backgroundColor: const Color(0xFF0F172A),
                             ),
