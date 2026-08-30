@@ -2684,13 +2684,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Divider(color: Colors.grey.shade200, height: 1),
                             const SizedBox(height: 8),
 
-                            _buildDrawerMenuItem(
-                              icon: Icons.translate_outlined,
-                              title: isGu ? 'ભાષા બદલો' : 'BHASHA BADLA',
-                              onTap: () {
-                                Navigator.pop(ctx);
-                                _showLanguageDialog();
-                              },
+                             // Change Language Section with Radio Buttons
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.g_translate_outlined, size: 18, color: Color(0xFF856404)),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        isGu ? 'ભાષા બદલો' : 'Change Language',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1E232D),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      // English Radio Button Option
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            lang.changeLanguage('en');
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: !isGu ? const Color(0xFF1E232D) : Colors.white,
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: !isGu ? const Color(0xFF1E232D) : const Color(0xFFCBD5E1),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  !isGu ? Icons.radio_button_checked : Icons.radio_button_off,
+                                                  size: 14,
+                                                  color: !isGu ? Colors.white : const Color(0xFF64748B),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  'English',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: !isGu ? Colors.white : const Color(0xFF475569),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      // Gujarati Radio Button Option
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            lang.changeLanguage('gu');
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: isGu ? const Color(0xFF1E232D) : Colors.white,
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: isGu ? const Color(0xFF1E232D) : const Color(0xFFCBD5E1),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  isGu ? Icons.radio_button_checked : Icons.radio_button_off,
+                                                  size: 14,
+                                                  color: isGu ? Colors.white : const Color(0xFF64748B),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  'ગુજરાતી',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: isGu ? Colors.white : const Color(0xFF475569),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                             _buildDrawerMenuItem(
                               icon: Icons.autorenew_outlined,
