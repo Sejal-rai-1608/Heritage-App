@@ -103,7 +103,7 @@ class _ObituaryScreenState extends State<ObituaryScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-        return StatefulWidget(
+        return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
               height: MediaQuery.of(context).size.height * 0.88,
