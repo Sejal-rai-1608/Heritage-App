@@ -161,22 +161,30 @@ String _getBusinessLocationLabel(String city, String area, bool isGu) {
 
 String _getBusinessRoleLabel(String role, bool isGu) {
   if (!isGu) return role;
-  switch (role) {
-    case 'SENIOR ACCOUNTANT':
-      return 'વરિષ્ઠ અકાઉન્ટન્ટ';
-    case 'ACCOUNTANT':
-      return 'અકાઉન્ટન્ટ';
-    case 'SENIOR BANKER':
-      return 'વરિષ્ઠ બેંકર';
-    case 'BRANCH MANAGER':
-      return 'બ્રાન્ચ મેનેજર';
-    case 'CIVIL ENGINEER':
-      return 'સિવિલ એન્જિનિયર';
-    case 'STRUCTURAL ENGINEER':
-      return 'સ્ટ્રક્ચરલ એન્જિનિયર';
-    default:
-      return role;
-  }
+  final r = role.toUpperCase();
+  if (r.contains('SENIOR ACCOUNTANT')) return 'વરિષ્ઠ અકાઉન્ટન્ટ';
+  if (r.contains('CHARTERED ACCOUNTANT')) return 'ચાર્ટર્ડ અકાઉન્ટન્ટ';
+  if (r.contains('ACCOUNTANT')) return 'અકાઉન્ટન્ટ';
+  if (r.contains('SENIOR BANKER')) return 'વરિષ્ઠ બેંકર';
+  if (r.contains('BRANCH MANAGER')) return 'બ્રાન્ચ મેનેજર';
+  if (r.contains('BANKER')) return 'બેંકર';
+  if (r.contains('STRUCTURAL ENGINEER')) return 'સ્ટ્રક્ચરલ એન્જિનિયર';
+  if (r.contains('CIVIL ENGINEER')) return 'સિવિલ એન્જિનિયર';
+  if (r.contains('ARCHITECTURAL')) return 'આર્કિટેક્ચરલ એન્જિનિયર';
+  if (r.contains('SOFTWARE ENGINEER')) return 'સોફ્ટવેર એન્જિનિયર';
+  if (r.contains('IT PROFESSIONAL') || r.contains('COMPUTER')) return 'આઇટી પ્રોફેશનલ';
+  if (r.contains('CONTRACTOR')) return 'કોન્ટ્રાક્ટર';
+  if (r.contains('DESIGNER')) return 'ડિઝાઇનર';
+  if (r.contains('BEAUTICIAN')) return 'બ્યુટીશિયન';
+  if (r.contains('ADMINISTRATION')) return 'એડમિનિસ્ટ્રેશન પ્રોફેશનલ';
+  if (r.contains('ADVERTISING')) return 'એડવર્ટાઇઝિંગ પ્રોફેશનલ';
+  if (r.contains('AGRICULTURE')) return 'કૃષિ નિષ્ણાત';
+  if (r.contains('AYURVEDIC')) return 'આયુર્વેદિક નિષ્ણાત';
+  if (r.contains('CUSTOMER SUPPORT')) return 'કસ્ટમર સપોર્ટ';
+  if (r.contains('CREATIVE')) return 'ક્રિએટિવ પર્સન';
+  if (r.contains('BUSINESS')) return 'વ્યવસાયિક';
+
+  return role;
 }
 
 String _getGujaratiNumberString(String numStr, bool isGu) {
@@ -659,65 +667,68 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                         final count = getCategoryCount(catName);
                         final icon = _getCategoryIcon(catName);
 
-                        return ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                          leading: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFEF9C3),
-                              shape: BoxShape.circle,
+                        return Material(
+                          color: Colors.transparent,
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                            leading: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFEF9C3),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                icon,
+                                color: const Color(0xFF854D0E),
+                                size: 20,
+                              ),
                             ),
-                            child: Icon(
-                              icon,
-                              color: const Color(0xFF854D0E),
-                              size: 20,
+                            title: Text(
+                              _getCategoryNameLabel(catName, isGu),
+                              style: const TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                          title: Text(
-                            _getCategoryNameLabel(catName, isGu),
-                            style: const TextStyle(
-                              color: Color(0xFF0F172A),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF6FF),
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Text(
-                                  _getGujaratiNumberString('$count', isGu),
-                                  style: const TextStyle(
-                                    color: Color(0xFF1E40AF),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF6FF),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Text(
+                                    _getGujaratiNumberString('$count', isGu),
+                                    style: const TextStyle(
+                                      color: Color(0xFF1E40AF),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.chevron_right,
-                                color: Color(0xFF94A3B8),
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BusinessCategoryDetailScreen(
-                                  categoryName: catName,
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.chevron_right,
+                                  color: Color(0xFF94A3B8),
+                                  size: 18,
                                 ),
-                              ),
-                            );
-                          },
+                              ],
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BusinessCategoryDetailScreen(
+                                    categoryName: catName,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
@@ -862,6 +873,354 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void _showMemberDetailsModal(BuildContext context, Map<String, dynamic> biz, bool isGu) {
+    final rawName = biz['name'] ?? 'Professional';
+    final displayName = _getBusinessMemberNameLabel(rawName, isGu);
+    final city = biz['city'] ?? 'Location';
+    final area = biz['area'] ?? '';
+    final location = _getBusinessLocationLabel(city, area, isGu);
+    final rawRole = (biz['role'] ?? (rawName.contains('Akshaykumar') ? 'SENIOR ACCOUNTANT' : 'ACCOUNTANT')).toString().toUpperCase();
+    final role = _getBusinessRoleLabel(rawRole, isGu);
+    final category = _getCategoryNameLabel(biz['category'] ?? categoryName, isGu);
+    final image = biz['image'] as String?;
+    final phone = (biz['phone'] != null && biz['phone'].toString().isNotEmpty)
+        ? _getGujaratiNumberString(biz['phone'].toString(), isGu)
+        : _getGujaratiNumberString('+91 98765 43210', isGu);
+    final email = '${rawName.toLowerCase().replaceAll(' ', '.')}@heritage.org';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.85,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            children: [
+              // Top Drag Handle & Close Button
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 16, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(width: 32), // Spacer
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Color(0xFF64748B)),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+              ),
+
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  child: Column(
+                    children: [
+                      // Avatar with Golden Ring
+                      Container(
+                        width: 96,
+                        height: 96,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFFCD34D), width: 3.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: (image != null && image.isNotEmpty)
+                              ? Image.network(
+                                  image,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (c, e, s) => Container(
+                                    color: const Color(0xFFF1F5F9),
+                                    child: const Icon(Icons.person, size: 50, color: Color(0xFF94A3B8)),
+                                  ),
+                                )
+                              : Container(
+                                  color: const Color(0xFFF1F5F9),
+                                  child: const Icon(Icons.person, size: 50, color: Color(0xFF94A3B8)),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Name & Role
+                      Text(
+                        displayName,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Serif',
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        role,
+                        style: const TextStyle(
+                          color: Color(0xFF9A7B38),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Verified Heritage Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEF9C3),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFFCD34D)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.verified_rounded, size: 16, color: Color(0xFF854D0E)),
+                            const SizedBox(width: 6),
+                            Text(
+                              isGu ? 'ચકાસાયેલ હેરિટેજ પ્રોફેશનલ' : 'VERIFIED HERITAGE PROFESSIONAL',
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF854D0E),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Details Cards Section
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildModalInfoRow(
+                              icon: Icons.work_outline,
+                              title: isGu ? 'વ્યવસાય શ્રેણી' : 'Category',
+                              value: category,
+                            ),
+                            const Divider(height: 24, color: Color(0xFFE2E8F0)),
+                            _buildModalInfoRow(
+                              icon: Icons.location_on_outlined,
+                              title: isGu ? 'સ્થળ / સરનામું' : 'Location / City',
+                              value: location,
+                            ),
+                            const Divider(height: 24, color: Color(0xFFE2E8F0)),
+                            _buildModalInfoRow(
+                              icon: Icons.phone_outlined,
+                              title: isGu ? 'સંપર્ક નંબર' : 'Phone / WhatsApp',
+                              value: phone,
+                            ),
+                            const Divider(height: 24, color: Color(0xFFE2E8F0)),
+                            _buildModalInfoRow(
+                              icon: Icons.email_outlined,
+                              title: isGu ? 'ઈમેલ આઈડી' : 'Email Address',
+                              value: email,
+                            ),
+                            const Divider(height: 24, color: Color(0xFFE2E8F0)),
+                            _buildModalInfoRow(
+                              icon: Icons.stars_outlined,
+                              title: isGu ? 'અનુભવ' : 'Experience',
+                              value: isGu ? '૧૨+ વર્ષનો પ્રોફેશનલ અનુભવ' : '12+ Years Professional Experience',
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Service Description Box
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFF1F5F9)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.02),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isGu ? 'સેવાઓની વિગતો' : 'Services & Expertise',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0F172A),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              isGu
+                                  ? 'ઉચ્ચ ગુણવત્તાયુક્ત વ્યાવસાયિક સેવાઓ, કોર્પોરેટ સલાહકાર અને સમુદાયના સભ્યો માટે વિશેષ સહાય.'
+                                  : 'Top tier heritage verified professional providing corporate consulting, auditing, legal advice, and business support for community members.',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF64748B),
+                                height: 1.45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      // Call & WhatsApp Action Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      isGu ? '$phone પર કોલ કરી રહ્યા છીએ...' : 'Calling $phone...',
+                                    ),
+                                    backgroundColor: const Color(0xFF0F172A),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.call, size: 18),
+                              label: Text(
+                                isGu ? 'કોલ કરો' : 'Call Now',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF0F172A),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      isGu ? '$phone પર વોટ્સએપ મોકલી રહ્યા છીએ...' : 'Opening WhatsApp for $phone...',
+                                    ),
+                                    backgroundColor: const Color(0xFF15803D),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                              label: Text(
+                                isGu ? 'વોટ્સએપ' : 'WhatsApp',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFCD34D),
+                                foregroundColor: const Color(0xFF0F172A),
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildModalInfoRow({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Icon(icon, size: 18, color: const Color(0xFF854D0E)),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -1124,18 +1483,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                isGu
-                                    ? '$name ની પ્રોફાઇલ ખોલી રહ્યા છીએ...'
-                                    : "Opening $name's profile...",
-                              ),
-                              backgroundColor: const Color(0xFF0F172A),
-                            ),
-                          );
-                        },
+                        onPressed: () => _showMemberDetailsModal(context, biz, isGu),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFCD34D),
                           foregroundColor: const Color(0xFF0F172A),
