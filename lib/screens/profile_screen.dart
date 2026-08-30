@@ -9,6 +9,7 @@ import 'settings_screen.dart';
 import 'image_picker_dialog.dart';
 import 'member_directory_screen.dart';
 import 'family_tree_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String? userName;
@@ -945,7 +946,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const RegistrationFormScreen(),
+                      builder: (_) => const EditProfileScreen(),
                     ),
                   );
                 },
@@ -1090,7 +1091,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => const RegistrationFormScreen(),
+                                builder: (_) => const EditProfileScreen(),
                               ),
                             );
                           },
