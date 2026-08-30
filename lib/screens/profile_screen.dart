@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'home_screen.dart';
-import 'registration_form_screen.dart';
 import 'settings_screen.dart';
 import 'image_picker_dialog.dart';
 import 'member_directory_screen.dart';
@@ -2979,34 +2978,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Select Language / bhaaShaa chunae'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('English'),
-                trailing: const Icon(Icons.check, color: Color(0xFF856404)),
-                onTap: () => Navigator.pop(ctx),
-              ),
-              ListTile(
-                title: const Text('hiMdi (Hindi)'),
-                onTap: () => Navigator.pop(ctx),
-              ),
-              ListTile(
-                title: const Text('maraaTHii (Marathi)'),
-                onTap: () => Navigator.pop(ctx),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+
 
   void _showFamilyTreeModal() {
     final lang = Provider.of<LanguageProvider>(context, listen: false);
