@@ -75,8 +75,8 @@ class _ObituaryScreenState extends State<ObituaryScreen> {
       'prarthnaDateGu': '૨૩ ઓગસ્ટ ૨૦૨૬',
       'prarthnaTimeEn': '10:00 AM to 12:00 PM',
       'prarthnaTimeGu': 'સવારે ૧૦:૦૦ થી ૧૨:૦૦',
-      'venueEn': 'Heritage Hall, Main Road, Kolhapur',
-      'venueGu': 'હેરિટેજ હોલ, મુખ્ય રોડ, કોલ્હાપુર',
+      'venueEn': 'Swajan Hall, Main Road, Kolhapur',
+      'venueGu': 'સ્વજન હોલ, મુખ્ય રોડ, કોલ્હાપુર',
       'familyEn': 'Akshaykumar Kadam & Kadam Family',
       'familyGu': 'અક્ષયકુમાર કદમ અને કદમ પરિવાર',
       'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
@@ -238,8 +238,8 @@ class _ObituaryScreenState extends State<ObituaryScreen> {
                               'passedDateGu': 'તાજેતરમાં અવસાન',
                               'ageEn': ageController.text.trim().isNotEmpty ? 'Age: ${ageController.text.trim()}' : 'Age: --',
                               'ageGu': ageController.text.trim().isNotEmpty ? 'ઉંમર: ${ageController.text.trim()}' : 'ઉંમર: --',
-                              'cityEn': cityController.text.trim().isNotEmpty ? cityController.text.trim() : 'Heritage Community',
-                              'cityGu': cityController.text.trim().isNotEmpty ? cityController.text.trim() : 'હેરિટેજ સમુદાય',
+                              'cityEn': cityController.text.trim().isNotEmpty ? cityController.text.trim() : 'Swajan Community',
+                              'cityGu': cityController.text.trim().isNotEmpty ? cityController.text.trim() : 'સ્વજન સમુદાય',
                               'prarthnaDateEn': 'Upcoming',
                               'prarthnaDateGu': 'આવનારી તારીખ',
                               'prarthnaTimeEn': 'Evening',
@@ -500,7 +500,7 @@ class _ObituaryScreenState extends State<ObituaryScreen> {
                         Text(
                           isGu
                               ? 'સમુદાયના સ્વર્ગસ્થ આત્માઓને આપણી નમ્ર શ્રદ્ધાંજલિ.'
-                              : 'Honoring and remembering our departed heritage community members.',
+                              : 'Honoring and remembering our departed Swajan community members.',
                           style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12,

@@ -8,20 +8,20 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => LanguageProvider(),
-      child: const HeritageApp(),
+      child: const SwajanApp(),
     ),
   );
 }
 
-class HeritageApp extends StatelessWidget {
-  const HeritageApp({super.key});
+class SwajanApp extends StatelessWidget {
+  const SwajanApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return MaterialApp(
-      title: 'Heritage App',
+      title: 'SWAJAN',
       debugShowCheckedModeBanner: false,
       locale: languageProvider.locale,
       supportedLocales: const [

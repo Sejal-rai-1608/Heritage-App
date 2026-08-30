@@ -92,34 +92,38 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Top Icon and Title (Yellow Theme)
+                // Top Logo and Title
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: primaryYellow,
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: primaryYellow.withValues(alpha: 0.35),
-                        blurRadius: 14,
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.account_balance,
-                    color: Colors.black87,
-                    size: 40,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.asset(
+                      'assets/images/swajan_logo.png',
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  languageProvider.getText('heritage_core'),
+                  'SWAJAN',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.w900,
                     color: primaryDark,
-                    letterSpacing: -0.3,
+                    letterSpacing: 1.2,
                   ),
                 ),
                 const SizedBox(height: 32),

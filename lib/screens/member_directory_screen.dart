@@ -352,7 +352,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          isGu ? 'હેરિટેજ એપ' : 'Heritage App',
+          isGu ? 'સ્વજન એપ' : 'SWAJAN',
           style: const TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 22,

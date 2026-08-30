@@ -537,7 +537,7 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                   Text(
                     isGu
                         ? 'અમારા સમુદાયના વિશિષ્ટ વ્યાવસાયિકો અને વ્યવસાયિક નેતાઓ સાથે જોડાઓ.'
-                        : 'Connect with the elite network of heritage business leaders and community specialists within our curated professional ecosystem.',
+                        : 'Connect with the elite network of Swajan business leaders and community specialists within our curated professional ecosystem.',
                     style: const TextStyle(
                       color: Color(0xFF64748B),
                       fontSize: 13.5,
@@ -1003,7 +1003,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                             const Icon(Icons.verified_rounded, size: 16, color: Color(0xFF854D0E)),
                             const SizedBox(width: 6),
                             Text(
-                              isGu ? 'ચકાસાયેલ હેરિટેજ પ્રોફેશનલ' : 'VERIFIED HERITAGE PROFESSIONAL',
+                              isGu ? 'ચકાસાયેલ સ્વજન પ્રોફેશનલ' : 'VERIFIED SWAJAN PROFESSIONAL',
                               style: const TextStyle(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.bold,
@@ -1092,7 +1092,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                             Text(
                               isGu
                                   ? 'ઉચ્ચ ગુણવત્તાયુક્ત વ્યાવસાયિક સેવાઓ, કોર્પોરેટ સલાહકાર અને સમુદાયના સભ્યો માટે વિશેષ સહાય.'
-                                  : 'Top tier heritage verified professional providing corporate consulting, auditing, legal advice, and business support for community members.',
+                                  : 'Top tier Swajan verified professional providing corporate consulting, auditing, legal advice, and business support for community members.',
                               style: const TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFF64748B),
@@ -1304,7 +1304,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          isGu ? 'હેરિટેજ એપ' : 'Heritage App',
+          isGu ? 'સ્વજન એપ' : 'SWAJAN',
           style: const TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 22,
@@ -1361,7 +1361,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                       isGu
                           ? 'અમારા વિશ્વસનીય વ્યાવસાયિકોના નેટવર્ક સાથે જોડાઓ.'
                           : (categoryName == 'Accountant'
-                              ? 'Connect with our elite network of verified financial professionals specializing in heritage-scale asset management and corporate accounting.'
+                              ? 'Connect with our elite network of verified financial professionals specializing in Swajan-scale asset management and corporate accounting.'
                               : 'Connect with our elite network of verified ${categoryName.toLowerCase()} professionals in our curated ecosystem.'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
@@ -1651,7 +1651,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                       Text(
                         isGu
                             ? 'તમારો વ્યવસાય "${newBusiness['name']}" જાહેર ડિરેક્ટરીમાં પ્રકાશિત કરવામાં આવ્યો છે.'
-                            : 'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Heritage App community members!',
+                            : 'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Swajan App community members!',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 13.5,
@@ -1772,7 +1772,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
               Text(
                 isGu
                     ? 'તમારા વ્યવસાયની માહિતી શેર કરો અને નેટવર્ક વિસ્તારો.'
-                    : 'Share your professional expertise and expand your business reach within our elite heritage community network.',
+                    : 'Share your professional expertise and expand your business reach within our elite Swajan community network.',
                 style: const TextStyle(
                   color: Color(0xFF64748B),
                   fontSize: 13.5,

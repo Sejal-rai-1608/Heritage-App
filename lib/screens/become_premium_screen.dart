@@ -322,7 +322,7 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      isGu ? 'પ્રીમિયમમાં અપગ્રેડ કરવાથી તમને હેરિટેજ એપ સમુદાય માટે વિશેષ નેટવર્કિંગ ઇવેન્ટ્સ અને ઐતિહાસિક આર્કાઇવ્સની ઍક્સેસ મળે છે.' : 'Upgrading to premium grants you access to exclusive networking events and historical archives for the Heritage App community.',
+                      isGu ? 'પ્રીમિયમમાં અપગ્રેડ કરવાથી તમને સ્વજન એપ સમુદાય માટે વિશેષ નેટવર્કિંગ ઇવેન્ટ્સ અને ઐતિહાસિક આર્કાઇવ્સની ઍક્સેસ મળે છે.' : 'Upgrading to premium grants you access to exclusive networking events and historical archives for the Swajan App community.',
                       style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF8B6B1B),

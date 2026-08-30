@@ -785,7 +785,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isGu ? 'સમુદાય રિયલ એસ્ટેટ' : 'HERITAGE REAL ESTATE',
+                          isGu ? 'સમુદાય રિયલ એસ્ટેટ' : 'SWAJAN REAL ESTATE',
                           style: const TextStyle(
                             color: Color(0xFFFCD34D),
                             fontWeight: FontWeight.bold,

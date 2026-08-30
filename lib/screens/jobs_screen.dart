@@ -22,8 +22,8 @@ class _JobsScreenState extends State<JobsScreen> {
       'id': '1',
       'titleEn': 'Senior Software Engineer',
       'titleGu': 'વરિષ્ઠ સોફ્ટવેર એન્જિનિયર',
-      'companyEn': 'Heritage Tech Solutions',
-      'companyGu': 'હેરિટેજ ટેક સોલ્યુશન્સ',
+      'companyEn': 'Swajan Tech Solutions',
+      'companyGu': 'સ્વજન ટેક સોલ્યુશન્સ',
       'locationEn': 'Ahmedabad, Gujarat',
       'locationGu': 'અમદાવાદ, ગુજરાત',
       'salaryEn': '₹50,000 - ₹75,000 / month',
@@ -38,10 +38,10 @@ class _JobsScreenState extends State<JobsScreen> {
       'postedTimeGu': '૨ દિવસ પહેલા પોસ્ટ કર્યું',
       'expEn': '3-5 Years Experience',
       'expGu': '૩-૫ વર્ષનો અનુભવ',
-      'descEn': 'Looking for an experienced Flutter & Node.js developer to build scalable heritage community apps and cloud architecture.',
+      'descEn': 'Looking for an experienced Flutter & Node.js developer to build scalable Swajan community apps and cloud architecture.',
       'descGu': 'સ્કેલેબલ એપ્લિકેશન્સ અને ક્લાઉડ આર્કિટેક્ચર બનાવવા માટે અનુભવી ફ્લટર અને નોડ.જેએસ ડેવલપરની જરૂર છે.',
       'hrPhone': '+91 98765 43210',
-      'hrEmail': 'careers@heritagetech.com',
+      'hrEmail': 'careers@swajantech.com',
       'logoColor': const Color(0xFF0F172A),
     },
     {
@@ -471,7 +471,7 @@ class _JobsScreenState extends State<JobsScreen> {
 
                     const SizedBox(height: 14),
                     _buildFieldLabel(isGu ? 'કંપની / સંસ્થાનું નામ' : 'Company Name', isGu),
-                    _buildInputField(companyController, isGu ? 'દા.ત. હેરિટેજ લિમિટેડ' : 'e.g. Heritage Pvt Ltd'),
+                    _buildInputField(companyController, isGu ? 'દા.ત. સ્વજન લિમિટેડ' : 'e.g. Swajan Pvt Ltd'),
 
                     const SizedBox(height: 14),
                     Row(
@@ -518,8 +518,8 @@ class _JobsScreenState extends State<JobsScreen> {
                               'id': DateTime.now().millisecondsSinceEpoch.toString(),
                               'titleEn': titleController.text.trim(),
                               'titleGu': titleController.text.trim(),
-                              'companyEn': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'Heritage Business',
-                              'companyGu': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'હેરિટેજ વ્યવસાય',
+                              'companyEn': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'Swajan Business',
+                              'companyGu': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'સ્વજન વ્યવસાય',
                               'locationEn': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'Ahmedabad',
                               'locationGu': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'અમદાવાદ',
                               'salaryEn': salaryController.text.trim().isNotEmpty ? salaryController.text.trim() : 'Negotiable',
@@ -537,7 +537,7 @@ class _JobsScreenState extends State<JobsScreen> {
                               'descEn': descController.text.trim().isNotEmpty ? descController.text.trim() : 'Contact employer for full details.',
                               'descGu': descController.text.trim().isNotEmpty ? descController.text.trim() : 'સંપૂર્ણ વિગતો માટે એમ્પ્લોયરનો સંપર્ક કરો.',
                               'hrPhone': phoneController.text.trim().isNotEmpty ? phoneController.text.trim() : '+91 98765 43210',
-                              'hrEmail': 'hr@heritage.org',
+                              'hrEmail': 'hr@swajan.org',
                               'logoColor': const Color(0xFF856404),
                             });
                           });
@@ -727,7 +727,7 @@ class _JobsScreenState extends State<JobsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isGu ? 'સમુદાય કારકિર્દી પોર્ટલ' : 'HERITAGE CAREER PORTAL',
+                          isGu ? 'સમુદાય કારકિર્દી પોર્ટલ' : 'SWAJAN CAREER PORTAL',
                           style: const TextStyle(
                             color: Color(0xFFFCD34D),
                             fontWeight: FontWeight.bold,
@@ -739,7 +739,7 @@ class _JobsScreenState extends State<JobsScreen> {
                         Text(
                           isGu
                               ? 'અમારા સમુદાયના વ્યવસાયોમાં શ્રેષ્ઠ નોકરીઓની તકો શોધો.'
-                              : 'Discover top career opportunities within our heritage business network.',
+                              : 'Discover top career opportunities within our Swajan business network.',
                           style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 12.5,

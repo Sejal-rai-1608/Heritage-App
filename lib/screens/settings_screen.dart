@@ -71,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Are you sure you want to log out of your Heritage account?',
+                        'Are you sure you want to log out of your Swajan account?',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF64748B),
@@ -494,8 +494,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           content: SingleChildScrollView(
                             child: Text(
                               isGu
-                                  ? 'હેરિટેજ એપમાં આપનું સ્વાગત છે. અમારા પ્લેટફોર્મનો ઉપયોગ કરીને, તમે તમામ સમુદાય માર્ગદર્શિકાઓ અને ગોપનીયતા શરતોનું પાલન કરવા માટે સંમત થાઓ છો.'
-                                  : 'Welcome to Heritage App. By using our platform, you agree to comply with all community guidelines and privacy terms.',
+                                  ? 'સ્વજન એપમાં આપનું સ્વાગત છે. અમારા પ્લેટફોર્મનો ઉપયોગ કરીને, તમે તમામ સમુદાય માર્ગદર્શિકાઓ અને ગોપનીયતા શરતોનું પાલન કરવા માટે સંમત થાઓ છો.'
+                                  : 'Welcome to Swajan App. By using our platform, you agree to comply with all community guidelines and privacy terms.',
                               style: const TextStyle(fontSize: 13.5, height: 1.4),
                             ),
                           ),
@@ -580,7 +580,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          isGu ? 'હેરિટેજ કોર સમુદાય © ૨૦૨૪' : 'Heritage Core Community © 2024',
+                          isGu ? 'સ્વજન સમુદાય © ૨૦૨૪' : 'Swajan Community © 2024',
                           style: const TextStyle(
                             color: Color(0xFFCBD5E1),
                             fontSize: 12,
@@ -667,7 +667,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Column(
                       children: [
                         Text(
-                          isGu ? 'હેરિટેજ એપ' : 'HERITAGE APP',
+                          isGu ? 'સ્વજન એપ' : 'SWAJAN APP',
                           style: const TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 11,
@@ -677,7 +677,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          isGu ? 'વર્ઝન ૧.૨.૦ • હેરિટેજ સમુદાય' : 'Version 1.2.0 • Heritage Community',
+                          isGu ? 'વર્ઝન ૧.૨.૦ • સ્વજન સમુદાય' : 'Version 1.2.0 • Swajan Community',
                           style: const TextStyle(
                             color: Color(0xFFCBD5E1),
                             fontSize: 11,

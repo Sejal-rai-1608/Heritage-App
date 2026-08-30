@@ -596,7 +596,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              isGu ? 'હેરિટેજ એપ' : 'Heritage App',
+              isGu ? 'સ્વજન એપ' : 'SWAJAN',
               style: TextStyle(
                 fontFamily: 'Serif',
                 fontSize: 22,
@@ -1046,7 +1046,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
                 // Quote Content
                 Text(
-                  isGu ? "'હેરિટેજ એપની પ્રીમિયમ સેવા દ્વારા મારા પુત્રનો જીવનસાથી મળ્યો. વ્યક્તિગત ધ્યાન અને મેચોની ગુણવત્તા ખરેખર અસાધારણ હતી. ખૂબ આગ્રહણીય.'" : "'Found my son's life partner through Heritage App's premium service. The personalized attention and quality of matches were truly exceptional. Highly recommended.'",
+                  isGu ? "'સ્વજન એપની પ્રીમિયમ સેવા દ્વારા મારા પુત્રનો જીવનસાથી મળ્યો. વ્યક્તિગત ધ્યાન અને મેચોની ગુણવત્તા ખરેખર અસાધારણ હતી. ખૂબ આગ્રહણીય.'" : "'Found my son's life partner through Swajan App's premium service. The personalized attention and quality of matches were truly exceptional. Highly recommended.'",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Serif',
@@ -1468,7 +1468,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  isGu ? 'હેરિટેજ એપ પર તાજેતરમાં નોંધાયેલા નવા સભ્યો સાથે જોડાનારાઓમાં પ્રારંભિક બનો.' : 'Be among the first to connect with new members who recently registered on Heritage App.',
+                  isGu ? 'સ્વજન એપ પર તાજેતરમાં નોંધાયેલા નવા સભ્યો સાથે જોડાનારાઓમાં પ્રારંભિક બનો.' : 'Be among the first to connect with new members who recently registered on Swajan App.',
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(0xFFE0E7FF),
