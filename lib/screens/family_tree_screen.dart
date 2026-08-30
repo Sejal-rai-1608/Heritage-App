@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'home_screen.dart';
 
@@ -19,9 +21,9 @@ class FamilyTreeScreen extends StatefulWidget {
 
 class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
   // Level of visible tree:
-  // 1 = Focus Member only (Image 1)
-  // 2 = Parents & Children (Image 2)
-  // 3 = 3-Generations Grandparents, Parents & Children (Image 3)
+  // 1 = Focus Member only
+  // 2 = Parents & Children
+  // 3 = 3-Generations Grandparents, Parents & Children
   int _treeLevel = 1;
 
   void _expandTreeUp() {
@@ -44,9 +46,12 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     final displayName = (widget.userName != null && widget.userName!.isNotEmpty)
-        ? widget.userName!
-        : 'સોહમ આદિત્ય મોરે';
+        ? (isGu ? widget.userName! : 'Soham Aaditya More')
+        : (isGu ? 'સોહમ આદિત્ય મોરે' : 'Soham Aaditya More');
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F9FC),
@@ -57,9 +62,9 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Color(0xFF1E232D)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'ફેમિલી ટ્રી',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'ફેમિલી ટ્રી' : 'Family Tree',
+          style: const TextStyle(
             fontFamily: 'Serif',
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -81,12 +86,18 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           TextButton(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('સભ્યો ઉમેરવા માટે પ્રોફાઇલ સ્ક્રીન પર "+ કુટુંબના સભ્ય ઉમેરો" વાપરો')),
+                SnackBar(
+                  content: Text(
+                    isGu
+                        ? 'સભ્યો ઉમેરવા માટે પ્રોફાઇલ સ્ક્રીન પર "+ કુટુંબના સભ્ય ઉમેરો" વાપરો'
+                        : 'Use "+ Add Family Member" on Profile Screen to add members',
+                  ),
+                ),
               );
             },
-            child: const Text(
-              'ઉમેરો',
-              style: TextStyle(
+            child: Text(
+              isGu ? 'ઉમેરો' : 'Add',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 color: Color(0xFF1E232D),
@@ -104,7 +115,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
         children: [
           Column(
             children: [
-              // Top Yellow Banner: "Add Family To Soham's Tree"
+              // Top Yellow Banner
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -118,8 +129,10 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                     const SizedBox(width: 8),
                     Text(
                       _treeLevel == 1
-                          ? "સોહમના ફેમિલી ટ્રીમાં ઉમેરો"
-                          : (_treeLevel == 2 ? "આદિત્યના ફેમિલી ટ્રીમાં ઉમેરો" : "શાંતનુના ફેમિલી ટ્રીમાં ઉમેરો"),
+                          ? (isGu ? "સોહમના ફેમિલી ટ્રીમાં ઉમેરો" : "Add Family to Soham's Tree")
+                          : (_treeLevel == 2
+                              ? (isGu ? "આદિત્યના ફેમિલી ટ્રીમાં ઉમેરો" : "Add Family to Aditya's Tree")
+                              : (isGu ? "શાંતનુના ફેમિલી ટ્રીમાં ઉમેરો" : "Add Family to Shantanu's Tree")),
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -140,10 +153,14 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                       // Header Title
                       Text(
                         _treeLevel == 1
-                            ? 'સોહમ આદિત્ય મોરે (સતારા\nરોડ) ફેમિલી-૧'
+                            ? (isGu
+                                ? 'સોહમ આદિત્ય મોરે (સતારા રોડ) ફેમિલી-૧'
+                                : 'Soham Aaditya More (Satara Road) Family-1')
                             : (_treeLevel == 2
-                                ? 'આદિત્ય શાંતનુ મોરે (સતારા\nરોડ)'
-                                : 'શાંતનુ મોરે (સતારા રોડ)'),
+                                ? (isGu
+                                    ? 'આદિત્ય શાંતનુ મોરે (સતારા રોડ)'
+                                    : 'Aditya Shantanu More (Satara Road)')
+                                : (isGu ? 'શાંતનુ મોરે (સતારા રોડ)' : 'Shantanu More (Satara Road)')),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: 'Serif',
@@ -155,9 +172,9 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                       ),
                       if (_treeLevel == 2) ...[
                         const SizedBox(height: 4),
-                        const Text(
-                          'ફેમિલી-૪',
-                          style: TextStyle(
+                        Text(
+                          isGu ? 'ફેમિલી-૪' : 'Family-4',
+                          style: const TextStyle(
                             fontFamily: 'Serif',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -166,9 +183,9 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                         ),
                       ] else if (_treeLevel == 3) ...[
                         const SizedBox(height: 4),
-                        const Text(
-                          'ફેમિલી-૬',
-                          style: TextStyle(
+                        Text(
+                          isGu ? 'ફેમિલી-૬' : 'Family-6',
+                          style: const TextStyle(
                             fontFamily: 'Serif',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -183,12 +200,14 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                         onTap: _expandTreeUp,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.history_toggle_off, size: 14, color: Color(0xFF6B7280)),
-                            SizedBox(width: 4),
+                          children: [
+                            const Icon(Icons.history_toggle_off, size: 14, color: Color(0xFF6B7280)),
+                            const SizedBox(width: 4),
                             Text(
-                              'માતાપિતા જોવા માટે ઉપરનો એરો ક્લિક કરો.',
-                              style: TextStyle(
+                              isGu
+                                  ? 'માતાપિતા જોવા માટે ઉપરનો એરો ક્લિક કરો.'
+                                  : 'Tap up arrow to view parents & lineage.',
+                              style: const TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFF6B7280),
                               ),
@@ -200,11 +219,11 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
 
                       // RENDER TREE FLOW CHART ACCORDING TO LEVEL
                       if (_treeLevel == 1)
-                        _buildLevel1FocusView(displayName)
+                        _buildLevel1FocusView(displayName, isGu)
                       else if (_treeLevel == 2)
-                        _buildLevel2ParentsChildrenView()
+                        _buildLevel2ParentsChildrenView(isGu)
                       else
-                        _buildLevel3FullGenerationsView(),
+                        _buildLevel3FullGenerationsView(isGu),
 
                       const SizedBox(height: 30),
 
@@ -212,17 +231,21 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                       GestureDetector(
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('ફેમિલી ટ્રી શેર થઈ રહ્યું છે...')),
+                            SnackBar(
+                              content: Text(
+                                isGu ? 'ફેમિલી ટ્રી શેર થઈ રહ્યું છે...' : 'Sharing family tree...',
+                              ),
+                            ),
                           );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.share_outlined, size: 16, color: Color(0xFF6B7280)),
-                            SizedBox(width: 6),
+                          children: [
+                            const Icon(Icons.share_outlined, size: 16, color: Color(0xFF6B7280)),
+                            const SizedBox(width: 6),
                             Text(
-                              'ફેમિલી ટ્રી શેર કરો',
-                              style: TextStyle(
+                              isGu ? 'ફેમિલી ટ્રી શેર કરો' : 'Share Family Tree',
+                              style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF6B7280),
@@ -246,8 +269,8 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
     );
   }
 
-  // --- LEVEL 1: FOCUS MEMBER CARD (Image 1) ---
-  Widget _buildLevel1FocusView(String name) {
+  // --- LEVEL 1: FOCUS MEMBER CARD ---
+  Widget _buildLevel1FocusView(String name, bool isGu) {
     return Column(
       children: [
         // Up Arrow Line
@@ -302,9 +325,9 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
               const SizedBox(height: 12),
 
               // FOCUS MEMBER Badge
-              const Text(
-                'મુખ્ય સભ્ય',
-                style: TextStyle(
+              Text(
+                isGu ? 'મુખ્ય સભ્ય' : 'FOCUS MEMBER',
+                style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.0,
@@ -323,23 +346,29 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                 ),
               ),
               const SizedBox(height: 2),
-              const Text(
-                'પેઢી ૧',
-                style: TextStyle(
+              Text(
+                isGu ? 'પેઢી ૧' : 'GENERATION 1',
+                style: const TextStyle(
                   fontSize: 12,
                   color: Color(0xFF6B7280),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Action Buttons: View Details & Edit Pencil
+              // Action Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('સોહમ મોરેની પ્રોફાઇલ વિગતો જુઓ')),
+                        SnackBar(
+                          content: Text(
+                            isGu
+                                ? 'સોહમ મોરેની પ્રોફાઇલ વિગતો જુઓ'
+                                : 'Viewing profile details of Soham More',
+                          ),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -347,9 +376,9 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                     ),
-                    child: const Text(
-                      'વિગતો જુઓ',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                    child: Text(
+                      isGu ? 'વિગતો જુઓ' : 'View Details',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -387,8 +416,8 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
     );
   }
 
-  // --- LEVEL 2: PARENTS & CHILDREN FLOW CHART (Image 2) ---
-  Widget _buildLevel2ParentsChildrenView() {
+  // --- LEVEL 2: PARENTS & CHILDREN FLOW CHART ---
+  Widget _buildLevel2ParentsChildrenView(bool isGu) {
     return Column(
       children: [
         // Parents Row (Top)
@@ -396,13 +425,13 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildTreeNodeItem(
-              name: 'આદિત્ય મોરે',
+              name: isGu ? 'આદિત્ય મોરે' : 'Aditya More',
               imagePath: 'assets/images/sanjay_profile.png',
               directionIcon: Icons.arrow_upward,
               onTap: _expandTreeUp,
             ),
             _buildTreeNodeItem(
-              name: 'વૈશાલી મોરે',
+              name: isGu ? 'વૈશાલી મોરે' : 'Vaishali More',
               imagePath: null,
               directionIcon: Icons.arrow_upward,
               onTap: _expandTreeUp,
@@ -410,7 +439,6 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           ],
         ),
 
-        // T-Connector Line (Parents to Children)
         _buildTConnectorLine(),
 
         // Children Row (Bottom)
@@ -418,14 +446,14 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildTreeNodeItem(
-              name: 'સોહમ મોરે',
+              name: isGu ? 'સોહમ મોરે' : 'Soham More',
               imagePath: widget.profileImagePath ?? 'assets/images/image1.jpeg',
               directionIcon: Icons.arrow_downward,
               isHighlight: true,
               onTap: () {},
             ),
             _buildTreeNodeItem(
-              name: 'રીયા મોરે',
+              name: isGu ? 'રીયા મોરે' : 'Riya More',
               imagePath: null,
               directionIcon: Icons.arrow_downward,
               onTap: () {},
@@ -436,14 +464,17 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
         const SizedBox(height: 20),
         OutlinedButton(
           onPressed: _reduceGenerations,
-          child: const Text('ઓછી પેઢીઓ', style: TextStyle(color: Color(0xFF856404))),
+          child: Text(
+            isGu ? 'ઓછી પેઢીઓ' : 'Fewer Generations',
+            style: const TextStyle(color: Color(0xFF856404)),
+          ),
         ),
       ],
     );
   }
 
-  // --- LEVEL 3: 3-GENERATIONS FULL FLOW CHART (Image 3) ---
-  Widget _buildLevel3FullGenerationsView() {
+  // --- LEVEL 3: 3-GENERATIONS FULL FLOW CHART ---
+  Widget _buildLevel3FullGenerationsView(bool isGu) {
     return Column(
       children: [
         // 1. Grandparents Generation (Top)
@@ -451,13 +482,13 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildTreeNodeItem(
-              name: 'શાંતનુ મોરે',
+              name: isGu ? 'શાંતનુ મોરે' : 'Shantanu More',
               imagePath: 'assets/images/sanjay_profile.png',
               directionIcon: Icons.arrow_upward,
               onTap: () {},
             ),
             _buildTreeNodeItem(
-              name: 'માનસી મોરે',
+              name: isGu ? 'માનસી મોરે' : 'Manasi More',
               imagePath: null,
               directionIcon: Icons.arrow_upward,
               onTap: () {},
@@ -472,13 +503,13 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildTreeNodeItem(
-              name: 'આદિત્ય મોરે',
+              name: isGu ? 'આદિત્ય મોરે' : 'Aditya More',
               imagePath: 'assets/images/sanjay_profile.png',
               directionIcon: Icons.arrow_downward,
               onTap: () {},
             ),
             _buildTreeNodeItem(
-              name: 'વૈશાલી મોરે',
+              name: isGu ? 'વૈશાલી મોરે' : 'Vaishali More',
               imagePath: null,
               directionIcon: Icons.arrow_upward,
               onTap: () {},
@@ -493,7 +524,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildTreeNodeItem(
-              name: 'સોહમ મોરે',
+              name: isGu ? 'સોહમ મોરે' : 'Soham More',
               imagePath: widget.profileImagePath ?? 'assets/images/image1.jpeg',
               directionIcon: Icons.arrow_downward,
               isHighlight: true,
@@ -501,7 +532,7 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
               onTap: () {},
             ),
             _buildTreeNodeItem(
-              name: 'રીયા મોરે',
+              name: isGu ? 'રીયા મોરે' : 'Riya More',
               imagePath: null,
               directionIcon: Icons.arrow_downward,
               onTap: () {},
@@ -516,27 +547,27 @@ class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
             GestureDetector(
               onTap: _reduceGenerations,
               child: Column(
-                children: const [
-                  Text('ઓછી', style: TextStyle(color: Color(0xFF856404), fontWeight: FontWeight.bold, fontSize: 13)),
-                  Text('પેઢીઓ', style: TextStyle(color: Color(0xFF64748B), fontSize: 11)),
+                children: [
+                  Text(isGu ? 'ઓછી' : 'FEWER', style: const TextStyle(color: Color(0xFF856404), fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text(isGu ? 'પેઢીઓ' : 'GENERATIONS', style: const TextStyle(color: Color(0xFF64748B), fontSize: 11)),
                 ],
               ),
             ),
             GestureDetector(
               onTap: _reduceGenerations,
               child: Column(
-                children: const [
-                  Text('ઓછી', style: TextStyle(color: Color(0xFF856404), fontWeight: FontWeight.bold, fontSize: 13)),
-                  Text('પેઢીઓ', style: TextStyle(color: Color(0xFF64748B), fontSize: 11)),
+                children: [
+                  Text(isGu ? 'ઓછી' : 'FEWER', style: const TextStyle(color: Color(0xFF856404), fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text(isGu ? 'પેઢીઓ' : 'GENERATIONS', style: const TextStyle(color: Color(0xFF64748B), fontSize: 11)),
                 ],
               ),
             ),
             GestureDetector(
               onTap: _reduceGenerations,
               child: Column(
-                children: const [
-                  Text('ઓછી', style: TextStyle(color: Color(0xFF856404), fontWeight: FontWeight.bold, fontSize: 13)),
-                  Text('પેઢીઓ', style: TextStyle(color: Color(0xFF64748B), fontSize: 11)),
+                children: [
+                  Text(isGu ? 'ઓછી' : 'FEWER', style: const TextStyle(color: Color(0xFF856404), fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text(isGu ? 'પેઢીઓ' : 'GENERATIONS', style: const TextStyle(color: Color(0xFF64748B), fontSize: 11)),
                 ],
               ),
             ),
