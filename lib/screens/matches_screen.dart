@@ -1,5 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
+import 'notifications_screen.dart';
 import 'become_premium_screen.dart';
 import '../widgets/custom_bottom_navbar.dart';
 
@@ -14,6 +17,162 @@ class MatchesScreen extends StatefulWidget {
 }
 
 class _MatchesScreenState extends State<MatchesScreen> {
+
+  String _getJoinedAgoLabel(String joinedAgo, bool isGu) {
+    if (!isGu) return joinedAgo;
+    if (joinedAgo.contains('2 hours')) return '૨ કલાક પહેલાં';
+    if (joinedAgo.contains('5 hours')) return '૫ કલાક પહેલાં';
+    if (joinedAgo.contains('1 day')) return '૧ દિવસ પહેલાં';
+    if (joinedAgo.contains('2 days')) return '૨ દિવસ પહેલાં';
+    return joinedAgo;
+  }
+
+
+  String _getProfileName(String name, bool isGu) {
+    if (!isGu) return name;
+    switch (name) {
+      case 'Rajesh V. Patel':
+        return 'રાજેશ વી. પટેલ';
+      case 'Meera S. Shah':
+        return 'મીરા એસ. શાહ';
+      case 'Suresh K. Mehta':
+        return 'સુરેશ કે. મહેતા';
+      case 'Ananya R. Desai':
+        return 'અનન્યા આર. દેસાઈ';
+      case 'Harsh M. Trivedi':
+        return 'હર્ષ એમ. ત્રિવેદી';
+      case 'Karan B. Shah':
+        return 'કરણ બી. શાહ';
+      case 'Pooja N. Mehta':
+        return 'પૂજા એન. મહેતા';
+      case 'Kavya P. Joshi':
+        return 'કાબ્યા પી. જોશી';
+      case 'Aarav R. Shah':
+        return 'આરવ આર. શાહ';
+      case 'Devam M. Patel':
+        return 'દેવમ એમ. પટેલ';
+      default:
+        return name;
+    }
+  }
+
+  String _getAgeLabel(String age, bool isGu) {
+    if (!isGu) return age;
+    switch (age) {
+      case '18 - 24':
+        return '૧૮ - ૨૪';
+      case '25 - 30':
+        return '૨૫ - ૩૦';
+      case '31 - 35':
+        return '૩૧ - ૩૫';
+      case '36 - 40':
+        return '૩૬ - ૪૦';
+      case '40+':
+        return '૪૦+';
+      default:
+        return age;
+    }
+  }
+
+  String _getGenderLabel(String gender, bool isGu) {
+    if (!isGu) return gender;
+    switch (gender) {
+      case 'Groom':
+        return 'વર';
+      case 'Bride':
+        return 'કન્યા';
+      default:
+        return gender;
+    }
+  }
+
+  String _getEducationLabel(String? edu, bool isGu) {
+    if (edu == null || edu.isEmpty) return isGu ? 'અનુસ્નાતક' : 'Post Graduate';
+    if (!isGu) return edu;
+    switch (edu) {
+      case 'All Qualifications':
+        return 'બધી લાયકાતો';
+      case 'Post Graduate':
+        return 'અનુસ્નાતક';
+      case 'Graduate':
+        return 'સ્નાતક';
+      case 'Doctorate / Ph.D':
+        return 'પીએચ.ડી';
+      case 'Chartered Accountant':
+        return 'સી.એ.';
+      case 'Medical / Doctor':
+        return 'ડોક્ટર';
+      case 'Engineering / IT':
+        return 'એન્જિનિયરિંગ / આઇટી';
+      default:
+        return edu;
+    }
+  }
+
+  String _getSortLabel(String sort, bool isGu) {
+    if (!isGu) return sort;
+    switch (sort) {
+      case 'Newest':
+        return 'નવીનતમ';
+      case 'Age: Low to High':
+        return 'ઉંમર: ઓછી થી વધુ';
+      case 'Age: High to Low':
+        return 'ઉંમર: વધુ થી ઓછી';
+      case 'Recently Active':
+        return 'તાજેતરમાં સક્રિય';
+      default:
+        return sort;
+    }
+  }
+
+  String _getProfessionLabel(String prof, bool isGu) {
+    if (!isGu) return prof;
+    switch (prof) {
+      case 'Chartered Accountant':
+        return 'ચાર્ટર્ડ એકાઉન્ટન્ટ';
+      case 'Pediatrician (M.D.)':
+        return 'બાળરોગ નિષ્ણાત (એમ.ડી.)';
+      case 'Software Architect':
+        return 'સોફ્ટવેર આર્કિટેક્ટ';
+      case 'Senior UI/UX Designer':
+        return 'સીનિયર UI/UX ડિઝાઇનર';
+      case 'Financial Analyst':
+        return 'ફાઇનાન્સિયલ એનાલિસ્ટ';
+      case 'Software Engineer':
+        return 'સોફ્ટવેર એન્જિનિયર';
+      case 'Architectural Consultant':
+        return 'આર્કિટેક્ચરલ કન્સલ્ટન્ટ';
+      case 'Architect (B.Arch)':
+        return 'આર્કિટેક્ટ (બી.આર્ક)';
+      case 'Data Scientist at MNC':
+        return 'ડેટા સાયન્ટિસ્ટ';
+      case 'Clinical Psychologist':
+        return 'ક્લિનિકલ સાયકોલોજિસ્ટ';
+      case 'Textile Business Owner':
+        return 'કાપડ વ્યવસાય માલિક';
+      default:
+        return prof;
+    }
+  }
+
+  String _getCityLabel(String city, bool isGu) {
+    if (!isGu) return city;
+    switch (city) {
+      case 'Ahmedabad, Gujarat':
+        return 'અમદાવાદ, ગુજરાત';
+      case 'Surat, Gujarat':
+        return 'સુરત, ગુજરાત';
+      case 'Vadodara, Gujarat':
+        return 'વડોદરા, ગુજરાત';
+      case 'Rajkot, Gujarat':
+        return 'રાજકોટ, ગુજરાત';
+      case 'Mumbai, Maharashtra':
+        return 'મુંબઈ, મહારાષ્ટ્ર';
+      default:
+        return city;
+    }
+  }
+
   // Active top tab index
   int _selectedTabIndex = 0;
   final List<String> _tabs = [
@@ -176,6 +335,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
   }
 
   void _showProfileDetailDialog(Map<String, dynamic> profile) {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -224,7 +385,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          profile['name'],
+                          _getProfileName(profile['name'], isGu),
                           style: const TextStyle(
                             fontFamily: 'Serif',
                             fontSize: 24,
@@ -258,7 +419,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      '${profile['age']} Years • ${profile['height']}',
+                      isGu ? '${profile['age']} વર્ષ • ${profile['height']}' : '${profile['age']} Years • ${profile['height']}',
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.grey[700],
@@ -266,20 +427,20 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       ),
                     ),
                     const Divider(height: 32),
-                    _buildDetailRow(Icons.work_outline, 'Profession', profile['profession']),
+                    _buildDetailRow(Icons.work_outline, isGu ? 'વ્યવસાય' : 'Profession', _getProfessionLabel(profile['profession'], isGu)),
                     const SizedBox(height: 12),
-                    _buildDetailRow(Icons.location_on_outlined, 'Location', profile['city']),
+                    _buildDetailRow(Icons.location_on_outlined, isGu ? 'સ્થળ' : 'Location', _getCityLabel(profile['city'], isGu)),
                     const SizedBox(height: 12),
-                    _buildDetailRow(Icons.school_outlined, 'Education', profile['education']),
+                    _buildDetailRow(Icons.school_outlined, isGu ? 'શિક્ષણ' : 'Education', _getEducationLabel(profile['education'], isGu)),
                     const SizedBox(height: 12),
-                    _buildDetailRow(Icons.groups_outlined, 'Community', 'Gujarati Patel'),
+                    _buildDetailRow(Icons.groups_outlined, isGu ? 'સમુદાય' : 'Community', isGu ? 'ગુજરાતી પટેલ' : 'Gujarati Patel'),
                     const SizedBox(height: 28),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Contact request sent to ${profile['name']}!'),
+                            content: Text(isGu ? '${_getProfileName(profile['name'], isGu)} ને સંપર્ક વિનંતી મોકલી!' : 'Contact request sent to ${profile['name']}!'),
                             backgroundColor: const Color(0xFF0F172A),
                           ),
                         );
@@ -291,8 +452,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Send Interest / Connect',
+                      child: Text(
+                        isGu ? 'રસ દર્શાવો / સંપર્ક કરો' : 'Send Interest / Connect',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -327,6 +488,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
   }
 
   void _showMoreFiltersSheet() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -344,8 +507,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'More Filters',
+                Text(
+                  isGu ? 'વધુ ફિલ્ટર્સ' : 'More Filters',
                   style: TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 20,
@@ -360,11 +523,11 @@ class _MatchesScreenState extends State<MatchesScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text('Marital Status', style: TextStyle(fontWeight: FontWeight.w600)),
+            Text(isGu ? 'વૈવાહિક સ્થિતિ' : 'Marital Status', style: const TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: ['Never Married', 'Divorced', 'Widowed']
+              children: [isGu ? 'ક્યારેય પરણેલા નથી' : 'Never Married', isGu ? 'છૂટાછેડા થયેલ' : 'Divorced', isGu ? 'વિધુર / વિધવા' : 'Widowed']
                   .map((s) => Chip(
                         label: Text(s),
                         backgroundColor: const Color(0xFFEFF3FA),
@@ -372,11 +535,11 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   .toList(),
             ),
             const SizedBox(height: 16),
-            const Text('City / District', style: TextStyle(fontWeight: FontWeight.w600)),
+            Text(isGu ? 'શહેર / જિલ્લો' : 'City / District', style: const TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Mumbai']
+              children: [isGu ? 'અમદાવાદ' : 'Ahmedabad', isGu ? 'સુરત' : 'Surat', isGu ? 'વડોદરા' : 'Vadodara', isGu ? 'રાજકોટ' : 'Rajkot', isGu ? 'મુંબઈ' : 'Mumbai']
                   .map((c) => Chip(
                         label: Text(c),
                         backgroundColor: const Color(0xFFEFF3FA),
@@ -396,7 +559,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('Apply Filters', style: TextStyle(color: Colors.white)),
+              child: Text(isGu ? 'ફિલ્ટર્સ લાગુ કરો' : 'Apply Filters', style: const TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -406,6 +569,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FC),
 
@@ -430,8 +595,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
               ),
             ),
             const SizedBox(width: 12),
-            const Text(
-              'Heritage App',
+            Text(
+              isGu ? 'હેરિટેજ એપ' : 'Heritage App',
               style: TextStyle(
                 fontFamily: 'Serif',
                 fontSize: 22,
@@ -443,7 +608,13 @@ class _MatchesScreenState extends State<MatchesScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const NotificationsScreen(),
+                ),
+              );
+            },
             icon: const Icon(
               Icons.notifications_none_outlined,
               color: Color(0xFF2D3139),
@@ -483,7 +654,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Found ${_filteredProfiles.length * 24 + 4} Profiles',
+                              isGu ? '${_filteredProfiles.length * 24 + 4} પ્રોફાઇલ્સ મળી' : 'Found ${_filteredProfiles.length * 24 + 4} Profiles',
                               style: const TextStyle(
                                 fontFamily: 'Serif',
                                 fontSize: 20,
@@ -500,7 +671,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                               child: Row(
                                 children: [
                                   Text(
-                                    'Sort: $_selectedSort',
+                                    isGu ? 'ગોઠવો: ${_getSortLabel(_selectedSort, isGu)}' : 'Sort: $_selectedSort',
                                     style: const TextStyle(
                                       fontSize: 13,
                                       color: Color(0xFF5A6270),
@@ -515,7 +686,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                                 ],
                               ),
                               itemBuilder: (context) => _sortOptions
-                                  .map((s) => PopupMenuItem(value: s, child: Text(s)))
+                                  .map((s) => PopupMenuItem(value: s, child: Text(_getSortLabel(s, isGu))))
                                   .toList(),
                             ),
                           ],
@@ -547,6 +718,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Horizontal Slide Tabs
   Widget _buildHorizontalTabBar() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     return Container(
       color: Colors.white,
       width: double.infinity,
@@ -573,7 +747,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ),
                 ),
                 child: Text(
-                  _tabs[index],
+                  isGu ? (_tabs[index] == 'Age Wise' ? 'ઉંમર મુજબ' : _tabs[index] == 'Premium Matches' ? 'પ્રીમિયમ મેચ' : _tabs[index] == 'Personal Matches' ? 'વ્યક્તિગત મેચ' : _tabs[index] == 'New Joined' ? 'નવા જોડાયેલા' : 'માત્ર ચકાસાયેલ') : _tabs[index],
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
@@ -590,6 +764,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Premium Matches Content View
   Widget _buildPremiumMatchesView() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -626,10 +802,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 const SizedBox(height: 16),
 
                 // Title
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Benefits Of Premium\nMatrimony',
+                    isGu ? 'પ્રીમિયમ લગ્નના\nલાભો' : 'Benefits Of Premium\nMatrimony',
                     style: TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 26,
@@ -642,10 +818,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 const SizedBox(height: 12),
 
                 // Subtitle Description
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Elevate your search with exclusive features designed for the discerning community member.',
+                    isGu ? 'વિવેકી સમુદાયના સભ્યો માટે રચાયેલ વિશિષ્ટ સુવિધાઓ સાથે તમારી શોધને શ્રેષ્ઠ બનાવો.' : 'Elevate your search with exclusive features designed for the discerning community member.',
                     style: TextStyle(
                       fontSize: 14,
                       color: Color(0xFF5E6573),
@@ -674,12 +850,12 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
-                      SizedBox(width: 8),
+                    children: [
+                      const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'Become Premium Member',
-                        style: TextStyle(
+                        isGu ? 'પ્રીમિયમ સભ્ય બનો' : 'Become Premium Member',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -710,9 +886,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          const Center(
+          Center(
             child: Text(
-              'Verified Community\nProfiles',
+              isGu ? 'ચકાસાયેલ સમુદાય\nપ્રોફાઇલ્સ' : 'Verified Community\nProfiles',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Serif',
@@ -724,10 +900,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              'Access hand-picked profiles from trusted Gujarati families with verified backgrounds. Our team personally ensures the authenticity of every premium member to provide a secure environment.',
+              isGu ? 'ચકાસાયેલ પૃષ્ઠભૂમિવાળા વિશ્વસનીય ગુજરાતી પરિવારોમાંથી પસંદ કરેલ પ્રોફાઇલ્સ ઍક્સેસ કરો. અમારી ટીમ સુરક્ષિત વાતાવરણ પ્રદાન કરવા માટે વ્યક્તિગત રીતે દરેક પ્રીમિયમ સભ્યની પ્રમાણિકતા સુનિશ્ચિત કરે છે.' : 'Access hand-picked profiles from trusted Gujarati families with verified backgrounds. Our team personally ensures the authenticity of every premium member to provide a secure environment.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -755,9 +931,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          const Center(
+          Center(
             child: Text(
-              'Profile Views',
+              isGu ? 'પ્રોફાઇલ વ્યૂઝ' : 'Profile Views',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Serif',
@@ -768,10 +944,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              'See who visited your profile instantly and express interest before they do. Never miss a potential connection.',
+              isGu ? 'તમારી પ્રોફાઇલ કોણે જોઈ તે તુરંત જુઓ અને તેઓ રસ દર્શાવે તે પહેલાં રસ વ્યક્ત કરો. ક્યારેય સંભવિત કનેક્શન ચૂકી ન જાવ.' : 'See who visited your profile instantly and express interest before they do. Never miss a potential connection.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -799,9 +975,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          const Center(
+          Center(
             child: Text(
-              'Direct Chat',
+              isGu ? 'સીધો ચેટ' : 'Direct Chat',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Serif',
@@ -812,10 +988,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              'Connect directly with matched families without any intermediaries. Secure, encrypted, and personal messaging.',
+              isGu ? 'કોઈપણ મધ્યસ્થી વિના મેળ ખાતા પરિવારો સાથે સીધા જ જોડાઓ. સુરક્ષિત, એનક્રિપ્ટેડ અને વ્યક્તિગત મેસેજિંગ.' : 'Connect directly with matched families without any intermediaries. Secure, encrypted, and personal messaging.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -869,8 +1045,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 const SizedBox(height: 24),
 
                 // Quote Content
-                const Text(
-                  "'Found my son's life partner through Heritage Luxe's premium service. The personalized attention and quality of matches were truly exceptional. Highly recommended.'",
+                Text(
+                  isGu ? "'હેરિટેજ એપની પ્રીમિયમ સેવા દ્વારા મારા પુત્રનો જીવનસાથી મળ્યો. વ્યક્તિગત ધ્યાન અને મેચોની ગુણવત્તા ખરેખર અસાધારણ હતી. ખૂબ આગ્રહણીય.'" : "'Found my son's life partner through Heritage App's premium service. The personalized attention and quality of matches were truly exceptional. Highly recommended.'",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Serif',
@@ -882,8 +1058,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 const SizedBox(height: 20),
 
                 // Author Name
-                const Text(
-                  'SANGEETA SHAH',
+                Text(
+                  isGu ? 'સંગીતા શાહ' : 'SANGEETA SHAH',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -894,8 +1070,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 const SizedBox(height: 4),
 
                 // Author Subtitle
-                const Text(
-                  'Premium Member since 2023',
+                Text(
+                  isGu ? '૨૦૨૩ થી પ્રીમિયમ સભ્ય' : 'Premium Member since 2023',
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(0xFF8A99AD),
@@ -907,8 +1083,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
           const SizedBox(height: 36),
 
           // 6. Support Contact Section
-          const Text(
-            'Need assistance? Our dedicated relationship managers are here to help.',
+          Text(
+            isGu ? 'સહાયતાની જરૂર છે? અમારા સમર્પિત રિલેશનશિપ મેનેજર મદદ માટે અહીં છે.' : 'Need assistance? Our dedicated relationship managers are here to help.',
             style: TextStyle(
               fontSize: 14,
               color: Color(0xFF5E6573),
@@ -935,18 +1111,18 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 ),
                 const SizedBox(width: 14),
                 RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
+                  text: TextSpan(
+                    style: const TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                     children: [
                       TextSpan(
-                        text: 'Support: ',
-                        style: TextStyle(color: Color(0xFF8B6B1B)),
+                        text: isGu ? 'સપોર્ટ: ' : 'Support: ',
+                        style: const TextStyle(color: Color(0xFF8B6B1B)),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: '+91 98234 56789',
                         style: TextStyle(color: Color(0xFF8B6B1B)),
                       ),
@@ -964,6 +1140,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Personal Matches Content View
   Widget _buildPersonalMatchesView() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -972,8 +1150,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
           const SizedBox(height: 8),
 
           // 1. Heading: Your Personal List
-          const Text(
-            'Your Personal List',
+          Text(
+            isGu ? 'તમારી વ્યક્તિગત યાદી' : 'Your Personal List',
             style: TextStyle(
               fontFamily: 'Serif',
               fontSize: 22,
@@ -1021,9 +1199,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'You have selected 0 members',
+                          isGu ? 'તમે ૦ સભ્યો પસંદ કર્યા છે' : 'You have selected 0 members',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -1068,8 +1246,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   const SizedBox(height: 20),
 
                   // Title: Build Your Connection
-                  const Text(
-                    'Build Your Connection',
+                  Text(
+                    isGu ? 'તમારો સંપર્ક બનાવો' : 'Build Your Connection',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Serif',
@@ -1084,25 +1262,25 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   // Description Text with bold "Personal List"
                   RichText(
                     textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      style: TextStyle(
+                    text: TextSpan(
+                      style: const TextStyle(
                         fontSize: 15,
                         color: Color(0xFF5A6270),
                         height: 1.5,
                       ),
                       children: [
                         TextSpan(
-                          text: 'Explore the directory to find compatible matches. Use the ',
+                          text: isGu ? 'સુસંગત મેચ શોધવા માટે ડિરેક્ટરીનું અન્વેષણ કરો. અમારા સમુદાયમાં તમને રસપ્રદ લાગતી પ્રોફાઇલ્સ ટ્રેક કરવા માટે ' : 'Explore the directory to find compatible matches. Use the ',
                         ),
                         TextSpan(
-                          text: '"Personal List"',
-                          style: TextStyle(
+                          text: isGu ? '"વ્યક્તિગત યાદી"' : '"Personal List"',
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF1E232D),
                           ),
                         ),
                         TextSpan(
-                          text: ' to track profiles you find interesting within our community.',
+                          text: isGu ? ' નો ઉપયોગ કરો.' : ' to track profiles you find interesting within our community.',
                         ),
                       ],
                     ),
@@ -1127,12 +1305,12 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.search_rounded, size: 20, color: Color(0xFF1E232D)),
-                        SizedBox(width: 8),
+                      children: [
+                        const Icon(Icons.search_rounded, size: 20, color: Color(0xFF1E232D)),
+                        const SizedBox(width: 8),
                         Text(
-                          'Discover Members',
-                          style: TextStyle(
+                          isGu ? 'સભ્યો શોધો' : 'Discover Members',
+                          style: const TextStyle(
                             color: Color(0xFF1E232D),
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -1153,6 +1331,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // New Joined Content View
   Widget _buildNewJoinedView() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     final List<Map<String, dynamic>> newProfiles = [
       {
         'id': 'nj1',
@@ -1160,6 +1340,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
         'age': 25,
         'height': "5'4\"",
         'profession': 'Architect (B.Arch)',
+        'education': 'Graduate',
         'city': 'Ahmedabad, Gujarat',
         'isVerified': true,
         'joinedAgo': '2 hours ago',
@@ -1171,6 +1352,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
         'age': 28,
         'height': "5'11\"",
         'profession': 'Data Scientist at MNC',
+        'education': 'Post Graduate',
         'city': 'Surat, Gujarat',
         'isVerified': true,
         'joinedAgo': '5 hours ago',
@@ -1182,6 +1364,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
         'age': 27,
         'height': "5'5\"",
         'profession': 'Clinical Psychologist',
+        'education': 'Doctorate / Ph.D',
         'city': 'Vadodara, Gujarat',
         'isVerified': true,
         'joinedAgo': '1 day ago',
@@ -1193,6 +1376,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
         'age': 30,
         'height': "6'1\"",
         'profession': 'Textile Business Owner',
+        'education': 'Graduate',
         'city': 'Rajkot, Gujarat',
         'isVerified': false,
         'joinedAgo': '2 days ago',
@@ -1261,8 +1445,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                         color: const Color(0xFF10B981),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text(
-                        '14 New Today',
+                      child: Text(
+                        isGu ? '૧૪ આજે નવા' : '14 New Today',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 11,
@@ -1273,8 +1457,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Recently Joined Profiles',
+                Text(
+                  isGu ? 'તાજેતરમાં જોડાયેલ પ્રોફાઇલ્સ' : 'Recently Joined Profiles',
                   style: TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 24,
@@ -1283,8 +1467,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Be among the first to connect with new members who recently registered on Heritage App.',
+                Text(
+                  isGu ? 'હેરિટેજ એપ પર તાજેતરમાં નોંધાયેલા નવા સભ્યો સાથે જોડાનારાઓમાં પ્રારંભિક બનો.' : 'Be among the first to connect with new members who recently registered on Heritage App.',
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(0xFFE0E7FF),
@@ -1305,7 +1489,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: FilterChip(
-                    label: Text(opt),
+                    label: Text(isGu ? (opt == 'All Verified' ? 'બધા ચકાસાયેલ' : opt == 'ID Verified' ? 'આઈડી ચકાસાયેલ' : opt == 'Family Verified' ? 'પરિવાર ચકાસાયેલ' : 'શિક્ષણ ચકાસાયેલ') : opt),
                     selected: isSelected,
                     onSelected: (val) {
                       setState(() => _selectedNewJoinedFilter = opt);
@@ -1408,6 +1592,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // New Joiner Profile Card Widget
   Widget _buildNewProfileCard(Map<String, dynamic> profile) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1453,7 +1639,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       const Icon(Icons.access_time_filled_rounded, size: 12, color: Colors.white),
                       const SizedBox(width: 4),
                       Text(
-                        'JOINED ${profile['joinedAgo'].toString().toUpperCase()}',
+                        isGu ? _getJoinedAgoLabel(profile['joinedAgo'].toString(), isGu) : 'JOINED ${profile['joinedAgo'].toString().toUpperCase()}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -1502,7 +1688,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      profile['name'],
+                      _getProfileName(profile['name'], isGu),
                       style: const TextStyle(
                         fontFamily: 'Serif',
                         fontSize: 20,
@@ -1511,7 +1697,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       ),
                     ),
                     Text(
-                      '${profile['age']} Yrs • ${profile['height']}',
+                      isGu ? '${profile['age']} વર્ષ • ${profile['height']}' : '${profile['age']} Yrs • ${profile['height']}',
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -1527,7 +1713,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        profile['profession'],
+                        _getProfessionLabel(profile['profession'], isGu),
                         style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563)),
                       ),
                     ),
@@ -1539,7 +1725,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     const Icon(Icons.location_on_outlined, size: 16, color: Color(0xFF6B7280)),
                     const SizedBox(width: 6),
                     Text(
-                      profile['city'],
+                      _getCityLabel(profile['city'], isGu),
                       style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563)),
                     ),
                   ],
@@ -1557,8 +1743,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          'View Profile',
+                        child: Text(
+                          isGu ? 'પ્રોફાઇલ જુઓ' : isGu ? 'પ્રોફાઇલ જુઓ' : 'View Profile',
                           style: TextStyle(
                             color: Color(0xFF4F46E5),
                             fontWeight: FontWeight.bold,
@@ -1573,7 +1759,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Expressed interest in ${profile['name']}!'),
+                              content: Text(isGu ? '${_getProfileName(profile['name'], isGu)} માં રસ વ્યક્ત કર્યો!' : 'Expressed interest in ${profile['name']}!'),
                               backgroundColor: const Color(0xFF4F46E5),
                             ),
                           );
@@ -1608,6 +1794,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Verified Only Content View
   Widget _buildVerifiedOnlyView() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     final List<Map<String, dynamic>> verifiedProfiles = _allProfiles
         .where((p) => p['isVerified'] == true)
         .toList();
@@ -1682,8 +1870,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ],
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  'Every profile listed here has passed our rigorous multi-point verification including Govt ID, education, and family background.',
+                Text(
+                  isGu ? 'અહીં સૂચિબદ્ધ દરેક પ્રોફાઇલ સરકારી આઈડી, શિક્ષણ અને પારિવારિક પૃષ્ઠભૂમિ સહિત અમારી સખત મલ્ટી-પોઇન્ટ ચકાસણીમાંથી પસાર થઈ છે.' : 'Every profile listed here has passed our rigorous multi-point verification including Govt ID, education, and family background.',
                   style: TextStyle(
                     fontSize: 13,
                     color: Color(0xFFD1FAE5),
@@ -1693,11 +1881,11 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    _buildVerificationBadgeChip('Govt ID ✓'),
+                    _buildVerificationBadgeChip(isGu ? 'સરકારી ID ✓' : 'Govt ID ✓', isGu),
                     const SizedBox(width: 8),
-                    _buildVerificationBadgeChip('Family Checked ✓'),
+                    _buildVerificationBadgeChip(isGu ? 'પરિવાર ચકાસાયેલ ✓' : 'Family Checked ✓', isGu),
                     const SizedBox(width: 8),
-                    _buildVerificationBadgeChip('Degree ✓'),
+                    _buildVerificationBadgeChip(isGu ? 'ડિગ્રી ✓' : 'Degree ✓', isGu),
                   ],
                 ),
               ],
@@ -1714,7 +1902,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: FilterChip(
-                    label: Text(opt),
+                    label: Text(isGu ? (opt == 'All Verified' ? 'બધા ચકાસાયેલ' : opt == 'ID Verified' ? 'આઈડી ચકાસાયેલ' : opt == 'Family Verified' ? 'પરિવાર ચકાસાયેલ' : 'શિક્ષણ ચકાસાયેલ') : opt),
                     selected: isSelected,
                     onSelected: (val) {
                       setState(() => _selectedVerifiedFilter = opt);
@@ -1745,7 +1933,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Showing ${verifiedProfiles.length} Verified Profiles',
+                isGu ? '${verifiedProfiles.length} ચકાસાયેલ પ્રોફાઇલ્સ દર્શાવી રહ્યા છીએ' : 'Showing ${verifiedProfiles.length} Verified Profiles',
                 style: const TextStyle(
                   fontFamily: 'Serif',
                   fontSize: 18,
@@ -1786,8 +1974,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   size: 40,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Get Your Profile 100% Verified',
+                Text(
+                  isGu ? 'તમારી પ્રોફાઇલ ૧૦૦% ચકાસાયેલ બનાવો' : 'Get Your Profile 100% Verified',
                   style: TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 18,
@@ -1796,8 +1984,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Verified profiles get 3x higher responses and instant trust from genuine families.',
+                Text(
+                  isGu ? 'ચકાસાયેલ પ્રોફાઇલ્સને ૩ ગણો વધુ પ્રતિસાદ અને વાસ્તવિક પરિવારો તરફથી ત્વરિત વિશ્વાસ મળે છે.' : 'Verified profiles get 3x higher responses and instant trust from genuine families.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -1822,8 +2010,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                   ),
-                  child: const Text(
-                    'Upload ID Documents',
+                  child: Text(
+                    isGu ? 'આઈડી દસ્તાવેજો અપલોડ કરો' : 'Upload ID Documents',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -1840,7 +2028,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
     );
   }
 
-  Widget _buildVerificationBadgeChip(String text) {
+  Widget _buildVerificationBadgeChip(String text, bool isGu) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -1860,6 +2048,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Verified Profile Card Widget
   Widget _buildVerifiedProfileCard(Map<String, dynamic> profile) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1924,7 +2114,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  profile['name'],
+                  _getProfileName(profile['name'], isGu),
                   style: const TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 20,
@@ -1934,7 +2124,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${profile['age']} Years • ${profile['height']}',
+                  isGu ? '${profile['age']} વર્ષ • ${profile['height']}' : '${profile['age']} Years • ${profile['height']}',
                   style: const TextStyle(
                     fontSize: 13,
                     color: Color(0xFF5A6270),
@@ -1948,9 +2138,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   spacing: 6,
                   runSpacing: 6,
                   children: [
-                    _buildVerifiedTag('Govt ID Confirmed'),
-                    _buildVerifiedTag('Degree Verified'),
-                    _buildVerifiedTag('Family Background Checked'),
+                    _buildVerifiedTag(isGu ? 'સરકારી આઈડી કન્ફર્મ' : 'Govt ID Confirmed'),
+                    _buildVerifiedTag(isGu ? 'ડિગ્રી ચકાસાયેલ' : 'Degree Verified'),
+                    _buildVerifiedTag(isGu ? 'કૌટુંબિક બેકગ્રાઉન્ડ ચકાસાયેલ' : 'Family Background Checked'),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -1968,8 +2158,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          'View Details',
+                        child: Text(
+                          isGu ? 'વિગતો જુઓ' : 'View Details',
                           style: TextStyle(
                             color: Color(0xFF059669),
                             fontWeight: FontWeight.bold,
@@ -1984,7 +2174,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Contact request sent to ${profile['name']}!'),
+                              content: Text(isGu ? '${_getProfileName(profile['name'], isGu)} ને સંપર્ક વિનંતી મોકલી!' : 'Contact request sent to ${profile['name']}!'),
                               backgroundColor: const Color(0xFF059669),
                             ),
                           );
@@ -1997,8 +2187,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          'Request Contact',
+                        child: Text(
+                          isGu ? 'સંપર્ક વિનંતી' : 'Request Contact',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -2045,6 +2235,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Filter Card Component
   Widget _buildFilterCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -2063,7 +2255,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Age Range Dropdown
-          _buildFilterDropdownLabel('Age Range'),
+          _buildFilterDropdownLabel(isGu ? 'ઉંમરની શ્રેણી' : 'Age Range'),
           const SizedBox(height: 6),
           _buildCustomDropdown(
             value: _selectedAgeRange,
@@ -2075,7 +2267,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
           const SizedBox(height: 14),
 
           // Looking for Dropdown
-          _buildFilterDropdownLabel('I am looking for'),
+          _buildFilterDropdownLabel(isGu ? 'હું શોધી રહ્યો છું / રહી છું' : 'I am looking for'),
           const SizedBox(height: 6),
           _buildCustomDropdown(
             value: _selectedGender,
@@ -2087,7 +2279,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
           const SizedBox(height: 14),
 
           // Education Dropdown
-          _buildFilterDropdownLabel('Education'),
+          _buildFilterDropdownLabel(isGu ? 'શિક્ષણ' : 'Education'),
           const SizedBox(height: 6),
           _buildCustomDropdown(
             value: _selectedEducation,
@@ -2113,12 +2305,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.tune_outlined, size: 18, color: Color(0xFF1E232D)),
+                    children: [
+                      const Icon(Icons.tune_outlined, size: 18, color: Color(0xFF1E232D)),
                       SizedBox(width: 8),
-                      Text(
-                        'More Filters',
-                        style: TextStyle(
+                      Text(isGu ? 'વધુ ફિલ્ટર્સ' : 'More Filters', style: const TextStyle(
                           color: Color(0xFF1E232D),
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -2150,12 +2340,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.search, size: 18, color: Colors.white),
+                    children: [
+                      const Icon(Icons.search, size: 18, color: Colors.white),
                       SizedBox(width: 8),
-                      Text(
-                        'Search',
-                        style: TextStyle(
+                      Text(isGu ? 'શોધો' : 'Search', style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -2188,6 +2376,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       decoration: BoxDecoration(
@@ -2211,7 +2401,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(_ageOptions.contains(item) ? _getAgeLabel(item, isGu) : (_genderOptions.contains(item) ? _getGenderLabel(item, isGu) : (_educationOptions.contains(item) ? _getEducationLabel(item, isGu) : item))),
             );
           }).toList(),
           onChanged: onChanged,
@@ -2222,6 +2412,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   // Match Profile Card Component
   Widget _buildProfileCard(Map<String, dynamic> profile) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     final isFav = _favoriteProfileIds.contains(profile['id']);
 
     return Container(
@@ -2346,7 +2538,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  profile['name'],
+                  _getProfileName(profile['name'], isGu),
                   style: const TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 22,
@@ -2356,7 +2548,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${profile['age']} Years • ${profile['height']}',
+                  isGu ? '${profile['age']} વર્ષ • ${profile['height']}' : '${profile['age']} Years • ${profile['height']}',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFF5A6270),
@@ -2375,7 +2567,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      profile['profession'],
+                      _getProfessionLabel(profile['profession'], isGu),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF2D3139),
@@ -2396,7 +2588,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      profile['city'],
+                      _getCityLabel(profile['city'], isGu),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF2D3139),
@@ -2418,8 +2610,8 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                   ),
-                  child: const Text(
-                    'View Profile',
+                  child: Text(
+                    isGu ? 'પ્રોફાઇલ જુઓ' : isGu ? 'પ્રોફાઇલ જુઓ' : 'View Profile',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LanguageProvider extends ChangeNotifier {
   // 'en' for English, 'gu' for Gujarati, 'hi' for Hindi
-  String _currentLanguage = 'gu';
+  String _currentLanguage = 'en';
   bool _isLoggedIn = false;
   String _selectedCommunity = '';
 
@@ -247,6 +247,34 @@ class LanguageProvider extends ChangeNotifier {
     final surname = _profileDetails['familySurname'] ?? '';
     if (first.isEmpty && surname.isEmpty) return '';
     return '$first $surname'.trim();
+  }
+
+  String get registeredFirstName {
+    return _profileDetails['firstName'] ?? '';
+  }
+
+  String get userNativePlace {
+    return _profileDetails['nativePlace'] ?? '';
+  }
+
+  String get userOccupation {
+    return _profileDetails['occupation'] ?? '';
+  }
+
+  String get userBloodGroup {
+    return _profileDetails['bloodGroup'] ?? '';
+  }
+
+  String get userBirthDate {
+    return _profileDetails['birthDate'] ?? '';
+  }
+
+  String get userGender {
+    return _profileDetails['gender'] ?? 'Male';
+  }
+
+  String get userMaritalStatus {
+    return _profileDetails['maritalStatus'] ?? 'Single';
   }
 
   void changeLanguage(String languageCode) {

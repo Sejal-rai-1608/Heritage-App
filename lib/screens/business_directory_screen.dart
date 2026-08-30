@@ -800,7 +800,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Heritage Luxe',
+          'Heritage App',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 22,
@@ -1152,7 +1152,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Heritage Luxe community members!',
+                        'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Heritage App community members!',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 13.5,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
+import 'notifications_screen.dart';
 import 'payment_summary_screen.dart';
 
 class BecomePremiumScreen extends StatefulWidget {
@@ -22,6 +25,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FD),
 
@@ -33,8 +38,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232D)),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Become Premium Member',
+        title: Text(
+          isGu ? 'પ્રીમિયમ સભ્ય બનો' : 'Become Premium Member',
           style: TextStyle(
             fontFamily: 'Serif',
             fontSize: 20,
@@ -44,7 +49,13 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const NotificationsScreen(),
+              ),
+            );
+          },
             icon: const Icon(
               Icons.notifications_none_outlined,
               color: Color(0xFF2D3139),
@@ -75,8 +86,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
             const SizedBox(height: 8),
 
             // 1. Title: Select Community Members
-            const Text(
-              'Select Community\nMembers',
+            Text(
+              isGu ? 'સમુદાયના સભ્યો\nપસંદ કરો' : 'Select Community\nMembers',
               style: TextStyle(
                 fontFamily: 'Serif',
                 fontSize: 26,
@@ -90,8 +101,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
             // Member 1 Card
             _buildMemberCard(
               id: '1',
-              name: 'Soham Aaditya More',
-              status: 'Active Member',
+              name: isGu ? 'સોહમ આદિત્ય મોરે' : 'Soham Aaditya More',
+              status: isGu ? 'સક્રિય સભ્ય' : 'Active Member',
               imagePath: 'assets/images/sanjay_profile.png',
               isAsset: true,
             ),
@@ -100,8 +111,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
             // Member 2 Card
             _buildMemberCard(
               id: '2',
-              name: 'Riya Aaditya More',
-              status: 'Active Member',
+              name: isGu ? 'રિયા આદિત્ય મોરે' : 'Riya Aaditya More',
+              status: isGu ? 'સક્રિય સભ્ય' : 'Active Member',
               imagePath: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800',
               isAsset: false,
             ),
@@ -125,8 +136,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Membership Plan Selection',
+                  Text(
+                    isGu ? 'સભ્યપદ પ્લાન પસંદગી' : 'Membership Plan Selection',
                     style: TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 22,
@@ -139,18 +150,18 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   // Plan Option 1: 6 Months
                   _buildPlanOption(
                     months: 6,
-                    title: '6 Months Premium Membership',
-                    subtitle: 'Limited Access +\nPriority Networking',
-                    price: 'Rs. 2000',
+                    title: isGu ? '૬ મહિનાની પ્રીમિયમ સભ્યપદ' : '6 Months Premium Membership',
+                    subtitle: isGu ? 'મર્યાદિત એક્સેસ +\nપ્રાથમિકતા નેટવર્કિંગ' : 'Limited Access +\nPriority Networking',
+                    price: isGu ? 'રૂ. ૨૦૦૦' : 'Rs. 2000',
                   ),
                   const SizedBox(height: 14),
 
                   // Plan Option 2: 12 Months
                   _buildPlanOption(
                     months: 12,
-                    title: '12 Months Premium Membership',
-                    subtitle: 'All Access +\nConcierge Support',
-                    price: 'Rs. 3000',
+                    title: isGu ? '૧૨ મહિનાની પ્રીમિયમ સભ્યપદ' : '12 Months Premium Membership',
+                    subtitle: isGu ? 'સંપૂર્ણ એક્સેસ +\nસહાયક સપોર્ટ' : 'All Access +\nConcierge Support',
+                    price: isGu ? 'રૂ. ૩૦૦૦' : 'Rs. 3000',
                   ),
                 ],
               ),
@@ -175,8 +186,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'PURCHASE TYPE',
+                  Text(
+                    isGu ? 'ખરીદીનો પ્રકાર' : 'PURCHASE TYPE',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -187,13 +198,13 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   const SizedBox(height: 14),
                   Row(
                     children: [
-                      _buildRadioOption('Personal', 'Personal Purchase'),
+                      _buildRadioOption('Personal', isGu ? 'વ્યક્તિગત ખરીદી' : 'Personal Purchase'),
                     ],
                   ),
                   const SizedBox(height: 14),
                   Row(
                     children: [
-                      _buildRadioOption('Business', 'Business Purchase'),
+                      _buildRadioOption('Business', isGu ? 'વ્યાવસાયિક ખરીદી' : 'Business Purchase'),
                     ],
                   ),
                 ],
@@ -212,8 +223,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'CHOOSE PAYMENT METHOD',
+                  Text(
+                    isGu ? 'ચુકવણી પદ્ધતિ પસંદ કરો' : 'CHOOSE PAYMENT METHOD',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -226,16 +237,16 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   // UPI Payment Option
                   _buildPaymentTile(
                     icon: Icons.account_balance_wallet_outlined,
-                    title: 'UPI Payment',
-                    subtitle: 'Google Pay / BHIM etc.',
+                    title: isGu ? 'UPI ચુકવણી' : 'UPI Payment',
+                    subtitle: isGu ? 'ગુગલ પે / ભીમ વગેરે' : 'Google Pay / BHIM etc.',
                     actionWidget: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFDE089),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text(
-                        'Pay',
+                      child: Text(
+                        isGu ? 'ચૂકવો' : 'Pay',
                         style: TextStyle(
                           color: Color(0xFF1E232D),
                           fontWeight: FontWeight.bold,
@@ -250,16 +261,16 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   // Online Payment Option
                   _buildPaymentTile(
                     icon: Icons.credit_card_outlined,
-                    title: 'Online Payment',
-                    subtitle: 'Card, Wallet, Netbanking',
+                    title: isGu ? 'ઓનલાઇન ચુકવણી' : 'Online Payment',
+                    subtitle: isGu ? 'કાર્ડ, વોલેટ, નેટબેંકિંગ' : 'Card, Wallet, Netbanking',
                     actionWidget: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: const Color(0xFF374151),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text(
-                        'Pay Online',
+                      child: Text(
+                        isGu ? 'ઓનલાઇન ચૂકવો' : 'Pay Online',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -274,10 +285,10 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   // Pay Using Cash Option
                   _buildPaymentTile(
                     icon: Icons.payments_outlined,
-                    title: 'Pay using Cash',
-                    subtitle: 'In-person Collection',
-                    actionWidget: const Text(
-                      'Contact Us',
+                    title: isGu ? 'રોકડ દ્વારા ચૂકવો' : 'Pay using Cash',
+                    subtitle: isGu ? 'રૂબરૂ કલેક્શન' : 'In-person Collection',
+                    actionWidget: Text(
+                      isGu ? 'સંપર્ક કરો' : 'Contact Us',
                       style: TextStyle(
                         color: Color(0xFFFDE089),
                         fontWeight: FontWeight.bold,
@@ -302,17 +313,17 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Icon(
+                children: [
+                  const Icon(
                     Icons.info_outline,
                     color: Color(0xFF8B6B1B),
                     size: 20,
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Upgrading to premium grants you access to exclusive networking events and historical archives for the Heritage Luxe community.',
-                      style: TextStyle(
+                      isGu ? 'પ્રીમિયમમાં અપગ્રેડ કરવાથી તમને હેરિટેજ એપ સમુદાય માટે વિશેષ નેટવર્કિંગ ઇવેન્ટ્સ અને ઐતિહાસિક આર્કાઇવ્સની ઍક્સેસ મળે છે.' : 'Upgrading to premium grants you access to exclusive networking events and historical archives for the Heritage App community.',
+                      style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF8B6B1B),
                         height: 1.4,
@@ -337,6 +348,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
     required String imagePath,
     required bool isAsset,
   }) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     final isSelected = _selectedMemberId == id;
     return GestureDetector(
       onTap: () => setState(() => _selectedMemberId = id),
@@ -393,7 +406,7 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    isGu ? (name.contains('Soham') ? 'સોહમ આદિત્ય મોરે' : 'રિયા આદિત્ય મોરે') : name,
                     style: const TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 17,
@@ -403,7 +416,7 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    status,
+                    isGu ? 'સક્રિય સભ્ય' : status,
                     style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xFF5E6573),
@@ -433,8 +446,8 @@ class _BecomePremiumScreenState extends State<BecomePremiumScreen> {
                   color: const Color(0xFFFDE089),
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: const Text(
-                  'Become\nPremium\nMember',
+                child: Text(
+                  isGu ? 'પ્રીમિયમ\nસભ્ય\nબનો' : 'Become\nPremium\nMember',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF1E232D),

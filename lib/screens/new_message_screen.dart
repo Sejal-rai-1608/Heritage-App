@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 
 class NewMessageScreen extends StatefulWidget {
   const NewMessageScreen({super.key});
@@ -52,10 +54,13 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
   }
 
   void _sendMessage() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     if (_detailsController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter message details!'),
+        SnackBar(
+          content: Text(isGu ? 'કૃપા કરીને સંદેશની વિગતો દાખલ કરો!' : 'Please enter message details!'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -63,8 +68,8 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Message Posted Successfully!'),
+      SnackBar(
+        content: Text(isGu ? 'સંદેશ સફળતાપૂર્વક મોકલવામાં આવ્યો!' : 'Message Posted Successfully!'),
         backgroundColor: Colors.green,
       ),
     );
@@ -74,6 +79,9 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -83,9 +91,9 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'New Message',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'નવો સંદેશ' : 'New Message',
+          style: const TextStyle(
             fontFamily: 'Serif',
             color: Colors.black87,
             fontSize: 18,
@@ -123,7 +131,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Message Type Label & Dropdown
-                      _buildLabel('Message Type'),
+                      _buildLabel(isGu ? 'સંદેશાનો પ્રકાર' : 'Message Type'),
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -147,7 +155,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                               return DropdownMenuItem<String>(
                                 value: type,
                                 child: Text(
-                                  type,
+                                  _getTypeLabel(type, isGu),
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF1E293B),
@@ -162,13 +170,13 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                       const SizedBox(height: 20),
 
                       // Message Details Label & Multi-line TextArea
-                      _buildLabel('Message Details'),
+                      _buildLabel(isGu ? 'સંદેશની વિગતો' : 'Message Details'),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _detailsController,
                         maxLines: 7,
                         decoration: InputDecoration(
-                          hintText: 'Enter Message Content',
+                          hintText: isGu ? 'સંદેશની સામગ્રી દાખલ કરો' : 'Enter Message Content',
                           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                           fillColor: const Color(0xFFF0F4FF),
                           filled: true,
@@ -182,7 +190,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                       const SizedBox(height: 20),
 
                       // WhatsApp Number Label & Input
-                      _buildLabel('WhatsApp Number (Not Necessary)'),
+                      _buildLabel(isGu ? 'વોટ્સએપ નંબર (જરૂરી નથી)' : 'WhatsApp Number (Not Necessary)'),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _whatsappController,
@@ -235,9 +243,9 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                       });
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'Open', child: Text('Open')),
-                      const PopupMenuItem(value: 'Members Only', child: Text('Members Only')),
-                      const PopupMenuItem(value: 'Private', child: Text('Private')),
+                      PopupMenuItem(value: 'Open', child: Text(isGu ? 'જાહેર' : 'Open')),
+                      PopupMenuItem(value: 'Members Only', child: Text(isGu ? 'માત્ર સભ્યો' : 'Members Only')),
+                      PopupMenuItem(value: 'Private', child: Text(isGu ? 'ખાનગી' : 'Private')),
                     ],
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -250,7 +258,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                           const Icon(Icons.verified_user_outlined, size: 16, color: Color(0xFF1E293B)),
                           const SizedBox(width: 6),
                           Text(
-                            _visibilityStatus,
+                            _getVisibilityLabel(_visibilityStatus, isGu),
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -264,7 +272,7 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
                     ),
                   ),
 
-                  // Middle Attachment Icon Box (Image picker with gold plus badge)
+                  // Middle Attachment Icon Box
                   InkWell(
                     onTap: _pickAttachmentImage,
                     child: Stack(
@@ -348,5 +356,45 @@ class _NewMessageScreenState extends State<NewMessageScreen> {
         color: Color(0xFF1E293B),
       ),
     );
+  }
+
+  String _getTypeLabel(String type, bool isGu) {
+    if (!isGu) return type;
+    switch (type) {
+      case 'General':
+        return 'સામાન્ય';
+      case 'Job':
+        return 'નોકરી';
+      case 'Property':
+        return 'મિલકત';
+      case 'Commercial':
+        return 'વ્યાવસાયિક';
+      case 'Death / Obituary':
+        return 'અવસાન / શ્રદ્ધાંજલિ';
+      case 'Event':
+        return 'ઇવેન્ટ';
+      case 'Business':
+        return 'વ્યાપાર';
+      case 'Matrimonial':
+        return 'લગ્ન';
+      case 'Seva / Support':
+        return 'સેવા / સહાય';
+      default:
+        return 'અન્ય';
+    }
+  }
+
+  String _getVisibilityLabel(String status, bool isGu) {
+    if (!isGu) return status;
+    switch (status) {
+      case 'Open':
+        return 'જાહેર';
+      case 'Members Only':
+        return 'માત્ર સભ્યો';
+      case 'Private':
+        return 'ખાનગી';
+      default:
+        return status;
+    }
   }
 }

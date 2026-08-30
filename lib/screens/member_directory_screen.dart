@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'new_message_screen.dart';
+import 'notifications_screen.dart';
 import '../widgets/custom_bottom_navbar.dart';
 
 class MemberDirectoryScreen extends StatefulWidget {
@@ -128,6 +131,96 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
     super.dispose();
   }
 
+  String _getMemberName(String name, bool isGu) {
+    if (!isGu) return name;
+    switch (name) {
+      case 'Amit I. Patel':
+        return 'અમિત આઈ. પટેલ';
+      case 'Anjali Shah':
+        return 'અંજલિ શાહ';
+      case 'Bharat Gandhi':
+        return 'ભરત ગાંધી';
+      case 'Bhavna Desai':
+        return 'ભાવના દેસાઈ';
+      case 'Chirag Mehta':
+        return 'ચિરાગ મહેતા';
+      case 'Deepak Joshi':
+        return 'દીપક જોશી';
+      case 'Kavita Trivedi':
+        return 'કવિતા ત્રિવેદી';
+      default:
+        return name;
+    }
+  }
+
+  String _getFirstName(String firstName, bool isGu) {
+    if (!isGu) return firstName;
+    switch (firstName) {
+      case 'Amit':
+        return 'અમિત';
+      case 'Anjali':
+        return 'અંજલિ';
+      case 'Bharat':
+        return 'ભરત';
+      case 'Bhavna':
+        return 'ભાવના';
+      case 'Chirag':
+        return 'ચિરાગ';
+      case 'Deepak':
+        return 'દીપક';
+      case 'Kavita':
+        return 'કવિતા';
+      default:
+        return firstName;
+    }
+  }
+
+  String _getCityLabel(String city, bool isGu) {
+    if (!isGu) return city;
+    switch (city) {
+      case 'All Cities':
+        return 'બધા શહેરો';
+      case 'Ahmedabad':
+        return 'અમદાવાદ';
+      case 'Surat':
+        return 'સુરત';
+      case 'Rajkot':
+        return 'રાજકોટ';
+      case 'Vadodara':
+        return 'વડોદરા';
+      case 'Bhavnagar':
+        return 'ભાવનગર';
+      case 'Jamnagar':
+        return 'જામનગર';
+      default:
+        return city;
+    }
+  }
+
+  String _getProfessionLabel(String profession, bool isGu) {
+    if (!isGu) return profession;
+    switch (profession) {
+      case 'All Professions':
+        return 'બધા વ્યવસાયો';
+      case 'Textile Business':
+        return 'કાપડ નો વ્યવસાય';
+      case 'Gynecologist':
+        return 'ગાયનેકોલોજિસ્ટ';
+      case 'Civil Engineer':
+        return 'સિવિલ એન્જિનિયર';
+      case 'School Principal':
+        return 'શાળાના આચાર્ય';
+      case 'Software Consultant':
+        return 'સોફ્ટવેર કન્સલ્ટન્ટ';
+      case 'Diamond Merchant':
+        return 'હીરાના વેપારી';
+      case 'Interior Designer':
+        return 'ઇન્ટિરિયર ડિઝાઇનર';
+      default:
+        return profession;
+    }
+  }
+
   List<Member> get _filteredMembers {
     return _allMembers.where((member) {
       final matchesSearch = _searchQuery.isEmpty ||
@@ -157,7 +250,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
     return grouped;
   }
 
-  void _showContactOptions(BuildContext context, Member member) {
+  void _showContactOptions(BuildContext context, Member member, bool isGu) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -179,7 +272,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Contact ${member.name}',
+                isGu ? '${_getMemberName(member.name, isGu)} નો સંપર્ક કરો' : 'Contact ${member.name}',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -189,7 +282,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                '${member.profession} • ${member.city}',
+                '${_getProfessionLabel(member.profession, isGu)} • ${_getCityLabel(member.city, isGu)}',
                 style: const TextStyle(
                   fontSize: 13,
                   color: Color(0xFF64748B),
@@ -201,8 +294,8 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                   backgroundColor: Color(0xFF0F172A),
                   child: Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
                 ),
-                title: const Text('Send In-App Message',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
+                title: Text(isGu ? 'એપમાં સંદેશ મોકલો' : 'Send In-App Message',
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.pop(context);
@@ -220,14 +313,14 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                   backgroundColor: Color(0xFF25D366),
                   child: Icon(Icons.phone, color: Colors.white, size: 20),
                 ),
-                title: const Text('WhatsApp / Phone Call',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
+                title: Text(isGu ? 'વોટ્સએપ / ફોન કૉલ' : 'WhatsApp / Phone Call',
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Calling ${member.name}...'),
+                      content: Text(isGu ? '${_getMemberName(member.name, isGu)} ને કૉલ કરી રહ્યા છીએ...' : 'Calling ${member.name}...'),
                       backgroundColor: const Color(0xFF0F172A),
                     ),
                   );
@@ -243,6 +336,9 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     final grouped = _groupedMembers;
     final sortedLetters = grouped.keys.toList()..sort();
 
@@ -255,9 +351,9 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Heritage Luxe',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'હેરિટેજ એપ' : 'Heritage App',
+          style: const TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -284,7 +380,13 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                 ),
               ],
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const NotificationsScreen(),
+                ),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0, left: 4.0),
@@ -318,24 +420,24 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (val) => setState(() => _searchQuery = val),
-                decoration: const InputDecoration(
-                  hintText: 'Search members by name...',
-                  hintStyle: TextStyle(
+                decoration: InputDecoration(
+                  hintText: isGu ? 'નામ દ્વારા સભ્યો શોધો...' : 'Search members by name...',
+                  hintStyle: const TextStyle(
                     color: Color(0xFF94A3B8),
                     fontSize: 14,
                   ),
-                  prefixIcon: Icon(Icons.search, color: Color(0xFF64748B), size: 22),
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFF64748B), size: 22),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
             // 2. City Dropdown Filter
-            const Text(
-              'City',
-              style: TextStyle(
+            Text(
+              isGu ? 'શહેર' : 'City',
+              style: const TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -367,7 +469,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                   items: _cities.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value),
+                      child: Text(_getCityLabel(value, isGu)),
                     );
                   }).toList(),
                 ),
@@ -376,9 +478,9 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
             const SizedBox(height: 16),
 
             // 3. Profession Dropdown Filter
-            const Text(
-              'Profession',
-              style: TextStyle(
+            Text(
+              isGu ? 'વ્યવસાય' : 'Profession',
+              style: const TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -410,7 +512,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                   items: _professions.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value),
+                      child: Text(_getProfessionLabel(value, isGu)),
                     );
                   }).toList(),
                 ),
@@ -420,12 +522,12 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
 
             // 4. Alphabetically Grouped Member Sections
             if (sortedLetters.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 40.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40.0),
                 child: Center(
                   child: Text(
-                    'No members found matching your search.',
-                    style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                    isGu ? 'તમારી શોધ મુજબ કોઈ સભ્યો મળ્યા નથી.' : 'No members found matching your search.',
+                    style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
                   ),
                 ),
               )
@@ -461,7 +563,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                     ),
 
                     // Member Cards for this Letter
-                    ...members.map((member) => _buildMemberCard(context, member)),
+                    ...members.map((member) => _buildMemberCard(context, member, isGu)),
                   ],
                 );
               }),
@@ -475,7 +577,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
     );
   }
 
-  Widget _buildMemberCard(BuildContext context, Member member) {
+  Widget _buildMemberCard(BuildContext context, Member member, bool isGu) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(18),
@@ -503,7 +605,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      member.name,
+                      _getMemberName(member.name, isGu),
                       style: const TextStyle(
                         color: Color(0xFF0F172A),
                         fontSize: 20,
@@ -521,7 +623,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          member.city,
+                          _getCityLabel(member.city, isGu),
                           style: const TextStyle(
                             color: Color(0xFF475569),
                             fontSize: 13,
@@ -541,7 +643,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            member.profession,
+                            _getProfessionLabel(member.profession, isGu),
                             style: const TextStyle(
                               color: Color(0xFF475569),
                               fontSize: 13,
@@ -587,7 +689,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => _showContactOptions(context, member),
+              onPressed: () => _showContactOptions(context, member, isGu),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
@@ -607,7 +709,7 @@ class _MemberDirectoryScreenState extends State<MemberDirectoryScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Contact ${member.firstName}',
+                    isGu ? '${_getFirstName(member.firstName, isGu)} નો સંપર્ક કરો' : 'Contact ${member.firstName}',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

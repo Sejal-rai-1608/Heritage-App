@@ -71,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Are you sure you want to log out of your Heritage Luxe account?',
+                        'Are you sure you want to log out of your Heritage account?',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF64748B),
@@ -105,6 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   listen: false,
                                 );
                                 lang.setLoggedIn(false);
+                                lang.resetProfile();
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                     builder: (_) => const LoginScreen(),
@@ -118,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 elevation: 0,
                                 padding: const EdgeInsets.symmetric(vertical: 11),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
                               child: const Text(
@@ -167,8 +168,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFCD34D),
-                foregroundColor: const Color(0xFF0F172A),
+                backgroundColor: const Color(0xFFE5A93C),
+                foregroundColor: const Color(0xFF191C21),
               ),
               child: const Text('OK', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
@@ -181,32 +182,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final langProvider = Provider.of<LanguageProvider>(context);
+    final bool isApproved = langProvider.isProfileApproved;
     final String currentLang = langProvider.currentLanguage;
     final bool isGu = currentLang == 'gu';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF9FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF9FAFC),
         elevation: 0,
         leadingWidth: 90,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            padding: const EdgeInsets.only(left: 12),
-            child: Row(
-              children: [
-                const Icon(Icons.arrow_back, color: Color(0xFF0F172A), size: 18),
-                const SizedBox(width: 4),
-                Text(
-                  isGu ? 'પાછા' : 'Back',
-                  style: const TextStyle(
-                    color: Color(0xFF0F172A),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+        leading: TextButton.icon(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A), size: 18),
+          label: Text(
+            isGu ? 'પાછા' : 'Back',
+            style: const TextStyle(
+              color: Color(0xFF0F172A),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -220,369 +214,483 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         centerTitle: true,
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage('assets/images/sanjay_profile.png'),
+            padding: const EdgeInsets.only(right: 18.0),
+            child: Consumer<LanguageProvider>(
+              builder: (context, lang, child) {
+                final hasImage = lang.profileImageUrl != null && lang.profileImageUrl!.isNotEmpty;
+                return CircleAvatar(
+                  radius: 17,
+                  backgroundColor: const Color(0xFFE5A93C),
+                  backgroundImage: hasImage ? NetworkImage(lang.profileImageUrl!) : null,
+                  child: hasImage
+                      ? null
+                      : const Icon(
+                          Icons.person_rounded,
+                          color: Color(0xFF191C21),
+                          size: 20,
+                        ),
+                );
+              },
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. SELECT LANGUAGE Section
-            Text(
-              isGu ? 'ભાષા પસંદ કરો' : 'SELECT LANGUAGE',
-              style: const TextStyle(
-                color: Color(0xFF64748B),
-                fontSize: 12,
-                letterSpacing: 1.2,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                // English Option
-                GestureDetector(
-                  onTap: () => langProvider.changeLanguage('en'),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: currentLang == 'en'
-                                ? const Color(0xFF0F172A)
-                                : const Color(0xFFCBD5E1),
-                            width: 2,
-                          ),
-                        ),
-                        child: currentLang == 'en'
-                            ? Center(
-                                child: Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF0F172A),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'English',
-                        style: TextStyle(
-                          color: Color(0xFF0F172A),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 32),
-
-                // Gujarati Option (ગુજરાતી)
-                GestureDetector(
-                  onTap: () => langProvider.changeLanguage('gu'),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: currentLang == 'gu'
-                                ? const Color(0xFF0F172A)
-                                : const Color(0xFFCBD5E1),
-                            width: 2,
-                          ),
-                        ),
-                        child: currentLang == 'gu'
-                            ? Center(
-                                child: Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF0F172A),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'ગુજરાતી',
-                        style: TextStyle(
-                          color: Color(0xFF0F172A),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 36),
-
-            // 2. Community Profile Section
-            Text(
-              isGu ? 'સમુદાય પ્રોફાઇલ' : 'Community Profile',
-              style: const TextStyle(
-                color: Color(0xFF64748B),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              isGu ? 'પટેલ' : _selectedCommunity,
-              style: const TextStyle(
-                color: Color(0xFF0F172A),
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Serif',
-              ),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () => _showChangeCommunityDialog(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFCD34D), // Warm light gold
-                foregroundColor: const Color(0xFF0F172A),
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-              child: Text(
-                isGu ? 'બદલો' : 'Change',
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            // 3. Settings Menu Items
-            // Logout
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(
-                Icons.logout_rounded,
-                color: Color(0xFFDC2626),
-                size: 22,
-              ),
-              title: Text(
-                isGu ? 'લોગઆઉટ' : 'Logout',
-                style: const TextStyle(
-                  color: Color(0xFFDC2626),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              trailing: const Icon(
-                Icons.chevron_right,
-                color: Color(0xFF64748B),
-                size: 20,
-              ),
-              onTap: () => _showLogoutDialog(context),
-            ),
-            const SizedBox(height: 8),
-
-            // Storage Usage
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(
-                Icons.dns_outlined,
-                color: Color(0xFF0F172A),
-                size: 22,
-              ),
-              title: Text(
-                isGu ? 'સંગ્રહ વપરાશ' : 'Storage Usage',
-                style: const TextStyle(
-                  color: Color(0xFF0F172A),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              trailing: const Icon(
-                Icons.chevron_right,
-                color: Color(0xFF64748B),
-                size: 20,
-              ),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      isGu ? 'સ્ટોરેજ વપરાશ: ૧૪.૨ MB વપરાયેલ' : 'Storage Usage: 14.2 MB used',
+      body: isApproved
+          ? SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 1. SELECT LANGUAGE Section
+                  Text(
+                    isGu ? 'ભાષા પસંદ કરો' : 'SELECT LANGUAGE',
+                    style: const TextStyle(
+                      color: Color(0xFF64748B),
+                      fontSize: 12,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.bold,
                     ),
-                    backgroundColor: const Color(0xFF0F172A),
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
+                  const SizedBox(height: 16),
 
-            // Terms of Service
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(
-                Icons.description_outlined,
-                color: Color(0xFF0F172A),
-                size: 22,
-              ),
-              title: Text(
-                isGu ? 'સેવાની શરતો' : 'Terms of Service',
-                style: const TextStyle(
-                  color: Color(0xFF0F172A),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              trailing: const Icon(
-                Icons.chevron_right,
-                color: Color(0xFF64748B),
-                size: 20,
-              ),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                  Row(
+                    children: [
+                      // English Option
+                      GestureDetector(
+                        onTap: () => langProvider.changeLanguage('en'),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: currentLang == 'en'
+                                      ? const Color(0xFF0F172A)
+                                      : const Color(0xFFCBD5E1),
+                                  width: 2,
+                                ),
+                              ),
+                              child: currentLang == 'en'
+                                  ? Center(
+                                      child: Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF0F172A),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 10),
+                            const Text(
+                              'English',
+                              style: TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 36),
+
+                      // Gujarati Option (ગુજરાતી)
+                      GestureDetector(
+                        onTap: () => langProvider.changeLanguage('gu'),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: currentLang == 'gu'
+                                      ? const Color(0xFF0F172A)
+                                      : const Color(0xFFCBD5E1),
+                                  width: 2,
+                                ),
+                              ),
+                              child: currentLang == 'gu'
+                                  ? Center(
+                                      child: Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF0F172A),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 10),
+                            const Text(
+                              'ગુજરાતી',
+                              style: TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 36),
+
+                  // 2. Community Profile Section
+                  Text(
+                    isGu ? 'સમુદાય પ્રોફાઇલ' : 'Community Profile',
+                    style: const TextStyle(
+                      color: Color(0xFF64748B),
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isGu ? 'પટેલ' : _selectedCommunity,
+                    style: const TextStyle(
+                      color: Color(0xFF0F172A),
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Serif',
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Soft Yellow Change Button (matching screenshot)
+                  SizedBox(
+                    width: 240,
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: () => _showChangeCommunityDialog(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFDE047),
+                        foregroundColor: const Color(0xFF191C21),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                      ),
+                      child: Text(
+                        isGu ? 'બદલો' : 'Change',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF191C21),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 36),
+
+                  // 3. Settings List Options (matching screenshot)
+                  // Logout
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    leading: const Icon(
+                      Icons.logout_rounded,
+                      color: Color(0xFFDC2626),
+                      size: 22,
+                    ),
+                    title: Text(
+                      isGu ? 'લોગઆઉટ' : 'Logout',
+                      style: const TextStyle(
+                        color: Color(0xFFDC2626),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Color(0xFF475569),
+                      size: 22,
+                    ),
+                    onTap: () => _showLogoutDialog(context),
+                  ),
+                  const SizedBox(height: 6),
+
+                  // Storage Usage
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    leading: const Icon(
+                      Icons.dns_outlined,
+                      color: Color(0xFF0F172A),
+                      size: 22,
+                    ),
+                    title: Text(
+                      isGu ? 'સંગ્રહ વપરાશ' : 'Storage Usage',
+                      style: const TextStyle(
+                        color: Color(0xFF0F172A),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Color(0xFF475569),
+                      size: 22,
+                    ),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isGu ? 'સ્ટોરેજ વપરાશ: ૧૪.૨ MB વપરાયેલ' : 'Storage Usage: 14.2 MB used',
+                          ),
+                          backgroundColor: const Color(0xFF0F172A),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 6),
+
+                  // Terms of Service
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    leading: const Icon(
+                      Icons.description_outlined,
+                      color: Color(0xFF0F172A),
+                      size: 22,
                     ),
                     title: Text(
                       isGu ? 'સેવાની શરતો' : 'Terms of Service',
                       style: const TextStyle(
-                        fontFamily: 'Serif',
-                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0F172A),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    content: SingleChildScrollView(
-                      child: Text(
-                        isGu
-                            ? 'હેરિટેજ લક્સમાં આપનું સ્વાગત છે. અમારા પ્લેટફોર્મનો ઉપયોગ કરીને, તમે તમામ સમુદાય માર્ગદર્શિકાઓ અને ગોપનીયતા શરતોનું પાલન કરવા માટે સંમત થાઓ છો.'
-                            : 'Welcome to Heritage Luxe. By using our platform, you agree to comply with all community guidelines and privacy terms.',
-                        style: const TextStyle(fontSize: 13.5, height: 1.4),
-                      ),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Color(0xFF475569),
+                      size: 22,
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(
-                          isGu ? 'બંધ કરો' : 'CLOSE',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: Text(
+                            isGu ? 'સેવાની શરતો' : 'Terms of Service',
+                            style: const TextStyle(
+                              fontFamily: 'Serif',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: SingleChildScrollView(
+                            child: Text(
+                              isGu
+                                  ? 'હેરિટેજ એપમાં આપનું સ્વાગત છે. અમારા પ્લેટફોર્મનો ઉપયોગ કરીને, તમે તમામ સમુદાય માર્ગદર્શિકાઓ અને ગોપનીયતા શરતોનું પાલન કરવા માટે સંમત થાઓ છો.'
+                                  : 'Welcome to Heritage App. By using our platform, you agree to comply with all community guidelines and privacy terms.',
+                              style: const TextStyle(fontSize: 13.5, height: 1.4),
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                isGu ? 'બંધ કરો' : 'CLOSE',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: 36),
+                  const SizedBox(height: 28),
 
-            // 4. Faded Cultural Legacy Image Component
-            Center(
-              child: Column(
-                children: [
+                  // 4. CULTURAL LEGACY MONUMENT CARD (matching screenshot)
                   Container(
-                    height: 220,
                     width: double.infinity,
+                    height: 200,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        // Soft faded image using Opacity & BlendMode
-                        Opacity(
-                          opacity: 0.35,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned.fill(
                             child: Image.asset(
                               'assets/images/settings_monument.png',
-                              width: double.infinity,
-                              height: 220,
                               fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: const Color(0xFFF1F5F9),
+                                child: const Icon(Icons.account_balance_rounded, size: 64, color: Color(0xFF94A3B8)),
+                              ),
                             ),
                           ),
-                        ),
-                        // Gradient Overlay for smooth edge fading
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFFF8FAFC).withValues(alpha: 0.8),
-                                Colors.transparent,
-                                const Color(0xFFF8FAFC).withValues(alpha: 0.85),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.white.withValues(alpha: 0.25),
                             ),
                           ),
-                        ),
-                        // Centered Overlay Text
-                        Positioned(
-                          bottom: 24,
-                          child: Text(
-                            isGu ? 'સાંસ્કૃતિક વારસો' : 'CULTURAL LEGACY',
-                            style: const TextStyle(
-                              color: Color(0xFF64748B),
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                          Positioned(
+                            bottom: 24,
+                            child: Text(
+                              'CULTURAL LEGACY',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF475569).withValues(alpha: 0.9),
+                                letterSpacing: 2.2,
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // 5. App Version Footer (matching screenshot)
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          isGu ? 'એપ વર્ઝન : ૧.૨.૦' : 'App Version : 10.16',
+                          style: const TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isGu ? 'હેરિટેજ કોર સમુદાય © ૨૦૨૪' : 'Heritage Core Community © 2024',
+                          style: const TextStyle(
+                            color: Color(0xFFCBD5E1),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'ACCOUNT & SESSION',
+                    style: TextStyle(
+                      color: Color(0xFF64748B),
+                      fontSize: 12,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Clean Container with Only Log Out Button for Unverified Users
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEE2E2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.logout_rounded,
+                          color: Color(0xFFDC2626),
+                          size: 22,
+                        ),
+                      ),
+                      title: const Text(
+                        'Log Out',
+                        style: TextStyle(
+                          color: Color(0xFFDC2626),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Sign out of your account session',
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 12,
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Color(0xFF94A3B8),
+                        size: 16,
+                      ),
+                      onTap: () => _showLogoutDialog(context),
+                    ),
+                  ),
+                  const Spacer(),
+
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          isGu ? 'હેરિટેજ એપ' : 'HERITAGE APP',
+                          style: const TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isGu ? 'વર્ઝન ૧.૨.૦ • હેરિટેજ સમુદાય' : 'Version 1.2.0 • Heritage Community',
+                          style: const TextStyle(
+                            color: Color(0xFFCBD5E1),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // App Version Footer
-                  Text(
-                    isGu ? 'એપ વર્ઝન : ૧૦.૧૬' : 'App Version : 10.16',
-                    style: const TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isGu ? 'હેરિટેજ કોર કોમ્યુનિટી © ૨૦૨૪' : 'Heritage Core Community © 2024',
-                    style: const TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'membership_request_screen.dart';
 
 class RegistrationFormScreen extends StatefulWidget {
@@ -11,6 +13,41 @@ class RegistrationFormScreen extends StatefulWidget {
 }
 
 class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final lang = Provider.of<LanguageProvider>(context, listen: false);
+      final details = lang.profileDetails;
+      if (details.isNotEmpty) {
+        setState(() {
+          if (details['firstName'] != null) _firstNameController.text = details['firstName']!;
+          if (details['familySurname'] != null) _familySurnameController.text = details['familySurname']!;
+          if (details['officialSurname'] != null) _officialSurnameController.text = details['officialSurname']!;
+          if (details['gender'] != null) _selectedGender = details['gender']!;
+          if (details['maritalStatus'] != null) _maritalStatus = details['maritalStatus']!;
+          if (details['bloodGroup'] != null) _selectedBloodGroup = details['bloodGroup']!;
+          if (details['nativePlace'] != null) _nativePlaceController.text = details['nativePlace']!;
+          if (details['birthDate'] != null) _birthDateController.text = details['birthDate']!;
+          if (details['occupation'] != null) _selectedOccupation = details['occupation']!;
+          if (details['spouseName'] != null) _spouseNameController.text = details['spouseName']!;
+          if (details['childrenNames'] != null) _childrenNamesController.text = details['childrenNames']!;
+          if (details['country'] != null) _selectedCountry = details['country']!;
+          if (details['state'] != null) _selectedState = details['state']!;
+          if (details['district'] != null) _selectedDistrict = details['district']!;
+          if (details['area'] != null) _selectedArea = details['area']!;
+          if (details['fatherName'] != null) _fatherNameController.text = details['fatherName']!;
+          if (details['motherName'] != null) _motherNameController.text = details['motherName']!;
+          if (details['fathersFatherName'] != null) _fathersFatherNameController.text = details['fathersFatherName']!;
+          if (details['fathersMotherName'] != null) _fathersMotherNameController.text = details['fathersMotherName']!;
+          if (details['mothersFatherName'] != null) _mothersFatherNameController.text = details['mothersFatherName']!;
+          if (details['mothersMotherName'] != null) _mothersMotherNameController.text = details['mothersMotherName']!;
+          if (details['mothersFatherSurname'] != null) _mothersFatherSurnameController.text = details['mothersFatherSurname']!;
+          if (details['mothersFatherVillage'] != null) _mothersFatherVillageController.text = details['mothersFatherVillage']!;
+        });
+      }
+    });
+  }
   int _currentStep = 1; // 1: Gender & Marital, 2: Basic Details, 3: Parent Details
 
   // Step 1 state
@@ -21,7 +58,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   // Step 2 Basic Details state
   String _selectedOccupation = 'Select';
   String _selectedBloodGroup = 'B Positive (B+)';
-  String _selectedCommunityWing = 'North Zone Senior Circle';
 
   // Basic Details controllers
   final TextEditingController _firstNameController = TextEditingController();
@@ -32,25 +68,11 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   final TextEditingController _spouseNameController = TextEditingController();
   final TextEditingController _childrenNamesController = TextEditingController();
 
-  Future<void> _pickProfileImage() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() {
-          _profileImagePath = image.path;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
   // Area Selection state
   String _selectedCountry = 'India';
   String _selectedState = 'Gujarat';
   String _selectedDistrict = 'Ahmedabad';
-  String _selectedArea = 'Borivali';
+  String _selectedArea = 'Satellite';
 
   // Step 3 / Parent Details controllers
   final TextEditingController _fatherNameController = TextEditingController();
@@ -82,60 +104,121 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     super.dispose();
   }
 
-  // --- SELECT VILLAGE MODAL (Image 1) ---
+  Future<void> _pickProfileImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      if (image != null) {
+        setState(() {
+          _profileImagePath = image.path;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  // --- CALENDAR DATE PICKER ---
+  Future<void> _selectBirthDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime initialDate = DateTime(now.year - 24, 1, 1);
+    final DateTime firstDate = DateTime(1920);
+    final DateTime lastDate = now;
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      helpText: 'SELECT DATE OF BIRTH',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE5A93C), // Amber Gold Header
+              onPrimary: Color(0xFF191C21),
+              onSurface: Color(0xFF191C21),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF191C21),
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _birthDateController.text =
+            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      });
+    }
+  }
+
+  // --- SELECT VILLAGE MODAL ---
   void _openSelectVillageModal({required Function(String) onVillageSelected}) {
-    String stateVal = 'Select State';
-    String districtVal = 'Select District';
-    String talukaVal = 'Select Taluka';
+    String stateVal = 'Gujarat';
+    String districtVal = 'Ahmedabad';
+    String talukaVal = 'Daskroi';
     String villageVal = 'Select Village';
-    String customVillage = '';
+    final TextEditingController customVillageCtrl = TextEditingController();
     bool villageNotFound = false;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
+      builder: (modalCtx) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 children: [
-                  // Modal Header Bar (Black)
+                  // Modal Header Bar (Yellow Theme)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      color: Color(0xFF191C21),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
                           icon: const Icon(Icons.close, color: Colors.white, size: 22),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Navigator.of(modalCtx).pop(),
                         ),
                         const Text(
-                          'Select Village',
+                          'Select Native Village',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFFE5A93C),
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Serif',
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.check, color: Colors.white, size: 22),
+                          icon: const Icon(Icons.check_circle_rounded, color: Color(0xFFE5A93C), size: 24),
                           onPressed: () {
-                            String chosen = customVillage.isNotEmpty
-                                ? customVillage
+                            String chosen = customVillageCtrl.text.trim().isNotEmpty
+                                ? customVillageCtrl.text.trim()
                                 : (villageVal != 'Select Village' ? villageVal : 'Thoriyari');
                             onVillageSelected(chosen);
-                            Navigator.of(context).pop();
+                            Navigator.of(modalCtx).pop();
                           },
                         ),
                       ],
@@ -149,56 +232,60 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 1. State Dropdown (Active Orange Border)
+                          _buildLabel('State'),
                           _buildDropdown(
                             value: stateVal,
-                            items: ['Select State', 'Gujarat', 'Rajasthan', 'Maharashtra', 'Madhya Pradesh'],
+                            items: ['Gujarat', 'Rajasthan', 'Maharashtra', 'Madhya Pradesh'],
                             onChanged: (val) => setModalState(() => stateVal = val!),
-                            borderColor: Colors.orange,
+                            borderColor: const Color(0xFFE5A93C),
                           ),
                           const SizedBox(height: 16),
 
-                          // 2. District Dropdown
+                          _buildLabel('District'),
                           _buildDropdown(
                             value: districtVal,
-                            items: ['Select District', 'Kutch', 'Ahmedabad', 'Surat', 'Rajkot', 'Patan'],
+                            items: ['Ahmedabad', 'Kutch', 'Surat', 'Rajkot', 'Patan', 'Vadodara'],
                             onChanged: (val) => setModalState(() => districtVal = val!),
-                            borderColor: Colors.grey.shade300,
+                            borderColor: const Color(0xFFE5A93C),
                           ),
                           const SizedBox(height: 16),
 
-                          // 3. Taluka Dropdown
+                          _buildLabel('Taluka'),
                           _buildDropdown(
                             value: talukaVal,
-                            items: ['Select Taluka', 'Bhuj', 'Mandvi', 'Anjar', 'Gandhidham', 'Nakhatrana'],
+                            items: ['Daskroi', 'Bhuj', 'Mandvi', 'Anjar', 'Gandhidham', 'Nakhatrana', 'Sanand'],
                             onChanged: (val) => setModalState(() => talukaVal = val!),
-                            borderColor: Colors.grey.shade300,
+                            borderColor: const Color(0xFFE5A93C),
                           ),
                           const SizedBox(height: 16),
 
-                          // 4. Village Dropdown
+                          _buildLabel('Popular Villages'),
                           _buildDropdown(
                             value: villageVal,
-                            items: ['Select Village', 'Thoriyari', 'Khedoi', 'Mothala', 'Kothara', 'Tera'],
+                            items: ['Select Village', 'Thoriyari', 'Khedoi', 'Mothala', 'Kothara', 'Tera', 'Bhadreshwar', 'Mundra'],
                             onChanged: (val) => setModalState(() => villageVal = val!),
-                            borderColor: Colors.grey.shade300,
+                            borderColor: const Color(0xFFE5A93C),
                           ),
                           const SizedBox(height: 16),
 
-                          // 5. Type Village TextField
+                          _buildLabel('Or Type Your Village Name'),
                           TextField(
-                            onChanged: (val) => customVillage = val,
+                            controller: customVillageCtrl,
                             decoration: InputDecoration(
-                              hintText: 'Type Village e.g. Thoriyari',
+                              hintText: 'Type native village name e.g. Thoriyari',
                               hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.grey.shade300),
+                                borderSide: const BorderSide(color: Color(0xFFE5A93C)),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.8),
                               ),
                             ),
                           ),
@@ -210,35 +297,36 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                             height: 48,
                             child: ElevatedButton(
                               onPressed: () {
-                                String chosen = customVillage.isNotEmpty
-                                    ? customVillage
+                                String chosen = customVillageCtrl.text.trim().isNotEmpty
+                                    ? customVillageCtrl.text.trim()
                                     : (villageVal != 'Select Village' ? villageVal : 'Thoriyari');
                                 onVillageSelected(chosen);
-                                Navigator.of(context).pop();
+                                Navigator.of(modalCtx).pop();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
+                                backgroundColor: const Color(0xFFE5A93C),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                elevation: 0,
                               ),
                               child: const Text(
-                                'SELECT',
+                                'CONFIRM VILLAGE',
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF191C21),
+                                  fontWeight: FontWeight.w900,
                                   fontSize: 15,
-                                  letterSpacing: 1.0,
+                                  letterSpacing: 0.8,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
 
-                          // Village Not Found Checkbox
                           Row(
                             children: [
                               Checkbox(
                                 value: villageNotFound,
-                                activeColor: Colors.black,
+                                activeColor: const Color(0xFFE5A93C),
+                                checkColor: const Color(0xFF191C21),
                                 onChanged: (val) {
                                   setModalState(() {
                                     villageNotFound = val ?? false;
@@ -246,36 +334,14 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                 },
                               ),
                               const Text(
-                                'Village Not Found ?',
+                                'Village Not Found in list?',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Color(0xFF2C3038),
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 12),
-
-                          // Contact Us Right Aligned
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton.icon(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Contact Support: support@heritage.com')),
-                                );
-                              },
-                              icon: const Icon(Icons.help, size: 16, color: Colors.black87),
-                              label: const Text(
-                                'Contact Us',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),
@@ -285,60 +351,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               ),
             );
           },
-        );
-      },
-    );
-  }
-
-  void _showRegistrationCompleteDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Row(
-            children: const [
-              Icon(Icons.check_circle, color: Colors.green, size: 28),
-              SizedBox(width: 10),
-              Text(
-                'Registration Complete',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E232D),
-                ),
-              ),
-            ],
-          ),
-          content: const Text(
-            'Your registration is complete! Your request has been submitted for admin verification.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF475569), height: 1.4),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                final String userFirstName = _firstNameController.text.trim();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => MembershipRequestScreen(
-                      userName: userFirstName.isNotEmpty ? userFirstName : 'Riya Mehta',
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-              ),
-              child: const Text(
-                'OK',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-            ),
-          ],
         );
       },
     );
@@ -350,140 +362,100 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
+      builder: (modalCtx) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
               height: MediaQuery.of(context).size.height * 0.82,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 children: [
-                  // Modal Header
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      color: Color(0xFF191C21),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
                           icon: const Icon(Icons.close, color: Colors.white, size: 22),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Navigator.of(modalCtx).pop(),
                         ),
                         const Text(
-                          'Select Area',
+                          'Select Current Location',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFFE5A93C),
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Serif',
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.check, color: Colors.white, size: 22),
-                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.check_circle_rounded, color: Color(0xFFE5A93C), size: 24),
+                          onPressed: () {
+                            setState(() {});
+                            Navigator.of(modalCtx).pop();
+                          },
                         ),
                       ],
                     ),
                   ),
-
-                  // Modal Content
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Country',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
+                          _buildLabel('Country'),
                           _buildDropdown(
                             value: _selectedCountry,
                             items: ['India', 'USA', 'UK', 'Canada', 'UAE'],
                             onChanged: (val) => setModalState(() => _selectedCountry = val!),
+                            borderColor: const Color(0xFFE5A93C),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 18),
 
-                          const Text(
-                            'Pincode',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              hintText: 'Postal Pin Code e.g. 400091',
-                              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: Colors.orange, width: 1.5),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: Colors.orange, width: 1.5),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Divider Or
-                          Row(
-                            children: [
-                              Expanded(child: Divider(color: Colors.grey.shade300)),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
-                                child: Text('Or', style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
-                              ),
-                              Expanded(child: Divider(color: Colors.grey.shade300)),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          const Text(
-                            'State',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
+                          _buildLabel('State'),
                           _buildDropdown(
                             value: _selectedState,
-                            items: ['Select State', 'Gujarat', 'Maharashtra', 'Rajasthan', 'Delhi'],
+                            items: ['Gujarat', 'Maharashtra', 'Rajasthan', 'Delhi', 'Karnataka'],
                             onChanged: (val) => setModalState(() => _selectedState = val!),
+                            borderColor: const Color(0xFFE5A93C),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 18),
 
-                          const Text(
-                            'District',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
+                          _buildLabel('District / City'),
                           _buildDropdown(
                             value: _selectedDistrict,
-                            items: ['Select District', 'Ahmedabad', 'Surat', 'Vadodara', 'Mumbai'],
+                            items: ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Mumbai', 'Pune'],
                             onChanged: (val) => setModalState(() => _selectedDistrict = val!),
+                            borderColor: const Color(0xFFE5A93C),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 18),
 
-                          const Text(
-                            'Area',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
+                          _buildLabel('Area / Locality'),
                           TextField(
                             onChanged: (val) => _selectedArea = val,
                             decoration: InputDecoration(
-                              hintText: 'Type Area e.g. Borivali',
-                              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                              hintText: 'Type Area e.g. Satellite, Borivali',
+                              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFFE5A93C)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.8),
                               ),
                             ),
                           ),
@@ -495,15 +467,21 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 setState(() {});
-                                Navigator.of(context).pop();
+                                Navigator.of(modalCtx).pop();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
+                                backgroundColor: const Color(0xFFE5A93C),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                elevation: 0,
                               ),
                               child: const Text(
-                                'Select',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                                'SAVE LOCATION',
+                                style: TextStyle(
+                                  color: Color(0xFF191C21),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
+                                  letterSpacing: 0.8,
+                                ),
                               ),
                             ),
                           ),
@@ -520,18 +498,208 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     );
   }
 
+  // --- VALIDATION HELPERS ---
+  void _validateAndProceedStep1() {
+    if (_maritalStatus == 'Select') {
+      _showWarningSnackBar('Please select your marital status.');
+      return;
+    }
+    setState(() {
+      _currentStep = 2;
+    });
+  }
+
+  void _validateAndProceedStep2() {
+    if (_firstNameController.text.trim().isEmpty) {
+      _showWarningSnackBar('First Name is required.');
+      return;
+    }
+    if (_familySurnameController.text.trim().isEmpty) {
+      _showWarningSnackBar('Family Surname is required.');
+      return;
+    }
+    if (_nativePlaceController.text.trim().isEmpty) {
+      _showWarningSnackBar('Native Place / Village is required.');
+      return;
+    }
+    if (_birthDateController.text.trim().isEmpty) {
+      _showWarningSnackBar('Birth Date is required. Tap to pick from calendar.');
+      return;
+    }
+    if (_selectedOccupation == 'Select') {
+      _showWarningSnackBar('Please select your occupation.');
+      return;
+    }
+    if (_maritalStatus == 'Married' && _spouseNameController.text.trim().isEmpty) {
+      _showWarningSnackBar('Spouse Name is required for married status.');
+      return;
+    }
+
+    setState(() {
+      _currentStep = 3;
+    });
+  }
+
+  void _validateAndSubmitStep3() {
+    if (_fatherNameController.text.trim().isEmpty) {
+      _showWarningSnackBar("Father's Name is required.");
+      return;
+    }
+    if (_motherNameController.text.trim().isEmpty) {
+      _showWarningSnackBar("Mother's Name is required.");
+      return;
+    }
+    if (_fathersFatherNameController.text.trim().isEmpty) {
+      _showWarningSnackBar("Father's Father Name (Grandfather) is required.");
+      return;
+    }
+    if (_mothersFatherNameController.text.trim().isEmpty) {
+      _showWarningSnackBar("Mother's Father Name is required.");
+      return;
+    }
+    if (_mothersFatherVillageController.text.trim().isEmpty) {
+      _showWarningSnackBar("Mother's Father Village is required.");
+      return;
+    }
+
+    // Save All Data Globally to LanguageProvider
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final String fullName = '${_firstNameController.text.trim()} ${_familySurnameController.text.trim()}'.trim();
+
+    lang.submitProfileDetails({
+      'firstName': _firstNameController.text.trim(),
+      'familySurname': _familySurnameController.text.trim(),
+      'officialSurname': _officialSurnameController.text.trim(),
+      'gender': _selectedGender,
+      'maritalStatus': _maritalStatus,
+      'bloodGroup': _selectedBloodGroup,
+      'nativePlace': _nativePlaceController.text.trim(),
+      'birthDate': _birthDateController.text.trim(),
+      'occupation': _selectedOccupation,
+      'spouseName': _spouseNameController.text.trim(),
+      'childrenNames': _childrenNamesController.text.trim(),
+      'country': _selectedCountry,
+      'state': _selectedState,
+      'district': _selectedDistrict,
+      'area': _selectedArea,
+      'fatherName': _fatherNameController.text.trim(),
+      'motherName': _motherNameController.text.trim(),
+      'fathersFatherName': _fathersFatherNameController.text.trim(),
+      'fathersMotherName': _fathersMotherNameController.text.trim(),
+      'mothersFatherName': _mothersFatherNameController.text.trim(),
+      'mothersMotherName': _mothersMotherNameController.text.trim(),
+      'mothersFatherSurname': _mothersFatherSurnameController.text.trim(),
+      'mothersFatherVillage': _mothersFatherVillageController.text.trim(),
+    });
+
+    if (_profileImagePath != null) {
+      lang.setProfileImageUrl(_profileImagePath);
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: Row(
+            children: const [
+              Icon(Icons.check_circle_rounded, color: Color(0xFFE5A93C), size: 30),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Registration Submitted',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF191C21),
+                    fontFamily: 'Serif',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Your registration details have been submitted successfully! Your request is currently under review by community administrators.',
+            style: TextStyle(fontSize: 14, color: Color(0xFF475569), height: 1.45),
+          ),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(dialogCtx).pop();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => MembershipRequestScreen(
+                        userName: fullName.isNotEmpty ? fullName : 'User Profile',
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE5A93C),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'VIEW MEMBERSHIP REQUEST',
+                  style: TextStyle(
+                    color: Color(0xFF191C21),
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showWarningSnackBar(String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.info_outline, color: Color(0xFF191C21)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Color(0xFF191C21),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFE5A93C),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFFAFAFC),
       appBar: AppBar(
-        backgroundColor: _currentStep > 1 ? Colors.black : Colors.white,
-        elevation: 0,
+        backgroundColor: Colors.white,
+        elevation: 0.5,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: _currentStep > 1 ? Colors.white : Colors.black87,
-          ),
+          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF191C21)),
           onPressed: () {
             if (_currentStep > 1) {
               setState(() {
@@ -543,23 +711,34 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
           },
         ),
         title: Text(
-          'Registration Form',
-          style: TextStyle(
-            color: _currentStep > 1 ? Colors.white : Colors.black87,
+          'Registration Form (Step $_currentStep of 3)',
+          style: const TextStyle(
+            color: Color(0xFF191C21),
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 17,
+            fontFamily: 'Serif',
           ),
         ),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: _currentStep > 1 ? Colors.white24 : Colors.grey.shade300,
-              child: Icon(
-                Icons.person,
-                size: 20,
-                color: _currentStep > 1 ? Colors.white : Colors.grey.shade700,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7DB),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE5A93C)),
+              ),
+              child: Center(
+                child: Text(
+                  'Step $_currentStep/3',
+                  style: const TextStyle(
+                    color: Color(0xFF8B6B00),
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11,
+                  ),
+                ),
               ),
             ),
           ),
@@ -568,133 +747,146 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Column(
             children: [
-              // Progress Bar if Step 3
-              if (_currentStep == 3)
-                LinearProgressIndicator(
-                  value: 0.75,
-                  backgroundColor: Colors.grey.shade300,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
-                  minHeight: 4,
-                ),
+              // Golden Step Progress Bar
+              LinearProgressIndicator(
+                value: _currentStep / 3,
+                backgroundColor: Colors.grey.shade200,
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                minHeight: 5,
+              ),
 
               Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(22.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // --- SELECT GENDER ---
-                    const Text(
-                      'Select Gender',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E232D),
+                    // ==========================================
+                    // STEP 1: GENDER & MARITAL STATUS
+                    // ==========================================
+                    if (_currentStep == 1) ...[
+                      const Text(
+                        'Select Gender *',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E232D),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        _buildRadioOption('Male'),
-                        const SizedBox(width: 32),
-                        _buildRadioOption('Female'),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // --- MARITAL STATUS ---
-                    const Text(
-                      'Marital Status',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E232D),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          _buildRadioOption('Male'),
+                          const SizedBox(width: 32),
+                          _buildRadioOption('Female'),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildDropdown(
-                      value: _maritalStatus,
-                      items: ['Select', 'Single', 'Married', 'Divorced', 'Widowed'],
-                      onChanged: (val) {
-                        setState(() {
-                          _maritalStatus = val!;
-                        });
-                      },
-                      borderColor: const Color(0xFF8B6B00),
-                    ),
-                    const SizedBox(height: 28),
+                      const SizedBox(height: 24),
 
-                    // STEP 1 BUTTONS (Submit & Cancel) if Step == 1
-                    if (_currentStep == 1)
+                      const Text(
+                        'Marital Status *',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E232D),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildDropdown(
+                        value: _maritalStatus,
+                        items: ['Single', 'Married', 'Divorced', 'Widowed'],
+                        onChanged: (val) {
+                          setState(() {
+                            _maritalStatus = val!;
+                          });
+                        },
+                        borderColor: const Color(0xFFE5A93C),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // STEP 1 ACTION BUTTONS (Yellow Theme)
                       Row(
                         children: [
                           Expanded(
                             child: SizedBox(
                               height: 48,
                               child: ElevatedButton.icon(
-                                onPressed: () {
-                                  setState(() {
-                                    _currentStep = 2;
-                                  });
-                                },
-                                icon: const Icon(Icons.check_circle_outline, color: Colors.white, size: 18),
+                                onPressed: _validateAndProceedStep1,
+                                icon: const Icon(Icons.arrow_forward_rounded, color: Color(0xFF191C21), size: 18),
                                 label: const Text(
-                                  'Submit',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  'Next Step',
+                                  style: TextStyle(
+                                    color: Color(0xFF191C21),
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 15,
+                                  ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  backgroundColor: const Color(0xFFE5A93C),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  elevation: 0,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          const SizedBox(width: 14),
                           Expanded(
                             child: SizedBox(
                               height: 48,
-                              child: OutlinedButton.icon(
+                              child: OutlinedButton(
                                 onPressed: () => Navigator.of(context).pop(),
-                                icon: const Icon(Icons.cancel_outlined, color: Colors.black87, size: 18),
-                                label: const Text(
-                                  'Cancel',
-                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                                ),
                                 style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: Colors.black, width: 1.2),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  side: BorderSide(color: Colors.grey.shade400),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: Color(0xFF4A4E57),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ],
                       ),
+                    ],
 
-                    // --- STEP 2: BASIC DETAILS ---
-                    if (_currentStep >= 2) ...[
-                      const SizedBox(height: 16),
-                      // Gray Banner Header
+                    // ==========================================
+                    // STEP 2: BASIC DETAILS
+                    // ==========================================
+                    if (_currentStep == 2) ...[
+                      // Yellow Section Banner
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF6E7480),
-                          borderRadius: BorderRadius.circular(4),
+                          color: const Color(0xFFFFF7DB),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFE5A93C)),
                         ),
-                        child: const Text(
-                          'Basic Details',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.person_pin_rounded, color: Color(0xFF8B6B00), size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Personal & Community Details',
+                              style: TextStyle(
+                                color: Color(0xFF8B6B00),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      // Upload Photo Box (Interactive Gallery Picker)
+                      // Upload Photo Box
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -703,7 +895,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Upload Photo',
+                                  'Profile Photo (Optional)',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
@@ -712,11 +904,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                 ),
                                 SizedBox(height: 2),
                                 Text(
-                                  'Tap to choose from local device storage',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey,
-                                  ),
+                                  'Choose from device gallery',
+                                  style: TextStyle(fontSize: 11, color: Colors.grey),
                                 ),
                               ],
                             ),
@@ -726,12 +915,12 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                             child: Stack(
                               children: [
                                 Container(
-                                  width: 80,
-                                  height: 80,
+                                  width: 74,
+                                  height: 74,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
+                                    color: const Color(0xFFFFF7DB),
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: Colors.grey.shade400),
+                                    border: Border.all(color: const Color(0xFFE5A93C), width: 1.5),
                                     image: _profileImagePath != null
                                         ? DecorationImage(
                                             image: FileImage(File(_profileImagePath!)),
@@ -740,7 +929,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                         : null,
                                   ),
                                   child: _profileImagePath == null
-                                      ? const Icon(Icons.person, size: 48, color: Colors.grey)
+                                      ? const Icon(Icons.person_rounded, size: 40, color: Color(0xFF8B6B00))
                                       : null,
                                 ),
                                 Positioned(
@@ -749,13 +938,13 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                   child: Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: const BoxDecoration(
-                                      color: Colors.black,
+                                      color: Color(0xFFE5A93C),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
-                                      _profileImagePath != null ? Icons.edit : Icons.add,
-                                      color: Colors.white,
-                                      size: 16,
+                                      _profileImagePath != null ? Icons.edit : Icons.add_a_photo,
+                                      color: const Color(0xFF191C21),
+                                      size: 14,
                                     ),
                                   ),
                                 ),
@@ -766,24 +955,23 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      _buildLabel('First Name'),
-                      _buildTextField(_firstNameController, 'Enter first name'),
-                      const SizedBox(height: 16),
+                      _buildLabel('First Name *'),
+                      _buildTextField(_firstNameController, 'Enter your first name'),
+                      const SizedBox(height: 14),
 
-                      _buildLabel('Family Surname'),
-                      _buildTextField(_familySurnameController, 'Enter family surname'),
-                      const SizedBox(height: 16),
+                      _buildLabel('Family Surname *'),
+                      _buildTextField(_familySurnameController, 'Enter family surname (e.g. Patel, Shah)'),
+                      const SizedBox(height: 14),
 
-                      _buildLabel('Official Surname if Different'),
+                      _buildLabel('Official Surname if Different (Optional)'),
                       _buildTextField(_officialSurnameController, 'Enter official surname'),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       // BLOOD GROUP DROPDOWN
-                      _buildLabel('Blood Group'),
+                      _buildLabel('Blood Group *'),
                       _buildDropdown(
                         value: _selectedBloodGroup,
                         items: [
-                          'Select',
                           'B Positive (B+)',
                           'A Positive (A+)',
                           'O Positive (O+)',
@@ -798,43 +986,24 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                             _selectedBloodGroup = val!;
                           });
                         },
-                        borderColor: const Color(0xFF8B6B00),
+                        borderColor: const Color(0xFFE5A93C),
                       ),
-                      const SizedBox(height: 16),
-
-                      // COMMUNITY WING DROPDOWN
-                      _buildLabel('Community Wing'),
-                      _buildDropdown(
-                        value: _selectedCommunityWing,
-                        items: [
-                          'North Zone Senior Circle',
-                          'Youth Wing',
-                          'Women Circle',
-                          'General Member',
-                        ],
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedCommunityWing = val!;
-                          });
-                        },
-                        borderColor: const Color(0xFF8B6B00),
-                      ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       // SPOUSE NAME FIELD (if Married)
                       if (_maritalStatus == 'Married') ...[
-                        _buildLabel('Spouse Name'),
+                        _buildLabel('Spouse Name *'),
                         _buildTextField(_spouseNameController, 'Enter spouse name e.g. Meena Patel'),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                       ],
 
                       // CHILDREN NAMES FIELD
                       _buildLabel('Children Names (Optional)'),
-                      _buildTextField(_childrenNamesController, 'e.g. Rajesh, Anjali'),
-                      const SizedBox(height: 16),
+                      _buildTextField(_childrenNamesController, 'e.g. Aarav, Ananya'),
+                      const SizedBox(height: 14),
 
                       // NATIVE PLACE / VILLAGE (Tapping opens Select Village Modal)
-                      _buildLabel('Native Place / Village'),
+                      _buildLabel('Native Place / Village *'),
                       InkWell(
                         onTap: () => _openSelectVillageModal(
                           onVillageSelected: (village) {
@@ -846,19 +1015,29 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                         child: IgnorePointer(
                           child: _buildTextField(
                             _nativePlaceController,
-                            'Select native place or village',
-                            prefixIcon: const Icon(Icons.location_on_outlined, color: Colors.grey, size: 20),
+                            'Tap to select native place or village',
+                            prefixIcon: const Icon(Icons.location_on, color: Color(0xFFE5A93C), size: 20),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
-                      _buildLabel('Birth Date'),
-                      _buildTextField(_birthDateController, 'mm/dd/yyyy'),
-                      const SizedBox(height: 16),
+                      // BIRTH DATE WITH CALENDAR
+                      _buildLabel('Date of Birth (DD/MM/YYYY) *'),
+                      InkWell(
+                        onTap: () => _selectBirthDate(context),
+                        child: IgnorePointer(
+                          child: _buildTextField(
+                            _birthDateController,
+                            'Tap to choose birth date from calendar',
+                            prefixIcon: const Icon(Icons.calendar_month_rounded, color: Color(0xFFE5A93C), size: 20),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
 
-                      // OCCUPATION DROPDOWN (Image 2 + Extra Options)
-                      _buildLabel('Occupation'),
+                      // OCCUPATION DROPDOWN
+                      _buildLabel('Occupation *'),
                       _buildDropdown(
                         value: _selectedOccupation,
                         items: [
@@ -868,22 +1047,16 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           'House Wife',
                           'Student',
                           'Retired',
-                          'Diksha',
-                          'Baby / Pre School',
                           'Business',
-                          'Service',
-                          'Stock Market',
-                          'Accountant',
-                          'Acting Professional',
+                          'Service / Corporate',
+                          'Stock Market / Finance',
+                          'Accountant / CA',
                           'Doctor / Medical',
-                          'Engineer',
+                          'Engineer / IT',
                           'Teacher / Professor',
                           'Lawyer / Advocate',
                           'Farmer / Agriculture',
-                          'Software / IT Professional',
-                          'Architect / Interior Designer',
                           'Real Estate',
-                          'Consultant',
                           'Other',
                         ],
                         onChanged: (val) {
@@ -891,128 +1064,127 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                             _selectedOccupation = val!;
                           });
                         },
-                        borderColor: const Color(0xFF8B6B00),
+                        borderColor: const Color(0xFFE5A93C),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
-                      // Select Area Trigger Button
+                      // Current Location Selection
+                      _buildLabel('Current Residence Location *'),
                       OutlinedButton.icon(
                         onPressed: _openSelectAreaModal,
-                        icon: const Icon(Icons.location_on_outlined, color: Colors.black87),
-                        label: Text(
-                          _selectedArea.isNotEmpty
-                              ? 'Selected Area: $_selectedArea, $_selectedDistrict'
-                              : 'Select Area / Location',
-                          style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+                        icon: const Icon(Icons.pin_drop_rounded, color: Color(0xFF8B6B00)),
+                        label: Expanded(
+                          child: Text(
+                            'Location: $_selectedArea, $_selectedDistrict, $_selectedState',
+                            style: const TextStyle(color: Color(0xFF191C21), fontWeight: FontWeight.w600, fontSize: 13),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 48),
-                          side: BorderSide(color: Colors.grey.shade400),
+                          side: const BorderSide(color: Color(0xFFE5A93C), width: 1.2),
+                          backgroundColor: const Color(0xFFFFFDF7),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                       ),
-                      const SizedBox(height: 28),
-
-                      if (_currentStep == 2)
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _currentStep = 3;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                            child: const Text(
-                              'Continue Registration',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                    ],
-
-                    // --- STEP 3: PARENT DETAILS ---
-                    if (_currentStep == 3) ...[
                       const SizedBox(height: 24),
 
-                      // Section Banner (PARENT DETAILS)
+                      // STEP 2 CONTINUE BUTTON
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _validateAndProceedStep2,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE5A93C),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            elevation: 0,
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Continue to Family Details',
+                                style: TextStyle(
+                                  color: Color(0xFF191C21),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(Icons.arrow_forward_rounded, color: Color(0xFF191C21), size: 18),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    // ==========================================
+                    // STEP 3: PARENT DETAILS
+                    // ==========================================
+                    if (_currentStep == 3) ...[
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE2E4E8),
-                          borderRadius: BorderRadius.circular(4),
+                          color: const Color(0xFFFFF7DB),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFE5A93C)),
                         ),
-                        child: Row(
-                          children: const [
-                            Icon(Icons.account_tree_outlined, color: Color(0xFF4A505C), size: 20),
-                            SizedBox(width: 10),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.family_restroom_rounded, color: Color(0xFF8B6B00), size: 20),
+                            SizedBox(width: 8),
                             Text(
-                              'PARENT DETAILS',
+                              'Parents & Ancestral Heritage Details',
                               style: TextStyle(
-                                color: Color(0xFF4A505C),
-                                fontSize: 13,
+                                color: Color(0xFF8B6B00),
+                                fontSize: 14,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 0.8,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      _buildLabel('Father Name'),
-                      _buildTextField(_fatherNameController, 'Enter full name'),
-                      const SizedBox(height: 16),
+                      _buildLabel("Father's Full Name *"),
+                      _buildTextField(_fatherNameController, 'Enter father full name'),
+                      const SizedBox(height: 14),
 
-                      _buildLabel('Mother Name'),
-                      _buildTextField(_motherNameController, 'Enter full name'),
-                      const SizedBox(height: 16),
+                      _buildLabel("Mother's Full Name *"),
+                      _buildTextField(_motherNameController, 'Enter mother full name'),
+                      const SizedBox(height: 14),
 
-                      _buildLabel("Father's Father Name"),
+                      _buildLabel("Father's Father Name (Grandfather) *"),
                       _buildTextField(_fathersFatherNameController, "Enter grandfather's name"),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
-                      _buildLabel("Father's Mother Name"),
+                      _buildLabel("Father's Mother Name (Grandmother)"),
                       _buildTextField(_fathersMotherNameController, "Enter grandmother's name"),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      // Dashed Divider
-                      Row(
-                        children: List.generate(
-                          30,
-                          (index) => Expanded(
-                            child: Container(
-                              height: 1,
-                              color: index % 2 == 0 ? Colors.grey.shade400 : Colors.transparent,
-                            ),
-                          ),
-                        ),
+                      // Yellow Accent Divider
+                      Container(
+                        height: 1.5,
+                        color: const Color(0xFFE5A93C).withValues(alpha: 0.3),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      _buildLabel("Mother's Father Name"),
-                      _buildTextField(
-                        _mothersFatherNameController,
-                        "Enter maternal grandfather's name",
-                        borderColor: Colors.orange,
-                      ),
-                      const SizedBox(height: 16),
+                      _buildLabel("Mother's Father Name (Maternal Grandfather) *"),
+                      _buildTextField(_mothersFatherNameController, "Enter maternal grandfather's name"),
+                      const SizedBox(height: 14),
 
-                      _buildLabel("Mother's Mother Name"),
+                      _buildLabel("Mother's Mother Name (Maternal Grandmother)"),
                       _buildTextField(_mothersMotherNameController, "Enter maternal grandmother's name"),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       _buildLabel("Mother's Father Surname"),
                       _buildTextField(_mothersFatherSurnameController, "Enter maternal family surname"),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
-                      // MOTHER'S FATHER VILLAGE (Tapping opens Select Village Modal)
-                      _buildLabel("Mother's Father Village"),
+                      // MOTHER'S FATHER VILLAGE
+                      _buildLabel("Mother's Father Native Village *"),
                       InkWell(
                         onTap: () => _openSelectVillageModal(
                           onVillageSelected: (village) {
@@ -1024,51 +1196,61 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                         child: IgnorePointer(
                           child: _buildTextField(
                             _mothersFatherVillageController,
-                            'Search village name',
-                            prefixIcon: const Icon(Icons.location_on_outlined, color: Colors.grey, size: 20),
+                            'Tap to select maternal village name',
+                            prefixIcon: const Icon(Icons.location_on, color: Color(0xFFE5A93C), size: 20),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 28),
 
-                      // Submit Details ➢ Button
+                      // Submit Details Button (Yellow Theme)
                       SizedBox(
                         width: double.infinity,
-                        height: 52,
+                        height: 50,
                         child: ElevatedButton(
-                          onPressed: _showRegistrationCompleteDialog,
+                          onPressed: _validateAndSubmitStep3,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            backgroundColor: const Color(0xFFE5A93C),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            elevation: 0,
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Text(
-                                'Submit Details',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                'SUBMIT REGISTRATION',
+                                style: TextStyle(
+                                  color: Color(0xFF191C21),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                               SizedBox(width: 8),
-                              Icon(Icons.send_outlined, color: Colors.white, size: 18),
+                              Icon(Icons.check_circle_rounded, color: Color(0xFF191C21), size: 20),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 12),
 
                       // Cancel Button
                       SizedBox(
                         width: double.infinity,
-                        height: 48,
+                        height: 46,
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.black, width: 1.2),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            side: BorderSide(color: Colors.grey.shade400),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           ),
                           child: const Text(
                             'Cancel',
-                            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 15),
+                            style: TextStyle(
+                              color: Color(0xFF4A4E57),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
@@ -1094,23 +1276,23 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
       child: Row(
         children: [
           Container(
-            width: 20,
-            height: 20,
+            width: 22,
+            height: 22,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: isSelected ? const Color(0xFF8B6B00) : Colors.grey.shade500,
+                color: isSelected ? const Color(0xFFE5A93C) : Colors.grey.shade400,
                 width: 2,
               ),
             ),
             child: isSelected
                 ? Center(
                     child: Container(
-                      width: 10,
-                      height: 10,
+                      width: 11,
+                      height: 11,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFF8B6B00),
+                        color: Color(0xFFE5A93C),
                       ),
                     ),
                   )
@@ -1121,8 +1303,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
             label,
             style: const TextStyle(
               fontSize: 14,
-              color: Color(0xFF2C3038),
-              fontWeight: FontWeight.w500,
+              color: Color(0xFF191C21),
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -1137,24 +1319,24 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     Color? borderColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: borderColor ?? const Color(0xFF8B6B00), width: 1.2),
+        border: Border.all(color: borderColor ?? const Color(0xFFE5A93C), width: 1.2),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: items.contains(value) ? value : items.first,
           isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF8B6B00)),
           onChanged: onChanged,
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
               child: Text(
                 item,
-                style: const TextStyle(fontSize: 14, color: Color(0xFF2C3038)),
+                style: const TextStyle(fontSize: 14, color: Color(0xFF191C21), fontWeight: FontWeight.w500),
               ),
             );
           }).toList(),
@@ -1185,11 +1367,15 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   }) {
     return TextField(
       controller: controller,
+      textInputAction: TextInputAction.next,
+      style: const TextStyle(fontSize: 14, color: Color(0xFF191C21)),
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        filled: true,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: borderColor ?? Colors.grey.shade300),
@@ -1200,7 +1386,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: borderColor ?? Colors.black87, width: 1.5),
+          borderSide: const BorderSide(color: Color(0xFFE5A93C), width: 1.8),
         ),
       ),
     );

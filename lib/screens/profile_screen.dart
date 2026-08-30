@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'home_screen.dart';
 import 'registration_form_screen.dart';
@@ -37,6 +39,102 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  String _getProfileDetailLabel(String key, bool isGu) {
+    if (!isGu) return key;
+    switch (key) {
+      case 'Personal Details': return 'વ્યક્તિગત વિગતો';
+      case 'Religion': return 'ધર્મ';
+      case 'Birth Place': return 'જન્મ સ્થળ';
+      case 'Birth Time': return 'જન્મ સમય';
+      case 'Manglik': return 'મંગળિક';
+      case 'Native Place': return 'વતન';
+      case 'Blood Group': return 'બ્લડ ગ્રુપ';
+      case 'Matrimony': return 'લગ્ન વિગતો';
+      case 'Marital Status': return 'વૈવાહિક સ્થિતિ';
+      case 'Birth Date': return 'જન્મ તારીખ';
+      case 'Height': return 'ઊંચાઈ';
+      case 'Weight': return 'વજન';
+      case 'Annual Income': return 'વાર્ષિક આવક';
+      case 'Home Ownership': return 'ઘરની માલિકી';
+      case 'Education &\nOccupation': return 'શિક્ષણ અને\nવ્યવસાય';
+      case 'Education Level': return 'શિક્ષણ સ્તર';
+      case 'Education Detail': return 'શિક્ષણ વિગત';
+      case 'Occupation': return 'વ્યવસાય';
+      case 'Occupation Detail': return 'વ્યવસાય વિગત';
+      case 'Location Details': return 'સ્થાનની વિગતો';
+      case 'City': return 'શહેર';
+      case 'Area': return 'વિસ્તાર';
+      case 'Pin Code': return 'પિન કોડ';
+      case 'Contact Information': return 'સંપર્ક માહિતી';
+      case 'Cell Phone': return 'મોબાઈલ ફોન';
+      case 'Email Address': return 'ઈમેઈલ સરનામું';
+      case 'Full Address': return 'પૂરું સરનામું';
+      case 'Other Details': return 'અન્ય વિગતો';
+      case 'Hobby': return 'શોખ';
+      case 'Diet': return 'ખોરાક';
+      case 'Drink Alcohol': return 'દારૂનું સેવન';
+      case 'Smoke': return 'ધૂમ્રપાન';
+      case 'Tobacco': return 'તંબાકુ';
+      case 'Body Type': return 'શરીર પ્રકાર';
+      case 'Physical Disability': return 'શારીરિક વિકલાંગતા';
+      case 'Health Problem': return 'આરોગ્ય સમસ્યા';
+      case 'About Me': return 'મારા વિશે';
+      default: return key;
+    }
+  }
+
+  String _getProfileDetailValue(String val, bool isGu) {
+    if (!isGu) return val;
+    if (val == '-') return '-';
+    switch (val) {
+      case 'Single': return 'અનપરીણિત (એકલ)';
+      case 'Satara Road': return 'સાતારા રોડ';
+      case '24 May 2005': return '૨૪ મે ૨૦૦૫';
+      case 'B.E./B.Tech (Engineering)': return 'બી.ઈ./બી.ટેક (એન્જિનિયરિંગ)';
+      case 'Student': return 'વિદ્યાર્થી';
+      case 'Maharashtra, India': return 'મહારાષ્ટ્ર, ભારત';
+      case 'Thane Region': return 'ઠાણે પ્રદેશ';
+      case 'Thane': return 'ઠાણે';
+      case 'Nala Sopara East': return 'નાલા સોપારા ઇસ્ટ';
+      case '401209': return '૪૦૧૨૦૯';
+      case '8010594617': return '૮૦૧૦૫૯૪૬૧૭';
+      case 'No additional information provided.': return 'કોઈ વધારાની માહિતી આપી નથી.';
+      default: return val;
+    }
+  }
+
+
+  String _getNameLabel(String name, bool isGu) {
+    if (!isGu) return name;
+    if (name.contains('Soham')) return 'સોહમ આદિત્ય મોરે';
+    if (name.contains('Aaditya')) return 'આદિત્ય શાંતનુ';
+    if (name.contains('Vaishali')) return 'બૈશાલી';
+    if (name.contains('Riya')) return 'રિયા આદિત્ય મોરે';
+    if (name.contains('Shantanu')) return 'શાંતનુ મોરે';
+    return name;
+  }
+
+  String _getRelationLabel(String relation, bool isGu) {
+    if (!isGu) return relation;
+    switch (relation) {
+      case 'Father': return 'પિતા';
+      case 'Mother': return 'માતા';
+      case 'Sister': return 'બહેન';
+      case 'Brother': return 'ભાઈ';
+      case 'Spouse': return 'જીવનસાથી';
+      case 'Wife': return 'પત્ની';
+      case 'Grandfather': return 'દાદા';
+      case 'Self (You)': return 'પોતે (તમે)';
+      default: return relation;
+    }
+  }
+
+  String _getHeightLabel(String height, bool isGu) {
+    if (!isGu) return height;
+    return height.replaceAll('ft', 'ફૂટ').replaceAll('in', 'ઇંચ').replaceAll('5', '૫').replaceAll('6', '૬').replaceAll('4', '૪').replaceAll('7', '૭').replaceAll('8', '૮').replaceAll('9', '૯').replaceAll('10', '૧૦').replaceAll('11', '૧૧').replaceAll('0', '૦');
+  }
+
   late int _activeTab; // 0: Family, 1: Profile Details, 2: Contact
   String _userHeight = "5 ft 10 in";
   String? _selectedImage;
@@ -66,6 +164,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // STEP 1: Popup 1 Selection Dialog (Matching Image 1)
   void _showAddFamilyMemberDialog() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     showDialog(
       context: context,
       builder: (dialogCtx) {
@@ -171,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildAddOptionItem(
                     dialogCtx,
                     icon: Icons.female_outlined,
-                    title: 'Add Wife',
+                    title: isGu ? 'પત્ની ઉમેરો' : 'Add Wife',
                     onTap: () {
                       Navigator.pop(dialogCtx);
                       _showAddMemberFormDialog('Wife');
@@ -180,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildAddOptionItem(
                     dialogCtx,
                     icon: Icons.person_add_alt_1_outlined,
-                    title: 'Add Brother',
+                    title: isGu ? 'ભાઈ ઉમેરો' : 'Add Brother',
                     onTap: () {
                       Navigator.pop(dialogCtx);
                       _showAddMemberFormDialog('Brother');
@@ -189,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildAddOptionItem(
                     dialogCtx,
                     icon: Icons.female_outlined,
-                    title: 'Add Sister',
+                    title: isGu ? 'બહેન ઉમેરો' : 'Add Sister',
                     onTap: () {
                       Navigator.pop(dialogCtx);
                       _showAddMemberFormDialog('Sister');
@@ -198,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildAddOptionItem(
                     dialogCtx,
                     icon: Icons.person_add_alt_1_outlined,
-                    title: 'Add Father',
+                    title: isGu ? 'પિતા ઉમેરો' : 'Add Father',
                     onTap: () {
                       Navigator.pop(dialogCtx);
                       _showAddMemberFormDialog('Father');
@@ -207,7 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildAddOptionItem(
                     dialogCtx,
                     icon: Icons.female_outlined,
-                    title: 'Add Mother',
+                    title: isGu ? 'માતા ઉમેરો' : 'Add Mother',
                     onTap: () {
                       Navigator.pop(dialogCtx);
                       _showAddMemberFormDialog('Mother');
@@ -235,8 +335,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
-                              'CONNECT',
+                            child: Text(
+                              isGu ? 'સંપર્ક કરો' : 'CONNECT',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -261,8 +361,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
-                              'DELETE',
+                            child: Text(
+                              isGu ? 'કાઢી નાખો' : 'DELETE',
                               style: TextStyle(
                                 color: Color(0xFFE11D48),
                                 fontWeight: FontWeight.bold,
@@ -329,6 +429,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // STEP 2: Popup 2 Input Dialog for Adding Member (Matching Image 2)
   void _showAddMemberFormDialog(String relation) {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     final nameController = TextEditingController();
 
     showDialog(
@@ -398,7 +500,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   // Heading Title: "Add [Relation] of Soham Aaditya More"
                   Text(
-                    'Add $relation of Soham Aaditya More',
+                    isGu ? 'સોહમ આદિત્ય મોરે ના ${_getRelationLabel(relation, isGu)} ઉમેરો' : 'Add $relation of Soham Aaditya More',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: 'Serif',
@@ -414,7 +516,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "$relation's Name",
+                      isGu ? '${_getRelationLabel(relation, isGu)} નું નામ' : "$relation's Name",
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
@@ -429,7 +531,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     controller: nameController,
                     autofocus: true,
                     decoration: InputDecoration(
-                      hintText: 'Enter full name',
+                      hintText: isGu ? 'પૂરું નામ દાખલ કરો' : 'Enter full name',
                       hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       border: OutlineInputBorder(
@@ -452,7 +554,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Please enter the maiden name or current legal name.',
+                      isGu ? 'કૃપા કરીને પૂર્વાશ્રમનું નામ અથવા વર્તમાન કાનૂની નામ દાખલ કરો.' : 'Please enter the maiden name or current legal name.',
                       style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey.shade500,
@@ -496,11 +598,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 16),
-                          SizedBox(width: 8),
+                        children: [
+                          const Icon(Icons.person_add_alt_1_outlined, color: Colors.white, size: 16),
+                          const SizedBox(width: 8),
                           Text(
-                            'ADD',
+                            isGu ? 'ઉમેરો' : 'ADD',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -526,8 +628,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(22),
                         ),
                       ),
-                      child: const Text(
-                        'Cancel',
+                      child: Text(
+                        isGu ? 'રદ કરો' : 'Cancel',
                         style: TextStyle(
                           color: Color(0xFF1E232D),
                           fontWeight: FontWeight.w600,
@@ -546,6 +648,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showUpdateHeightDialog() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     final List<String> heights = [
       '5 ft 4 in',
       '5 ft 5 in',
@@ -584,8 +688,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Update Height',
+              Text(
+                isGu ? 'ઊંચાઈ અપડેટ કરો' : 'Update Height',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -594,8 +698,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Select your current height from the list below',
+              Text(
+                isGu ? 'નીચેની યાદીમાંથી તમારી વર્તમાન ઊંચાઈ પસંદ કરો' : 'Select your current height from the list below',
                 style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
               ),
               const SizedBox(height: 16),
@@ -608,7 +712,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final isSelected = h == _userHeight;
                     return ListTile(
                       title: Text(
-                        h,
+                        _getHeightLabel(h, isGu),
                         style: TextStyle(
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected ? const Color(0xFF856404) : Colors.black87,
@@ -655,22 +759,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     final String displayName = (widget.userName != null && widget.userName!.isNotEmpty)
         ? widget.userName!
         : 'Soham Aaditya More';
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => HomeScreen(userName: widget.userName),
+            ),
+          );
+        }
+      },
+      child: Scaffold(
         backgroundColor: const Color(0xFFF7F8FA),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232D)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF7F8FA),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232D)),
+            onPressed: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => HomeScreen(userName: widget.userName),
+                  ),
+                );
+              }
+            },
+          ),
         title: Text(
-          _activeTab == 1 ? 'Profile Details' : 'Heritage Luxe',
+          _activeTab == 1 ? (isGu ? 'પ્રોફાઇલ વિગતો' : 'Profile Details') : (isGu ? 'હેરિટેજ એપ' : 'Heritage App'),
           style: const TextStyle(
             color: Color(0xFF1E232D),
             fontFamily: 'Serif',
@@ -784,11 +914,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.qr_code_2_outlined, color: Colors.white, size: 20),
-                      SizedBox(width: 8),
+                    children: [
+                      const Icon(Icons.qr_code_2_outlined, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'See Family Tree',
+                        isGu ? 'વંશાવલી જુઓ' : 'See Family Tree',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -842,11 +972,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         currentIndex: 3,
         userName: widget.userName,
       ),
+    ),
     );
   }
 
   // HERO PROFILE CARD WIDGET
   Widget _buildHeroProfileCard(String displayName) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       width: double.infinity,
       height: 320,
@@ -905,7 +1038,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    displayName,
+                    _getNameLabel(displayName, isGu),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
@@ -923,9 +1056,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         size: 16,
                       ),
                       const SizedBox(width: 6),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Satara Road, Nala Sopara East',
+                          isGu ? 'સાતારા રોડ, નાલા સોપારા ઇસ્ટ' : 'Satara Road, Nala Sopara East',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 13,
@@ -937,29 +1070,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   if (_activeTab == 0) ...[
                     const SizedBox(height: 14),
-                    ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Connect request sent!')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFDF7D),
-                        foregroundColor: Colors.black,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+                    Row(
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const RegistrationFormScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit_note_rounded, size: 18, color: Color(0xFF1E232D)),
+                          label: Text(
+                            isGu ? 'પ્રોફાઇલ એડિટ કરો' : 'Edit Profile',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: Color(0xFF1E232D),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFDF7D),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Connect',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: Colors.black87,
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.white30),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.verified, color: Color(0xFF60A5FA), size: 16),
+                              const SizedBox(width: 4),
+                              Text(
+                                isGu ? 'ચકાસાયેલ' : 'Verified',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ],
@@ -973,6 +1135,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ACTION CARD: Add Profile Media
   Widget _buildAddMediaCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1009,9 +1173,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(width: 14),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Add Profile Media',
+                    isGu ? 'પ્રોફાઇલ મીડિયા ઉમેરો' : 'Add Profile Media',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -1034,6 +1198,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ACTION CARD: Update Height
   Widget _buildUpdateHeightCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF1F3F8),
@@ -1069,8 +1235,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Row(
                         children: [
-                          const Text(
-                            'Update Height',
+                          Text(
+                            isGu ? 'ઊંચાઈ અપડેટ કરો' : 'Update Height',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -1085,7 +1251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              _userHeight,
+                              _getHeightLabel(_userHeight, isGu),
                               style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -1096,8 +1262,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'Keep your profile current',
+                      Text(
+                        isGu ? 'તમારી પ્રોફાઇલ વર્તમાન રાખો' : 'Keep your profile current',
                         style: TextStyle(
                           fontSize: 12,
                           color: Color(0xFF6B7280),
@@ -1129,7 +1295,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // TAB HEADER (Family, Profile Details, Contact)
   Widget _buildTabHeader() {
-    final tabs = ['Family', 'Profile Details', 'Contact'];
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+    final tabs = [isGu ? 'પરિવાર' : 'Family', isGu ? 'પ્રોફાઇલ વિગતો' : 'Profile Details', isGu ? 'સંપર્ક' : 'Contact'];
 
     return Row(
       children: List.generate(tabs.length, (index) {
@@ -1165,6 +1333,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // FAMILY TAB CONTENT
   Widget _buildFamilyTabContent() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1172,8 +1342,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Immediate\nFamily',
+            Text(
+              isGu ? 'પ્રાથમિક\nપરિવાર' : 'Immediate\nFamily',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -1185,11 +1355,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             GestureDetector(
               onTap: _showAddFamilyMemberDialog,
               child: Row(
-                children: const [
-                  Icon(Icons.person_add_alt_1_outlined, color: Color(0xFF856404), size: 18),
-                  SizedBox(width: 6),
+                children: [
+                  const Icon(Icons.person_add_alt_1_outlined, color: Color(0xFF856404), size: 18),
+                  const SizedBox(width: 6),
                   Text(
-                    'Add Family\nMember',
+                    isGu ? 'પરિવારના સભ્ય\nઉમેરો' : 'Add Family\nMember',
                     textAlign: TextAlign.end,
                     style: TextStyle(
                       fontSize: 13,
@@ -1299,12 +1469,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // CONTACT TAB CONTENT (Matching Contact Details Screenshots 1 & 2)
   Widget _buildContactTabContent() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 1. Header Title & Subtitle
-        const Text(
-          'Contact Details',
+        Text(
+          isGu ? 'સંપર્ક વિગતો' : 'Contact Details',
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -1313,8 +1485,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
-          'Manage your verified communication channels and addresses.',
+        Text(
+          isGu ? 'તમારા ચકાસાયેલ સંચાર ચેનલો અને સરનામાંઓ સંચાલિત કરો.' : 'Manage your verified communication channels and addresses.',
           style: TextStyle(
             fontSize: 13,
             color: Color(0xFF6B7280),
@@ -1342,6 +1514,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // CARD 1: MOBILE CONNECTIVITY
   Widget _buildMobileConnectivityCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -1362,9 +1536,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Header Row with Signal/Tower Icon on Right
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
-                'MOBILE CONNECTIVITY',
+                isGu ? 'મોબાઈલ કનેક્ટિવિટી' : 'MOBILE CONNECTIVITY',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -1394,9 +1568,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'CELL PHONE',
+                      isGu ? 'મોબાઈલ ફોન' : 'CELL PHONE',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -1406,7 +1580,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '8010594617',
+                      isGu ? '૮૦૧૦૫૯૪૬૧૭' : '8010594617',
                       style: TextStyle(
                         fontFamily: 'Serif',
                         fontSize: 20,
@@ -1435,8 +1609,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
 
           // SECONDARY CELL
-          const Text(
-            'SECONDARY CELL',
+          Text(
+            isGu ? 'સેકન્ડરી સેલ' : 'SECONDARY CELL',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -1445,8 +1619,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            '— Not Provided —',
+          Text(
+            isGu ? '— આપેલ નથી —' : '— Not Provided —',
             style: TextStyle(
               fontSize: 13,
               color: Color(0xFF94A3B8),
@@ -1456,8 +1630,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 18),
 
           // HOME PHONE
-          const Text(
-            'HOME PHONE',
+          Text(
+            isGu ? 'ઘરનો ફોન' : 'HOME PHONE',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -1466,8 +1640,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            '— Not Provided —',
+          Text(
+            isGu ? '— આપેલ નથી —' : '— Not Provided —',
             style: TextStyle(
               fontSize: 13,
               color: Color(0xFF94A3B8),
@@ -1481,6 +1655,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // CARD 2: COMMUNICATION (Dark Navy Card)
   Widget _buildCommunicationCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -1500,15 +1676,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           // Header Row
           Row(
-            children: const [
-              Icon(
+            children: [
+              const Icon(
                 Icons.mail_outline,
                 color: Color(0xFFFDE047),
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                'COMMUNICATION',
+                isGu ? 'સંચાર' : 'COMMUNICATION',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -1521,8 +1697,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
 
           // EMAIL ADDRESS
-          const Text(
-            'EMAIL ADDRESS',
+          Text(
+            isGu ? 'ઈમેઈલ સરનામું' : 'EMAIL ADDRESS',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -1531,8 +1707,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            '— No email linked —',
+          Text(
+            isGu ? '— કોઈ ઈમેઈલ લિંક નથી —' : '— No email linked —',
             style: TextStyle(
               fontSize: 13,
               color: Color(0xFF94A3B8),
@@ -1545,8 +1721,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 16),
 
           // Note Text
-          const Text(
-            'Keep your contact information updated to receive exclusive invitations and community updates.',
+          Text(
+            isGu ? 'એક્સક્લુસિવ આમંત્રણો અને કોમ્યુનિટી અપડેટ્સ મેળવવા માટે તમારી સંપર્ક માહિતી અપડેટ રાખો.' : 'Keep your contact information updated to receive exclusive invitations and community updates.',
             style: TextStyle(
               fontSize: 12,
               color: Color(0xFF94A3B8),
@@ -1570,8 +1746,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(22),
                 ),
               ),
-              child: const Text(
-                'Add Email',
+              child: Text(
+                isGu ? 'ઈમેઈલ ઉમેરો' : 'Add Email',
                 style: TextStyle(
                   color: Color(0xFF1E232D),
                   fontWeight: FontWeight.bold,
@@ -1587,6 +1763,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // CARD 3: RESIDENTIAL ADDRESS
   Widget _buildResidentialAddressCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -1606,15 +1784,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           // Header Row
           Row(
-            children: const [
-              Icon(
+            children: [
+              const Icon(
                 Icons.location_on_outlined,
                 color: Color(0xFF1E232D),
                 size: 20,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                'RESIDENTIAL ADDRESS',
+                isGu ? 'રહેઠાણનું સરનામું' : 'RESIDENTIAL ADDRESS',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -1636,9 +1814,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               border: Border.all(color: const Color(0xFFEFF6FF)),
             ),
             child: Column(
-              children: const [
+              children: [
                 Text(
-                  '— Address not verified —',
+                  isGu ? '— સરનામું ચકાસાયેલ નથી —' : '— Address not verified —',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -1648,7 +1826,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  'Verify your address to unlock premium local networking features.',
+                  isGu ? 'પ્રીમિયમ સ્થાનિક નેટવર્કિંગ સુવિધાઓ અનલૉક કરવા માટે તમારું સરનામું ચકાસો.' : 'Verify your address to unlock premium local networking features.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
@@ -1666,6 +1844,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // CARD 4: PROFESSIONAL LINE
   Widget _buildProfessionalLineCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -1683,8 +1863,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'PROFESSIONAL LINE',
+          Text(
+            isGu ? 'વ્યાવસાયિક લાઇન' : 'PROFESSIONAL LINE',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
@@ -1697,9 +1877,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Item 1: WORK LANDLINE
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
-                'WORK LANDLINE',
+                isGu ? 'ઓફિસ લેન્ડલાઇન' : 'WORK LANDLINE',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1722,9 +1902,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Item 2: WORK MOBILE
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
-                'WORK MOBILE',
+                isGu ? 'ઓફિસ મોબાઈલ' : 'WORK MOBILE',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1747,9 +1927,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Item 3: WORK MOBILE 2
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
-                'WORK MOBILE 2',
+                isGu ? 'ઓફિસ મોબાઈલ ૨' : 'WORK MOBILE 2',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1773,6 +1953,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showAddEmailDialog() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     final emailController = TextEditingController();
     showDialog(
       context: context,
@@ -1786,8 +1968,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Add Email Address',
+                Text(
+                  isGu ? 'ઈમેઈલ સરનામું ઉમેરો' : 'Add Email Address',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Serif'),
                 ),
                 const SizedBox(height: 14),
@@ -1795,7 +1977,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: 'Enter your email address',
+                    hintText: isGu ? 'તમારું ઈમેઈલ સરનામું દાખલ કરો' : 'Enter your email address',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
@@ -1805,7 +1987,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(ctx),
-                        child: const Text('Cancel'),
+                        child: Text(isGu ? 'રદ કરો' : 'Cancel'),
                       ),
                     ),
                     Expanded(
@@ -1814,10 +1996,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () {
                           Navigator.pop(ctx);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Email address submitted for verification')),
+                            SnackBar(content: Text(isGu ? 'ઈમેઈલ સરનામું ચકાસણી માટે મોકલવામાં આવ્યું છે' : 'Email address submitted for verification')),
                           );
                         },
-                        child: const Text('Save', style: TextStyle(color: Colors.white)),
+                        child: Text(isGu ? 'સાચવો' : 'Save', style: const TextStyle(color: Colors.white)),
                       ),
                     ),
                   ],
@@ -1832,44 +2014,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // --- CARD 1: PERSONAL DETAILS ---
   Widget _buildPersonalDetailsCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+    final details = lang.profileDetails;
+    final nativePlace = details['nativePlace']?.isNotEmpty == true ? details['nativePlace']! : 'Satara Road';
+    final bloodGroup = details['bloodGroup']?.isNotEmpty == true ? details['bloodGroup']! : '-';
     return _buildDetailCard(
       icon: Icons.person_outline,
-      title: 'Personal Details',
+      title: isGu ? 'વ્યક્તિગત વિગતો' : 'Personal Details',
       children: [
-        _buildRowItem('Religion', '-'),
-        _buildRowItem('Birth Place', '-'),
-        _buildRowItem('Birth Time', '-'),
-        _buildRowItem('Manglik', '-'),
-        _buildRowItem('Native Place', 'Satara Road'),
-        _buildRowItem('Blood Group', '-'),
+        _buildRowItem('Religion', details['religion'] ?? '-', isGu),
+        _buildRowItem('Birth Place', details['birthPlace'] ?? nativePlace, isGu),
+        _buildRowItem('Birth Time', details['birthTime'] ?? '-', isGu),
+        _buildRowItem('Manglik', details['manglik'] ?? '-', isGu),
+        _buildRowItem('Native Place', nativePlace, isGu),
+        _buildRowItem('Blood Group', bloodGroup, isGu),
       ],
     );
   }
 
   // --- CARD 2: MATRIMONY ---
   Widget _buildMatrimonyCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+    final details = lang.profileDetails;
+    final marital = details['maritalStatus']?.isNotEmpty == true ? details['maritalStatus']! : 'Single';
+    final birthDate = details['birthDate']?.isNotEmpty == true ? details['birthDate']! : '24 May 2005';
     return _buildDetailCard(
       icon: Icons.favorite_outline,
-      title: 'Matrimony',
+      title: isGu ? 'લગ્ન વિગતો' : 'Matrimony',
       children: [
-        _buildRowItem('Marital Status', 'Single'),
-        _buildRowItem('Birth Date', '24 May 2005'),
-        _buildRowItem('Height', '-'),
-        _buildRowItem('Weight', '-'),
-        _buildRowItem('Annual Income', '-'),
-        _buildRowItem('Home Ownership', '-'),
+        _buildRowItem('Marital Status', marital, isGu),
+        _buildRowItem('Birth Date', birthDate, isGu),
+        _buildRowItem('Height', details['height'] ?? '-', isGu),
+        _buildRowItem('Weight', details['weight'] ?? '-', isGu),
+        _buildRowItem('Annual Income', details['income'] ?? '-', isGu),
+        _buildRowItem('Home Ownership', details['homeOwnership'] ?? '-', isGu),
       ],
     );
   }
 
   // --- CARD 3: EDUCATION & OCCUPATION ---
   Widget _buildEducationOccupationCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+    final details = lang.profileDetails;
+    final eduLevel = details['education']?.isNotEmpty == true ? details['education']! : (isGu ? 'બી.ઈ./બી.ટેક (એન્જિનિયરિંગ)' : 'B.E./B.Tech (Engineering)');
+    final occ = details['occupation']?.isNotEmpty == true ? details['occupation']! : (isGu ? 'વિદ્યાર્થી' : 'Student');
     return _buildDetailCard(
       icon: Icons.school_outlined,
-      title: 'Education &\nOccupation',
+      title: isGu ? 'શિક્ષણ અને\nવ્યવસાય' : 'Education &\nOccupation',
       children: [
         const SizedBox(height: 4),
-        // Education Level box
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(14),
@@ -1879,15 +2075,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                'Education Level',
-                style: TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
+                isGu ? 'શિક્ષણ સ્તર' : 'Education Level',
+                style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
-                'B.E./B.Tech (Engineering)',
-                style: TextStyle(
+                _getProfileDetailValue(eduLevel, isGu),
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E232D),
@@ -1897,8 +2093,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
-        // Education Detail box
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(14),
@@ -1908,15 +2102,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                'Education Detail',
-                style: TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
+                isGu ? 'શિક્ષણ વિગત' : 'Education Detail',
+                style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
-                'B.E./B.Tech (Engineering)',
-                style: TextStyle(
+                _getProfileDetailValue(eduLevel, isGu),
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E232D),
@@ -1926,8 +2120,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
-        // Occupation Sub-Section
         Row(
           children: [
             Container(
@@ -1946,15 +2138,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(width: 14),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'Occupation',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+                  isGu ? 'વ્યવસાય' : 'Occupation',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'Student',
-                  style: TextStyle(
+                  _getProfileDetailValue(occ, isGu),
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1E232D),
@@ -1965,19 +2157,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         const SizedBox(height: 16),
-        _buildRowItem('Occupation Detail', '-'),
+        _buildRowItem('Occupation Detail', details['occupationDetail'] ?? '-', isGu),
       ],
     );
   }
 
   // --- CARD 4: LOCATION DETAILS ---
   Widget _buildLocationDetailsCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+    final details = lang.profileDetails;
+    final stateStr = details['state']?.isNotEmpty == true ? details['state']! : (isGu ? 'મહારાષ્ટ્ર' : 'Maharashtra');
+    final countryStr = details['country']?.isNotEmpty == true ? details['country']! : (isGu ? 'ભારત' : 'India');
+    final cityStr = details['district']?.isNotEmpty == true ? details['district']! : (isGu ? 'ઠાણે' : 'Thane');
+    final areaStr = details['area']?.isNotEmpty == true ? details['area']! : (isGu ? 'નાલા સોપારા ઇસ્ટ' : 'Nala Sopara East');
     return _buildDetailCard(
       icon: Icons.map_outlined,
-      title: 'Location Details',
+      title: isGu ? 'સ્થાનની વિગતો' : 'Location Details',
       children: [
         const SizedBox(height: 4),
-        // Blue Location Banner
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(14),
@@ -2003,19 +2201,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: 14),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Maharashtra, India',
-                    style: TextStyle(
+                    "$stateStr, $countryStr",
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E232D),
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
-                    'Thane Region',
-                    style: TextStyle(
+                    "$cityStr ${isGu ? 'પ્રદેશ' : 'Region'}",
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Color(0xFF6B7280),
                     ),
@@ -2029,21 +2227,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildSubColumnItem('City', 'Thane')),
-            Expanded(child: _buildSubColumnItem('Area', 'Nala Sopara East')),
+            Expanded(child: _buildSubColumnItem('City', cityStr, isGu)),
+            Expanded(child: _buildSubColumnItem('Area', areaStr, isGu)),
           ],
         ),
         const SizedBox(height: 14),
-        _buildSubColumnItem('Pin Code', '401209'),
+        _buildSubColumnItem('Pin Code', details['pinCode'] ?? '401209', isGu),
       ],
     );
   }
 
   // --- CARD 5: CONTACT INFORMATION ---
   Widget _buildContactInformationCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return _buildDetailCard(
       icon: Icons.contact_mail_outlined,
-      title: 'Contact Information',
+      title: isGu ? 'સંપર્ક માહિતી' : 'Contact Information',
       children: [
         const SizedBox(height: 4),
         Row(
@@ -2052,10 +2252,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('Cell Phone', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
-                SizedBox(height: 2),
-                Text('8010594617', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E232D))),
+              children: [
+                Text(isGu ? 'મોબાઈલ ફોન' : 'Cell Phone', style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
+                const SizedBox(height: 2),
+                Text(isGu ? '૮૦૧૦૫૯૪૬૧૭' : '8010594617', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E232D))),
               ],
             ),
           ],
@@ -2067,10 +2267,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('Email Address', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
-                SizedBox(height: 2),
-                Text('-', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E232D))),
+              children: [
+                Text(isGu ? 'ઈમેઈલ સરનામું' : 'Email Address', style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
+                const SizedBox(height: 2),
+                const Text('-', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E232D))),
               ],
             ),
           ],
@@ -2078,10 +2278,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 14),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text('Full Address', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
-            SizedBox(height: 2),
-            Text('Nala Sopara East', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF1E232D))),
+          children: [
+            Text(isGu ? 'પૂરું સરનામું' : 'Full Address', style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
+            const SizedBox(height: 2),
+            Text(isGu ? 'નાલા સોપારા ઇસ્ટ' : 'Nala Sopara East', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF1E232D))),
           ],
         ),
       ],
@@ -2090,35 +2290,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // --- CARD 6: OTHER DETAILS ---
   Widget _buildOtherDetailsCard() {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
     return _buildDetailCard(
       icon: Icons.article_outlined,
-      title: 'Other Details',
+      title: isGu ? 'અન્ય વિગતો' : 'Other Details',
       children: [
         Row(
           children: [
-            Expanded(child: _buildSubColumnItem('Hobby', '-')),
-            Expanded(child: _buildSubColumnItem('Diet', '-')),
+            Expanded(child: _buildSubColumnItem('Hobby', '-', isGu)),
+            Expanded(child: _buildSubColumnItem('Diet', '-', isGu)),
           ],
         ),
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _buildSubColumnItem('Drink Alcohol', '-')),
-            Expanded(child: _buildSubColumnItem('Smoke', '-')),
+            Expanded(child: _buildSubColumnItem('Drink Alcohol', '-', isGu)),
+            Expanded(child: _buildSubColumnItem('Smoke', '-', isGu)),
           ],
         ),
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _buildSubColumnItem('Tobacco', '-')),
-            Expanded(child: _buildSubColumnItem('Body Type', '-')),
+            Expanded(child: _buildSubColumnItem('Tobacco', '-', isGu)),
+            Expanded(child: _buildSubColumnItem('Body Type', '-', isGu)),
           ],
         ),
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _buildSubColumnItem('Physical Disability', '-')),
-            Expanded(child: _buildSubColumnItem('Health Problem', '-')),
+            Expanded(child: _buildSubColumnItem('Physical Disability', '-', isGu)),
+            Expanded(child: _buildSubColumnItem('Health Problem', '-', isGu)),
           ],
         ),
         const SizedBox(height: 18),
@@ -2187,21 +2389,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildRowItem(String label, String value) {
+  Widget _buildRowItem(String label, String value, bool isGu) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            label,
+            _getProfileDetailLabel(label, isGu),
             style: const TextStyle(
               fontSize: 13,
               color: Color(0xFF6B7280),
             ),
           ),
           Text(
-            value,
+            _getProfileDetailValue(value, isGu),
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -2213,12 +2415,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildSubColumnItem(String label, String value) {
+  Widget _buildSubColumnItem(String label, String value, bool isGu) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          _getProfileDetailLabel(label, isGu),
           style: const TextStyle(
             fontSize: 11,
             color: Color(0xFF6B7280),
@@ -2226,7 +2428,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 3),
         Text(
-          value,
+          _getProfileDetailValue(value, isGu),
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -2239,6 +2441,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // HERITAGE CORE SIDE DRAWER (Matching Screenshot)
   void _showHeritageCoreSideDrawer() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -2311,12 +2515,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         child: ClipOval(
                                           child: _selectedImage != null && File(_selectedImage!).existsSync()
                                               ? Image.file(File(_selectedImage!), fit: BoxFit.cover)
-                                              : Image.asset(
-                                                  'assets/images/image1.jpeg',
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (_, __, ___) => Image.asset(
-                                                    'assets/images/sanjay_profile.png',
-                                                    fit: BoxFit.cover,
+                                              : Container(
+                                                  color: const Color(0xFFE5A93C),
+                                                  child: const Center(
+                                                    child: Icon(
+                                                      Icons.person_rounded,
+                                                      color: Color(0xFF191C21),
+                                                      size: 42,
+                                                    ),
                                                   ),
                                                 ),
                                         ),
@@ -2354,12 +2560,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                         const SizedBox(height: 3),
                                         Row(
-                                          children: const [
-                                            Icon(Icons.location_on_outlined, size: 12, color: Color(0xFF6B7280)),
-                                            SizedBox(width: 2),
+                                          children: [
+                                            const Icon(Icons.location_on_outlined, size: 12, color: Color(0xFF6B7280)),
+                                            const SizedBox(width: 2),
                                             Expanded(
                                               child: Text(
-                                                'Satara Road, Nala Sopara.',
+                                                isGu ? 'સાતારા રોડ, નાલા સોપારા.' : 'Satara Road, Nala Sopara.',
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
@@ -2401,11 +2607,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons.hub_outlined, color: Colors.white, size: 20),
-                                    SizedBox(width: 10),
+                                  children: [
+                                    const Icon(Icons.hub_outlined, color: Colors.white, size: 20),
+                                    const SizedBox(width: 10),
                                     Text(
-                                      'FAMILY TREE',
+                                      isGu ? 'વંશાવલી' : 'FAMILY TREE',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -2422,7 +2628,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // 4. Menu Items
                             _buildDrawerMenuItem(
                               icon: Icons.groups_outlined,
-                              title: 'Directory',
+                              title: isGu ? 'ડિરેક્ટરી' : 'Directory',
                               onTap: () {
                                 Navigator.pop(ctx);
                                 Navigator.of(context).push(
@@ -2434,7 +2640,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             _buildDrawerMenuItem(
                               icon: Icons.edit_note_outlined,
-                              title: 'Edit Profile',
+                              title: isGu ? 'પ્રોફાઇલ સંપાદિત કરો' : 'Edit Profile',
                               onTap: () {
                                 Navigator.pop(ctx);
                                 setState(() => _activeTab = 1); // Switch to Profile Details tab
@@ -2442,7 +2648,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             _buildDrawerMenuItem(
                               icon: Icons.camera_alt_outlined,
-                              title: 'Change Photo',
+                              title: isGu ? 'ફોટો બદલો' : 'Change Photo',
                               onTap: () {
                                 Navigator.pop(ctx);
                                 _pickMedia();
@@ -2450,7 +2656,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             _buildDrawerMenuItem(
                               icon: Icons.mail_outline,
-                              title: 'Inbox',
+                              title: isGu ? 'ઇનબોક્સ' : 'Inbox',
                               hasNotificationBadge: true,
                               onTap: () {
                                 Navigator.pop(ctx);
@@ -2465,7 +2671,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             _buildDrawerMenuItem(
                               icon: Icons.translate_outlined,
-                              title: 'BHASHA BADLA',
+                              title: isGu ? 'ભાષા બદલો' : 'BHASHA BADLA',
                               onTap: () {
                                 Navigator.pop(ctx);
                                 _showLanguageDialog();
@@ -2473,7 +2679,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             _buildDrawerMenuItem(
                               icon: Icons.autorenew_outlined,
-                              title: 'Refresh',
+                              title: isGu ? 'તાજું કરો' : 'Refresh',
                               onTap: () {
                                 Navigator.pop(ctx);
                                 setState(() {});
@@ -2484,7 +2690,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             _buildDrawerMenuItem(
                               icon: Icons.share_outlined,
-                              title: 'Share',
+                              title: isGu ? 'શેર કરો' : 'Share',
                               onTap: () {
                                 Navigator.pop(ctx);
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -2512,8 +2718,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   border: Border.all(color: const Color(0xFFFCA5A5)),
                                 ),
                                 child: Row(
-                                  children: const [
-                                    Icon(
+                                  children: [
+                                    const Icon(
                                       Icons.warning_amber_rounded,
                                       color: Color(0xFFDC2626),
                                       size: 22,
@@ -2521,7 +2727,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        'Problem in Profile',
+                                        isGu ? 'પ્રોફાઇલમાં સમસ્યા' : 'Problem in Profile',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
@@ -2553,9 +2759,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         border: Border(top: BorderSide(color: Color(0xFFF1F5F9))),
                       ),
                       child: Column(
-                        children: const [
+                        children: [
                           Text(
-                            'HERITAGE V2.4.0',
+                            isGu ? 'હેરિટેજ એપ વર્ઝન ૨.૪.૦' : 'HERITAGE V2.4.0',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -2674,6 +2880,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showFamilyTreeModal() {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2703,8 +2911,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Family Tree',
+                  Text(
+                    isGu ? 'વંશાવલી' : 'Family Tree',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -2724,7 +2932,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       // Grandparents
-                      _buildTreeNode('Shantanu More', 'Grandfather', isRoot: true),
+                      _buildTreeNode(_getNameLabel('Shantanu More', isGu), _getRelationLabel('Grandfather', isGu), isRoot: true),
                       const SizedBox(height: 16),
                       Container(width: 2, height: 24, color: const Color(0xFF856404)),
                       const SizedBox(height: 16),
@@ -2733,8 +2941,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildTreeNode('Aaditya Shantanu', 'Father'),
-                          _buildTreeNode('Vaishali', 'Mother'),
+                          _buildTreeNode(_getNameLabel('Aaditya Shantanu', isGu), _getRelationLabel('Father', isGu)),
+                          _buildTreeNode(_getNameLabel('Vaishali', isGu), _getRelationLabel('Mother', isGu)),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -2745,8 +2953,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildTreeNode('Soham Aaditya More', 'Self (You)', isHighlight: true),
-                          _buildTreeNode('Riya Aaditya More', 'Sister'),
+                          _buildTreeNode(_getNameLabel('Soham Aaditya More', isGu), _getRelationLabel('Self (You)', isGu), isHighlight: true),
+                          _buildTreeNode(_getNameLabel('Riya Aaditya More', isGu), _getRelationLabel('Sister', isGu)),
                         ],
                       ),
                     ],
