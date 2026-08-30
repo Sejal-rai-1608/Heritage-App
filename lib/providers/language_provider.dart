@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LanguageProvider extends ChangeNotifier {
   // 'en' for English, 'gu' for Gujarati, 'hi' for Hindi
-  String _currentLanguage = 'en';
+  String _currentLanguage = 'gu';
   bool _isLoggedIn = false;
   String _selectedCommunity = '';
 
@@ -204,6 +204,7 @@ class LanguageProvider extends ChangeNotifier {
   ];
 
   String get currentLanguage => _currentLanguage;
+  Locale get locale => Locale(_currentLanguage);
   bool get isLoggedIn => _isLoggedIn;
   String get selectedCommunity => _selectedCommunity;
 

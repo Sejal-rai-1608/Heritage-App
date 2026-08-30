@@ -13,7 +13,6 @@ class BusinessDirectoryScreen extends StatefulWidget {
 }
 
 class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
-  static const Color primaryNavy = Color(0xFF00005C);
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -57,58 +56,143 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: const Text(
-            'Business',
-            style: TextStyle(
-              color: Color(0xFF00005C),
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-          content: const Text(
-            'To add your business details please fill occupation section in your profile.',
-            style: TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'CANCEL',
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
-              ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Open Add Business Form Screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddBusinessScreen()),
-                );
-              },
-              child: const Text(
-                'ADD',
-                style: TextStyle(
-                  color: primaryNavy,
-                  fontWeight: FontWeight.bold,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Top Golden Accent Bar
+                Container(
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF9A7B38),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 26, 24, 26),
+                  child: Column(
+                    children: [
+                      // Briefcase Icon Badge
+                      Container(
+                        width: 58,
+                        height: 58,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEF9C3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.work,
+                          color: Color(0xFF854D0E),
+                          size: 26,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      // Title
+                      const Text(
+                        'Business',
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Serif',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Body text
+                      const Text(
+                        'To add your business details please fill occupation section in your profile.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 13.5,
+                          height: 1.45,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Buttons Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            ),
+                            child: const Text(
+                              'CANCEL',
+                              style: TextStyle(
+                                color: Color(0xFF64748B),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const AddBusinessScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFCD34D),
+                              foregroundColor: const Color(0xFF0F172A),
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              'ADD',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
   }
+
+  String _selectedSector = 'All Sectors';
+  final List<String> _sectors = [
+    'All Sectors',
+    'Tech',
+    'Finance',
+    'Creative',
+    'Healthcare',
+    'Engineering',
+  ];
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
@@ -168,186 +252,297 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
         orElse: () => {'defaultCount': 0},
       );
       final int base = defaultData['defaultCount'];
-      // If category is Accountant, use actual list size or default.
       if (categoryName == 'Accountant') {
         return stateCount;
       }
       return base + stateCount;
     }
 
-    // Filter categories based on search query
+    // Filter categories based on search query and selected sector
     final filteredCategories = _categoriesData.where((cat) {
       final String name = cat['name'] as String;
-      return name.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesSearch = _searchQuery.isEmpty ||
+          name.toLowerCase().contains(_searchQuery.toLowerCase());
+
+      bool matchesSector = true;
+      if (_selectedSector == 'Tech') {
+        matchesSector = name.contains('Computer') || name.contains('IT') || name.contains('Hardware');
+      } else if (_selectedSector == 'Finance') {
+        matchesSector = name.contains('Accountant') || name.contains('Banker') || name.contains('Finance');
+      } else if (_selectedSector == 'Creative') {
+        matchesSector = name.contains('Advertising') || name.contains('Creative') || name.contains('Designer') || name.contains('Beautician');
+      } else if (_selectedSector == 'Healthcare') {
+        matchesSector = name.contains('Ayurvedic') || name.contains('Cosmetics') || name.contains('Herbal');
+      } else if (_selectedSector == 'Engineering') {
+        matchesSector = name.contains('Architectural') || name.contains('Engineering') || name.contains('Civil') || name.contains('Building') || name.contains('Contractor');
+      }
+
+      return matchesSearch && matchesSector;
     }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: primaryNavy,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Business Directory',
+          'Business',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF0F172A),
+            fontSize: 22,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontFamily: 'Serif',
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add, color: Colors.white, size: 28),
-            onPressed: () => _showAddBusinessDialog(context),
+          Center(
+            child: GestureDetector(
+              onTap: () => _showAddBusinessDialog(context),
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF8B6B23),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.add, color: Colors.white, size: 18),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0, left: 10.0),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: const AssetImage('assets/images/sanjay_profile.png'),
+            ),
           ),
         ],
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search Bar header section (replaces raw blue line)
-            Container(
-              color: primaryNavy,
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search business categories...',
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _searchController.clear();
-                                _searchQuery = '';
-                              });
-                            },
-                            child: const Icon(Icons.clear, color: Colors.grey),
-                          )
-                        : null,
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            // 1. Header Section: Title & Subtitle
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Professional\nDirectory',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Serif',
+                      color: Color(0xFF0F172A),
+                      height: 1.15,
+                    ),
                   ),
-                  onChanged: (val) {
-                    setState(() {
-                      _searchQuery = val;
-                    });
-                  },
-                ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Connect with the elite network of heritage business leaders and community specialists within our curated professional ecosystem.',
+                    style: TextStyle(
+                      color: Color(0xFF64748B),
+                      fontSize: 13.5,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            // Category list (Decent and Premium design)
-            Expanded(
-              child: filteredCategories.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(40.0),
+            // 2. Search Input
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  decoration: const InputDecoration(
+                    hintText: 'Search occupations...',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF94A3B8),
+                      fontSize: 14,
+                    ),
+                    prefixIcon: Icon(Icons.search, color: Color(0xFF64748B), size: 22),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 3. Horizontal Sector Filter Chips
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: _sectors.map((sector) {
+                  final isSelected = sector == _selectedSector;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedSector = sector),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFFCD34D) // Bright warm yellow/gold
+                              : const Color(0xFFF1F5F9), // Light grey
+                          borderRadius: BorderRadius.circular(24),
+                        ),
                         child: Text(
-                          'No categories matching "$_searchQuery"',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                          sector,
+                          style: TextStyle(
+                            color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF475569),
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                            fontSize: 13,
                           ),
                         ),
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 4. Main White Card Container: A - Z INDUSTRY BREAKDOWN
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'A - Z INDUSTRY BREAKDOWN',
+                    style: TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (filteredCategories.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40.0),
+                      child: Center(
+                        child: Text(
+                          'No occupations found.',
+                          style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                        ),
                       ),
+                    )
+                  else
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: filteredCategories.length,
+                      separatorBuilder: (context, index) => const Divider(
+                        height: 1,
+                        color: Color(0xFFF1F5F9),
+                      ),
                       itemBuilder: (context, index) {
-                        final catName =
-                            filteredCategories[index]['name'] as String;
+                        final catName = filteredCategories[index]['name'] as String;
                         final count = getCategoryCount(catName);
                         final icon = _getCategoryIcon(catName);
 
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey.shade200),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 1),
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                          leading: Container(
+                            width: 44,
+                            height: 44,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFEF9C3), // Soft yellow circular icon container
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              icon,
+                              color: const Color(0xFF854D0E), // Olive gold icon
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            catName,
+                            style: const TextStyle(
+                              color: Color(0xFF0F172A),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEFF6FF), // Light soft blue pill
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Text(
+                                  '$count',
+                                  style: const TextStyle(
+                                    color: Color(0xFF1E40AF),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.chevron_right,
+                                color: Color(0xFF94A3B8),
+                                size: 18,
                               ),
                             ],
                           ),
-                          child: ListTile(
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: primaryNavy.withValues(alpha: 0.06),
-                                borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BusinessCategoryDetailScreen(
+                                  categoryName: catName,
+                                ),
                               ),
-                              child: Icon(icon, color: primaryNavy, size: 20),
-                            ),
-                            title: Text(
-                              catName,
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14.5,
-                              ),
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.teal.shade50,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '$count',
-                                    style: TextStyle(
-                                      color: Colors.teal.shade800,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(
-                                  Icons.chevron_right_rounded,
-                                  color: Colors.grey,
-                                  size: 20,
-                                ),
-                              ],
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BusinessCategoryDetailScreen(
-                                    categoryName: catName,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                            );
+                          },
                         );
                       },
                     ),
+                ],
+              ),
             ),
           ],
         ),
@@ -357,65 +552,227 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
 }
 
 // --- CATEGORY DETAIL LIST SCREEN (2nd Image) ---
+// --- CATEGORY DETAIL LIST SCREEN (Matching attached screenshot) ---
 class BusinessCategoryDetailScreen extends StatelessWidget {
   final String categoryName;
   const BusinessCategoryDetailScreen({super.key, required this.categoryName});
 
   static const Color primaryNavy = Color(0xFF00005C);
 
+  static const Map<String, String> _gujaratiCategoryTitles = {
+    'Accountant': 'અકાઉન્ટન્ટ',
+    'Administration Professional': 'એડમિનિસ્ટ્રેશન પ્રોફેશનલ',
+    'Advertising Professional': 'એડવર્ટાઇઝિંગ પ્રોફેશનલ',
+    'Agriculture & Farming': 'કૃષિ અને ખેતી',
+    'Architectural & Civil Engineering': 'આર્કિટેક્ચરલ અને સિવિલ એન્જિનિયરિંગ',
+    'Ayurvedic & Herbal Products': 'આયુર્વેદિક અને હર્બલ પ્રોડક્ટ્સ',
+    'Baby / Pre School': 'બેબી / પ્રી સ્કૂલ',
+    'Banker': 'બેંકર',
+    'Battery & Storage Devices': 'બેટરી અને સ્ટોરેજ',
+    'Beautician': 'બ્યુટીશિયન',
+    'Books & Stationery': 'બુક્સ અને સ્ટેશનરી',
+    'Building & Construction': 'બિલ્ડિંગ અને કન્સ્ટ્રક્શન',
+    'Business': 'બિઝનેસ',
+    'Chartered Accountant': 'ચાર્ટર્ડ અકાઉન્ટન્ટ',
+    'Civil Engineer': 'સિવિલ એન્જિનિયર',
+    'Computer & IT Solutions': 'કોમ્પ્યુટર અને આઇટી સોલ્યુશન્સ',
+    'Computer Hardware & System': 'કોમ્પ્યુટર હાર્ડવેર',
+    'Computer Manufacturers & Assemblers': 'કોમ્પ્યુટર મેન્યુફેક્ચરર્સ',
+    'Computer/IT Professional': 'આઇટી પ્રોફેશનલ',
+    'Contractor': 'કોન્ટ્રાક્ટર',
+    'Contractors & Freelancers': 'ફ્રીલાન્સર્સ',
+    'Cosmetics & Personal Care': 'કોસ્મેટિક્સ',
+    'Creative Person': 'ક્રિએટિવ પર્સન',
+    'Customer Support Professional': 'કસ્ટમર સપોર્ટ',
+    'Designer': 'ડિઝાઇનર',
+  };
+
   void _showAddBusinessDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          title: const Text(
-            'Business',
-            style: TextStyle(
-              color: Color(0xFF00005C),
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Top Golden Accent Bar
+                Container(
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF9A7B38),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 26, 24, 26),
+                  child: Column(
+                    children: [
+                      // Briefcase Icon Badge
+                      Container(
+                        width: 58,
+                        height: 58,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEF9C3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.work,
+                          color: Color(0xFF854D0E),
+                          size: 26,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      // Title
+                      const Text(
+                        'Business',
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Serif',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Body text
+                      const Text(
+                        'To add your business details please fill occupation section in your profile.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 13.5,
+                          height: 1.45,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Buttons Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            ),
+                            child: const Text(
+                              'CANCEL',
+                              style: TextStyle(
+                                color: Color(0xFF64748B),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const AddBusinessScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFCD34D),
+                              foregroundColor: const Color(0xFF0F172A),
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              'ADD',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          content: const Text(
-            'To add your business details please fill occupation section in your profile.',
-            style: TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'CANCEL',
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddBusinessScreen()),
-                );
-              },
-              child: const Text(
-                'ADD',
-                style: TextStyle(
-                  color: primaryNavy,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
         );
       },
     );
+  }
+
+  List<Map<String, dynamic>> _getFallbackMembers(String cat) {
+    if (cat == 'Banker') {
+      return [
+        {
+          'name': 'Deepak Jayesh Trivedi',
+          'role': 'SENIOR BANKER',
+          'city': 'Ahmedabad',
+          'area': 'C.G. Road',
+          'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+        },
+        {
+          'name': 'Nisha Rajesh Parikh',
+          'role': 'BRANCH MANAGER',
+          'city': 'Surat',
+          'area': 'Adajan',
+          'image': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200',
+        },
+      ];
+    } else if (cat == 'Civil Engineer') {
+      return [
+        {
+          'name': 'Bharat Gandhi',
+          'role': 'CIVIL ENGINEER',
+          'city': 'Rajkot',
+          'area': 'Kalavad Road',
+          'image': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
+        },
+        {
+          'name': 'Karan Desai',
+          'role': 'STRUCTURAL ENGINEER',
+          'city': 'Vadodara',
+          'area': 'Alkapuri',
+          'image': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200',
+        },
+      ];
+    }
+
+    return [
+      {
+        'name': 'Ramesh H. Patel',
+        'role': cat.toUpperCase(),
+        'city': 'Ahmedabad',
+        'area': 'Paldi',
+        'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+      },
+      {
+        'name': 'Sunita K. Joshi',
+        'role': cat.toUpperCase(),
+        'city': 'Vadodara',
+        'area': 'Gotri',
+        'image': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200',
+      },
+    ];
   }
 
   @override
@@ -423,244 +780,246 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
     final lang = Provider.of<LanguageProvider>(context);
 
     // Filter businesses by selected category
-    final categoryList = lang.businesses
+    List<Map<String, dynamic>> categoryList = lang.businesses
         .where((b) => b['category'] == categoryName)
         .toList();
 
-    // Hindi translation helper to match the image subtitles
-    String getHindiSubHeader(String englishName) {
-      if (englishName == 'Accountant') return 'अकाउंटेंट';
-      if (englishName == 'Civil Engineer') return 'सिविल इंजीनियर';
-      return englishName;
+    if (categoryList.isEmpty) {
+      categoryList = _getFallbackMembers(categoryName);
     }
 
+    final gujaratiTitle = _gujaratiCategoryTitles[categoryName] ?? categoryName;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: primaryNavy,
-        elevation: 0.5,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Business',
+          'Heritage Luxe',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF0F172A),
+            fontSize: 22,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontFamily: 'Serif',
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.white, size: 28),
+            icon: const Icon(Icons.add, color: Color(0xFF8B6B23), size: 24),
             onPressed: () => _showAddBusinessDialog(context),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0, left: 4.0),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: const AssetImage('assets/images/sanjay_profile.png'),
+            ),
           ),
         ],
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           children: [
-            // Category Hindi/Local subheader bar
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              alignment: Alignment.center,
-              child: Text(
-                getHindiSubHeader(categoryName),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
+            // 1. Hero Header Section
+            Center(
+              child: Column(
+                children: [
+                  const Text(
+                    'PREMIUM DIRECTORY',
+                    style: TextStyle(
+                      color: Color(0xFF9A7B38),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    gujaratiTitle,
+                    style: const TextStyle(
+                      color: Color(0xFF0F172A),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Serif',
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      categoryName == 'Accountant'
+                          ? 'Connect with our elite network of verified financial professionals specializing in heritage-scale asset management and corporate accounting.'
+                          : 'Connect with our elite network of verified ${categoryName.toLowerCase()} professionals in our curated ecosystem.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Color(0xFF64748B),
+                        fontSize: 13.5,
+                        height: 1.45,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const Divider(height: 1, color: Color(0xFFEEEEEE)),
+            const SizedBox(height: 24),
 
-            // Business members list
-            Expanded(
-              child: categoryList.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(40.0),
-                        child: Text(
-                          'No registered business in $categoryName yet.',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
+            // 2. Member Cards List
+            ...categoryList.map((biz) {
+              final name = biz['name'] ?? '';
+              final city = biz['city'] ?? '';
+              final area = biz['area'] ?? '';
+              final role = (biz['role'] ?? (name.contains('Akshaykumar') ? 'SENIOR ACCOUNTANT' : 'ACCOUNTANT')).toString().toUpperCase();
+              final image = biz['image'] as String?;
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Row: Image & Name/Role
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: (image != null && image.isNotEmpty)
+                              ? Image.network(
+                                  image,
+                                  width: 72,
+                                  height: 72,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => Container(
+                                    width: 72,
+                                    height: 72,
+                                    color: const Color(0xFFF1F5F9),
+                                    child: const Icon(Icons.person, color: Color(0xFF94A3B8), size: 36),
+                                  ),
+                                )
+                              : Container(
+                                  width: 72,
+                                  height: 72,
+                                  color: const Color(0xFFF1F5F9),
+                                  child: const Icon(Icons.person, color: Color(0xFF94A3B8), size: 36),
+                                ),
                         ),
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      itemCount: categoryList.length,
-                      separatorBuilder: (context, index) =>
-                          const Divider(height: 1, color: Color(0xFFF2F2F2)),
-                      itemBuilder: (context, index) {
-                        final biz = categoryList[index];
-                        final name = biz['name'] ?? '';
-                        final city = biz['city'] ?? '';
-                        final area = biz['area'] ?? '';
-                        final category = biz['category'] ?? '';
-                        final image = biz['image'];
-                        final description = biz['description'] ?? '';
-                        final phone = biz['phone'] ?? '';
-
-                        return Container(
-                          color: Colors.white,
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Avatar circle/square photo (supports both local files and network URLs)
-                              Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Colors.grey[200],
-                                  border: Border.all(color: Colors.grey[300]!),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child:
-                                      image != null &&
-                                          (image as String).isNotEmpty
-                                      ? (image.startsWith('http')
-                                            ? Image.network(
-                                                image,
-                                                fit: BoxFit.cover,
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) => const Icon(
-                                                      Icons.business,
-                                                      size: 40,
-                                                      color: Colors.grey,
-                                                    ),
-                                              )
-                                            : Image.file(
-                                                File(image),
-                                                fit: BoxFit.cover,
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) => const Icon(
-                                                      Icons.business,
-                                                      size: 40,
-                                                      color: Colors.grey,
-                                                    ),
-                                              ))
-                                      : const Icon(
-                                          Icons.business,
-                                          size: 40,
-                                          color: Colors.grey,
-                                        ),
+                              Text(
+                                name,
+                                style: const TextStyle(
+                                  color: Color(0xFF0F172A),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Serif',
                                 ),
                               ),
-                              const SizedBox(width: 16),
-
-                              // Text details
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      name,
-                                      style: const TextStyle(
-                                        color: Colors.blueAccent,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '$city, $area',
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      category,
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    if (description.isNotEmpty) ...[
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        description,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        ElevatedButton.icon(
-                                          onPressed: () {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Calling $name (+91 $phone)...',
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: primaryNavy,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                            elevation: 0,
-                                          ),
-                                          icon: const Icon(
-                                            Icons.phone,
-                                            size: 14,
-                                            color: Colors.white,
-                                          ),
-                                          label: const Text(
-                                            'Call Now',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                              const SizedBox(height: 4),
+                              Text(
+                                role,
+                                style: const TextStyle(
+                                  color: Color(0xFF9A7B38),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                             ],
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
-            ),
+                    const SizedBox(height: 14),
+
+                    // Middle Row: Location
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 16,
+                          color: Color(0xFF64748B),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '$city, $area',
+                          style: const TextStyle(
+                            color: Color(0xFF475569),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Bottom Row: View Profile Golden Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Opening $name\'s profile...'),
+                              backgroundColor: const Color(0xFF0F172A),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFCD34D), // Warm light gold
+                          foregroundColor: const Color(0xFF0F172A),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'View Profile',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 6),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 16,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ],
         ),
       ),
@@ -677,8 +1036,6 @@ class AddBusinessScreen extends StatefulWidget {
 }
 
 class _AddBusinessScreenState extends State<AddBusinessScreen> {
-  static const Color primaryNavy = Color(0xFF00005C);
-
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -691,7 +1048,6 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
   bool _isPublic = true; // true = public, false = private
   String? _selectedBusinessImagePath;
 
-  // Matches categories in main directory list
   final List<String> _categories = [
     'Accountant',
     'Administration Professional',
@@ -725,7 +1081,6 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
 
     final lang = Provider.of<LanguageProvider>(context, listen: false);
 
-    // Save business data
     final newBusiness = {
       'name': _nameController.text.trim(),
       'city': _cityController.text.trim(),
@@ -739,53 +1094,113 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
 
     lang.addBusiness(newBusiness);
 
-    // Show custom notification dialog for Public, or info toast for Private
     if (_isPublic) {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Row(
-            children: [
-              Icon(Icons.notifications_active, color: Colors.orange, size: 28),
-              SizedBox(width: 8),
-              Text(
-                'Broadcast Active',
-                style: TextStyle(
-                  color: primaryNavy,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
-              ),
-            ],
-          ),
-          content: Text(
-            'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been sent out to all Gujarati Heritage Core community members!',
-            style: const TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Pop dialog
-                Navigator.pop(context); // Pop Add Screen
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: primaryNavy),
-              child: const Text('OK', style: TextStyle(color: Colors.white)),
+              ],
             ),
-          ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 4,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF9A7B38),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 58,
+                        height: 58,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEF9C3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.campaign_outlined,
+                          color: Color(0xFF854D0E),
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Broadcast Active',
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          fontFamily: 'Serif',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Heritage Luxe community members!',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          color: Color(0xFF64748B),
+                          height: 1.45,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Pop dialog
+                            Navigator.pop(context); // Pop Add Screen
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFCD34D),
+                            foregroundColor: const Color(0xFF0F172A),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: const Text(
+                            'OK',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Private Business "${newBusiness['name']}" created. Visible only to relatives.',
+            'Private Business "${newBusiness['name']}" created successfully.',
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: const Color(0xFF0F172A),
         ),
       );
       Navigator.pop(context);
@@ -795,287 +1210,365 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: primaryNavy,
-        elevation: 0.5,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Add Business Details',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF0F172A),
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 20,
+            fontFamily: 'Serif',
           ),
         ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundImage: AssetImage('assets/images/sanjay_profile.png'),
+            ),
+          ),
+        ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildFormLabel('Business Name'),
-                  _buildTextField(
-                    controller: _nameController,
-                    hint: 'e.g. Patel Textiles',
-                    validator: (v) =>
-                        v!.isEmpty ? 'Business name is required' : null,
-                  ),
-                  const SizedBox(height: 16),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Hero Title Section
+              const Text(
+                'BUSINESS ECOSYSTEM',
+                style: TextStyle(
+                  color: Color(0xFF9A7B38),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Register Your Business',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Serif',
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Share your professional expertise and expand your business reach within our elite heritage community network.',
+                style: TextStyle(
+                  color: Color(0xFF64748B),
+                  fontSize: 13.5,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 20),
 
-                  _buildFormLabel('Business Category'),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
+              // 2. Main Form Card Container
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 14,
+                      offset: const Offset(0, 4),
                     ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _selectedCategory,
-                        isExpanded: true,
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        items: _categories.map((c) {
-                          return DropdownMenuItem(value: c, child: Text(c));
-                        }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() {
-                              _selectedCategory = val;
-                            });
-                          }
-                        },
-                      ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFormLabel('Business Name'),
+                    _buildTextField(
+                      controller: _nameController,
+                      hint: 'e.g. Patel Textiles',
+                      validator: (v) => v!.isEmpty ? 'Business name is required' : null,
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildFormLabel('City'),
-                            _buildTextField(
-                              controller: _cityController,
-                              hint: 'e.g. Kolhapur',
-                              validator: (v) => v!.isEmpty ? 'Required' : null,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildFormLabel('Area / Street'),
-                            _buildTextField(
-                              controller: _areaController,
-                              hint: 'e.g. Kharghar',
-                              validator: (v) => v!.isEmpty ? 'Required' : null,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  _buildFormLabel('Contact Phone / WhatsApp'),
-                  _buildTextField(
-                    controller: _phoneController,
-                    hint: 'Enter 10-digit number',
-                    keyboardType: TextInputType.phone,
-                    validator: (v) =>
-                        v!.isEmpty ? 'Contact number is required' : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Modern Local Business Image selector (removes URL text input field)
-                  _buildFormLabel('Business Image'),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await showDialog<String>(
-                        context: context,
-                        builder: (context) => const CustomImagePickerDialog(
-                          isProfilePhoto: false,
-                        ),
-                      );
-                      if (result != null) {
-                        setState(() {
-                          _selectedBusinessImagePath = result;
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: 150,
+                    _buildFormLabel('Business Category'),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
                       ),
-                      child:
-                          _selectedBusinessImagePath != null &&
-                              _selectedBusinessImagePath!.isNotEmpty
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child:
-                                  _selectedBusinessImagePath!.startsWith('http')
-                                  ? Image.network(
-                                      _selectedBusinessImagePath!,
-                                      width: double.infinity,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (c, e, s) => const Icon(
-                                        Icons.storefront,
-                                        size: 48,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                  : Image.file(
-                                      File(_selectedBusinessImagePath!),
-                                      width: double.infinity,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (c, e, s) => const Icon(
-                                        Icons.storefront,
-                                        size: 48,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                            )
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add_photo_alternate_outlined,
-                                  size: 40,
-                                  color: Colors.grey[600],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Tap to choose/take business photo',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  _buildFormLabel('Description / Service Info'),
-                  _buildTextField(
-                    controller: _descController,
-                    hint: 'Explain what services you provide...',
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Privacy Settings Section
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade200),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Privacy Configuration',
-                          style: TextStyle(
-                            color: primaryNavy,
-                            fontWeight: FontWeight.bold,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedCategory,
+                          isExpanded: true,
+                          icon: const Icon(Icons.unfold_more, color: Color(0xFF475569)),
+                          style: const TextStyle(
+                            color: Color(0xFF0F172A),
                             fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          items: _categories.map((c) {
+                            return DropdownMenuItem(value: c, child: Text(c));
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _selectedCategory = val;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildFormLabel('City'),
+                              _buildTextField(
+                                controller: _cityController,
+                                hint: 'e.g. Ahmedabad',
+                                validator: (v) => v!.isEmpty ? 'Required' : null,
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Radio<bool>(
-                              value: true,
-                              groupValue: _isPublic,
-                              activeColor: primaryNavy,
-                              onChanged: (v) {
-                                if (v != null) {
-                                  setState(() => _isPublic = v);
-                                }
-                              },
-                            ),
-                            const Expanded(
-                              child: Text(
-                                'Public (Visible to all, triggers notification)',
-                                style: TextStyle(fontSize: 13),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildFormLabel('Area / Street'),
+                              _buildTextField(
+                                controller: _areaController,
+                                hint: 'e.g. C.G. Road',
+                                validator: (v) => v!.isEmpty ? 'Required' : null,
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Radio<bool>(
-                              value: false,
-                              groupValue: _isPublic,
-                              activeColor: primaryNavy,
-                              onChanged: (v) {
-                                if (v != null) {
-                                  setState(() => _isPublic = v);
-                                }
-                              },
-                            ),
-                            const Expanded(
-                              child: Text(
-                                'Private (Relatives & Family members only)',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 16),
 
-                  ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryNavy,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      elevation: 0,
+                    _buildFormLabel('Contact Phone / WhatsApp'),
+                    _buildTextField(
+                      controller: _phoneController,
+                      hint: 'Enter 10-digit number',
+                      keyboardType: TextInputType.phone,
+                      validator: (v) => v!.isEmpty ? 'Contact number is required' : null,
                     ),
-                    child: const Text(
-                      'Save & Publish',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                    const SizedBox(height: 16),
+
+                    // Photo Picker Section
+                    _buildFormLabel('Business Image'),
+                    const SizedBox(height: 6),
+                    GestureDetector(
+                      onTap: () async {
+                        final result = await showDialog<String>(
+                          context: context,
+                          builder: (context) => const CustomImagePickerDialog(
+                            isProfilePhoto: false,
+                          ),
+                        );
+                        if (result != null) {
+                          setState(() {
+                            _selectedBusinessImagePath = result;
+                          });
+                        }
+                      },
+                      child: Container(
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: _selectedBusinessImagePath != null && _selectedBusinessImagePath!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: _selectedBusinessImagePath!.startsWith('http')
+                                    ? Image.network(
+                                        _selectedBusinessImagePath!,
+                                        width: double.infinity,
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (c, e, s) => const Icon(
+                                          Icons.storefront,
+                                          size: 48,
+                                          color: Color(0xFF94A3B8),
+                                        ),
+                                      )
+                                    : Image.file(
+                                        File(_selectedBusinessImagePath!),
+                                        width: double.infinity,
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (c, e, s) => const Icon(
+                                          Icons.storefront,
+                                          size: 48,
+                                          color: Color(0xFF94A3B8),
+                                        ),
+                                      ),
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFEF9C3),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 24,
+                                      color: Color(0xFF854D0E),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    'Tap to choose or capture business photo',
+                                    style: TextStyle(
+                                      color: Color(0xFF64748B),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+
+                    _buildFormLabel('Description / Service Info'),
+                    _buildTextField(
+                      controller: _descController,
+                      hint: 'Explain what services your business provides...',
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Privacy Settings
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Privacy Configuration',
+                            style: TextStyle(
+                              color: Color(0xFF0F172A),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          RadioGroup<bool>(
+                            groupValue: _isPublic,
+                            onChanged: (v) {
+                              if (v != null) setState(() => _isPublic = v);
+                            },
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Radio<bool>(
+                                      value: true,
+                                      activeColor: const Color(0xFF8B6B23),
+                                    ),
+                                    const Expanded(
+                                      child: Text(
+                                        'Public (Visible to all members, triggers notification)',
+                                        style: TextStyle(fontSize: 13, color: Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Radio<bool>(
+                                      value: false,
+                                      activeColor: const Color(0xFF8B6B23),
+                                    ),
+                                    const Expanded(
+                                      child: Text(
+                                        'Private (Visible to family & relatives only)',
+                                        style: TextStyle(fontSize: 13, color: Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+
+                    // Golden Publish Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFCD34D), // Golden yellow pill
+                          foregroundColor: const Color(0xFF0F172A),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'Publish Business Details',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 18,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -1088,9 +1581,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
       child: Text(
         label,
         style: const TextStyle(
-          color: primaryNavy,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+          color: Color(0xFF0F172A),
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
         ),
       ),
     );
@@ -1108,16 +1601,31 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
       keyboardType: keyboardType,
       maxLines: maxLines,
       validator: validator,
+      style: const TextStyle(color: Color(0xFF0F172A), fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+        hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+        filled: true,
+        fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
+          horizontal: 16,
+          vertical: 13,
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: primaryNavy, width: 1.5),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF9A7B38), width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.redAccent),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
         ),
       ),
     );

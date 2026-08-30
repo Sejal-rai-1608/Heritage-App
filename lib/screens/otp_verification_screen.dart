@@ -1,30 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
-import 'reset_password_screen.dart';
-import 'home_screen.dart';
+import 'detailed_registration_screen.dart';
 
-class OtpVerificationScreen extends StatefulWidget {
-  final bool fromForgotPassword;
-  const OtpVerificationScreen({super.key, this.fromForgotPassword = false});
+class OTPVerificationScreen extends StatefulWidget {
+  final String phoneNumber;
+
+  const OTPVerificationScreen({super.key, required this.phoneNumber});
 
   @override
-  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
+  State<OTPVerificationScreen> createState() => _OTPVerificationScreenState();
 }
 
-class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-  final Color primaryNavy = const Color(0xFF00005C);
-  final Color accentGold = const Color(0xFFE67E22);
-
+class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   final List<TextEditingController> _otpControllers =
-      List.generate(5, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(5, (_) => FocusNode());
+      List.generate(4, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
 
-  int _timerSeconds = 46;
-  Timer? _countdownTimer;
-  bool _canResend = false;
+  int _resendTimer = 46;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -33,290 +26,260 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void _startTimer() {
-    setState(() {
-      _timerSeconds = 46;
-      _canResend = false;
-    });
-    _countdownTimer?.cancel();
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timerSeconds > 0) {
+    _resendTimer = 46;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_resendTimer > 0) {
         setState(() {
-          _timerSeconds--;
+          _resendTimer--;
         });
       } else {
-        timer.cancel();
-        setState(() {
-          _canResend = true;
-        });
+        _timer?.cancel();
       }
     });
   }
 
   @override
   void dispose() {
-    _countdownTimer?.cancel();
-    for (final controller in _otpControllers) {
+    _timer?.cancel();
+    for (var controller in _otpControllers) {
       controller.dispose();
     }
-    for (final node in _focusNodes) {
+    for (var node in _focusNodes) {
       node.dispose();
     }
     super.dispose();
   }
 
-  void _onOtpChanged(String value, int index) {
-    if (value.length == 1 && index < 4) {
-      _focusNodes[index + 1].requestFocus();
-    } else if (value.isEmpty && index > 0) {
-      _focusNodes[index - 1].requestFocus();
-    }
-  }
-
-  void _onVerifyOtp() {
+  void _onVerifyOTP() {
     String otp = _otpControllers.map((c) => c.text).join();
-    debugPrint('OTP entered: $otp');
-
-    if (widget.fromForgotPassword) {
-      // Navigate to Reset Password Screen
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const ResetPasswordScreen(),
-        ),
+    if (otp.length < 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter 4-digit OTP')),
       );
-    } else {
-      // Normal registration/login flow — go back or to home
-      debugPrint('OTP verified for registration/login');
-      Provider.of<LanguageProvider>(context, listen: false).setLoggedIn(true);
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => const HomeScreen(),
-        ),
-        (route) => false,
-      );
+      return;
     }
+
+    // OTP Verified -> Navigate to Name & Password details screen
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => DetailedRegistrationScreen(phoneNumber: widget.phoneNumber),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final lang = Provider.of<LanguageProvider>(context);
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Back Button
-              GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.arrow_back, color: primaryNavy, size: 20),
-                    const SizedBox(width: 4),
-                    Text(
-                      lang.getText('back'),
-                      style: TextStyle(
-                        color: primaryNavy,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
+      backgroundColor: const Color(0xFFF9FAFC),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leadingWidth: 100,
+        leading: InkWell(
+          onTap: () => Navigator.of(context).pop(),
+          child: Row(
+            children: const [
+              SizedBox(width: 16),
+              Icon(Icons.arrow_back, color: Colors.black87, size: 20),
+              SizedBox(width: 4),
+              Text(
+                'Back',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
-              const SizedBox(height: 48),
+            ],
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28.0),
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 24),
 
-              // Lock Icon with dots
-              Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: primaryNavy,
-                        shape: BoxShape.circle,
-                      ),
+              // Lock Icon Header (• • 🔒)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Colors.black87,
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 6),
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: primaryNavy,
-                        shape: BoxShape.circle,
-                      ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Colors.black87,
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade800, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(Icons.lock_outline, color: Colors.grey.shade800, size: 28),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.black87, width: 2),
                     ),
-                  ],
-                ),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: Colors.black87,
+                      size: 26,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 32),
 
               // Title
-              Center(
-                child: Text(
-                  lang.getText('enter_otp_title'),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                    height: 1.4,
-                  ),
+              const Text(
+                'Enter the code that was sent\nto you in SMS',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF191C21),
+                  height: 1.3,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 36),
 
-              // OTP Input Boxes
+              // 4 OTP Boxes
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(4, (index) {
+                  bool isFocused = _focusNodes[index].hasFocus;
                   return Container(
-                    width: 52,
-                    height: 56,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isFocused ? Colors.orange : Colors.grey.shade300,
+                        width: isFocused ? 2.0 : 1.2,
+                      ),
+                    ),
                     child: TextField(
                       controller: _otpControllers[index],
                       focusNode: _focusNodes[index],
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       maxLength: 1,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: primaryNavy,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         counterText: '',
-                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: index == 0
-                                ? accentGold
-                                : Colors.grey.shade300,
-                            width: index == 0 ? 2 : 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: accentGold,
-                            width: 2,
-                          ),
-                        ),
+                        border: InputBorder.none,
                       ),
-                      onChanged: (value) => _onOtpChanged(value, index),
+                      onChanged: (value) {
+                        if (value.isNotEmpty && index < 3) {
+                          _focusNodes[index + 1].requestFocus();
+                        } else if (value.isEmpty && index > 0) {
+                          _focusNodes[index - 1].requestFocus();
+                        }
+                        setState(() {});
+                      },
                     ),
                   );
                 }),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 36),
 
-              // Verify OTP Button
+              // Verify OTP Button (Black Container)
               SizedBox(
                 width: double.infinity,
-                height: 54,
+                height: 52,
                 child: ElevatedButton(
-                  onPressed: _onVerifyOtp,
+                  onPressed: _onVerifyOTP,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryNavy,
+                    backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
-                    lang.getText('verify_otp'),
-                    style: const TextStyle(
+                  child: const Text(
+                    'Verify OTP',
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
-              // Request OTP again + Timer / Send Again Button
+              // Request OTP again row with timer box
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.sms_outlined, color: Colors.grey.shade600, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        lang.getText('request_otp_again'),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey.shade700,
-                          fontWeight: FontWeight.w500,
+                  InkWell(
+                    onTap: _resendTimer == 0 ? _startTimer : null,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline,
+                          size: 18,
+                          color: _resendTimer == 0 ? Colors.black87 : Colors.grey.shade600,
                         ),
-                      ),
-                    ],
-                  ),
-                  // Timer or Send Again Button
-                  _canResend
-                      ? GestureDetector(
-                          onTap: () {
-                            _startTimer();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: primaryNavy,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              lang.getText('send_again'),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Request OTP again',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: _resendTimer == 0 ? Colors.black87 : Colors.grey.shade700,
                           ),
-                        )
-                      : Row(
-                          children: [
-                            Icon(Icons.access_time,
-                                color: Colors.grey.shade600, size: 16),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$_timerSeconds',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                          ],
                         ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.access_time, size: 14, color: Colors.grey.shade700),
+                        const SizedBox(width: 6),
+                        Text(
+                          '$_resendTimer',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

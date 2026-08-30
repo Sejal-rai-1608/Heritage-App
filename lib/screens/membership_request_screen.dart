@@ -1,352 +1,299 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-import '../providers/language_provider.dart';
-import 'detailed_registration_screen.dart';
 import 'home_screen.dart';
 
 class MembershipRequestScreen extends StatelessWidget {
-  const MembershipRequestScreen({super.key});
+  final String? userName;
 
-  static const Color primaryNavy = Color(0xFF00005C);
-  static const Color inProcessBg = Color(0xFFFFEBEE);
-  static const Color inProcessText = Color(0xFFE53935);
+  const MembershipRequestScreen({super.key, this.userName});
 
   @override
   Widget build(BuildContext context) {
-    final lang = Provider.of<LanguageProvider>(context);
-
-    // Format current date e.g. "14-Jun-2026"
-    final String currentDateStr = DateFormat(
-      'dd-MMM-yyyy',
-    ).format(DateTime.now());
-
-    // Fetch registered name or use fallback
-    final String displayName = lang.registeredName.isNotEmpty
-        ? lang.registeredName
-        : 'Riya Mheta';
+    final String displayName = userName != null && userName!.isNotEmpty ? userName! : 'Riya Mehta';
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.5,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: primaryNavy),
-          onPressed: () {
-            // Go back to Home Screen
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-              (route) => false,
-            );
-          },
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Membership Request',
-          style: TextStyle(
-            color: primaryNavy,
-            fontWeight: FontWeight.w800,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // --- Profile Header Section ---
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 36,
-                      backgroundColor: Colors.grey[200],
-                      child: const Icon(
-                        Icons.image_outlined,
-                        size: 36,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            displayName,
-                            style: const TextStyle(
-                              color: primaryNavy,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            currentDateStr,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: inProcessBg,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              'IN PROCESS',
-                              style: TextStyle(
-                                color: inProcessText,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 10,
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Title
+              const Text(
+                'Membership Request',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0F172A),
                 ),
-                const SizedBox(height: 32),
+              ),
+              const SizedBox(height: 24),
 
-                // --- Card 1: Status ---
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
+              // User Info Card (Avatar, Name, Date, IN PROCESS Tag)
+              Row(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE2E8F0),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.image_outlined,
+                      color: Color(0xFF94A3B8),
+                      size: 32,
+                    ),
                   ),
-                  child: const Column(
+                  const SizedBox(width: 16),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Status :',
-                        style: TextStyle(
-                          color: primaryNavy,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'We have received your registration form. We will approve your request after verification.',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 14,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // --- Card 2: Admin Comments ---
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Admin Comments :',
-                        style: TextStyle(
-                          color: primaryNavy,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
-                        ),
-                      ),
-                      SizedBox(height: 24), // empty height to match photo
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // --- Simulation Developer Widget ---
-                Container(
-                  margin: const EdgeInsets.only(bottom: 24),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.amber.shade300),
-                  ),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Developer Demo Shortcut',
-                        style: TextStyle(
+                        displayName,
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber,
-                          fontSize: 13,
+                          color: Color(0xFF1E293B),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          lang.simulateAdminApproval();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Profile approved by Admin! You now have full app access.',
-                              ),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (_) => const HomeScreen(),
-                            ),
-                            (route) => false,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          elevation: 0,
+                      const SizedBox(height: 4),
+                      const Text(
+                        '11-Jun-2026',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF0ED),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
-                          'Simulate Admin Approval',
+                          'IN PROCESS',
                           style: TextStyle(
-                            color: Colors.white,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
+                            color: Color(0xFFFF5252),
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
+                ],
+              ),
+              const SizedBox(height: 28),
 
-                // --- Timings Footer ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.calendar_today_outlined,
-                        color: primaryNavy,
-                        size: 20,
+              // Status Card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Status :',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '10am to 7pm',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          '+91-9511000666',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
+                    SizedBox(height: 10),
+                    Text(
+                      'We have received your registration form. We will approve your request after verification.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF475569),
+                        height: 1.45,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+              ),
+              const SizedBox(height: 20),
 
-                // --- Footer Action Buttons ---
-                Row(
-                  children: [
-                    Expanded(
+              // Admin Comments Card
+              Container(
+                width: double.infinity,
+                height: 120,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Admin Comments :',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 36),
+
+              // Support Contact Footer
+              Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFF1E293B), width: 1.5),
+                    ),
+                    child: const Icon(
+                      Icons.calendar_today_outlined,
+                      color: Color(0xFF1E293B),
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        '10am to 7pm',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF475569),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        '+91-9511000666',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0284C7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+
+              // Action Buttons (Close & Edit)
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
                       child: OutlinedButton(
-                        onPressed: () {
-                          // Go back to Home
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (_) => const HomeScreen(),
-                            ),
-                            (route) => false,
-                          );
-                        },
+                        onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: primaryNavy,
-                            width: 1.5,
-                          ),
+                          side: const BorderSide(color: Colors.black, width: 1.5),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(25),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                         child: const Text(
                           'Close',
                           style: TextStyle(
-                            color: primaryNavy,
+                            color: Colors.black,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Go to edit profile details
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const DetailedRegistrationScreen(),
-                            ),
-                          );
+                          Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryNavy,
+                          backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(25),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
                           elevation: 0,
                         ),
                         child: const Text(
                           'Edit',
                           style: TextStyle(
                             color: Colors.white,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // BYPASS BUTTON FOR ADMIN APPROVAL (TESTING / DEV)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 8),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Admin Approved Registration Request! Redirecting to Home...'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => HomeScreen(userName: displayName),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                  icon: const Icon(Icons.flash_on, color: Colors.black, size: 20),
+                  label: const Text(
+                    'Bypass Verification (Simulate Admin Approval)',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF3D276),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),

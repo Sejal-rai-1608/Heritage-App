@@ -374,8 +374,8 @@ class _CustomCropDialogState extends State<CustomCropDialog> {
                         final currentMatrix = _transformationController.value;
                         final translation = currentMatrix.getTranslation();
                         final newMatrix = Matrix4.identity()
-                          ..translate(translation.x, translation.y)
-                          ..scale(_zoomScale);
+                          ..translateByVector3(translation)
+                          ..scaleByDouble(_zoomScale, _zoomScale, 1.0, 1.0);
                         _transformationController.value = newMatrix;
                       });
                     },
