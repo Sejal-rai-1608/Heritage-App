@@ -320,6 +320,17 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateFullProfileDetails(Map<String, String> updatedDetails) {
+    _profileDetails.addAll(updatedDetails);
+    _isProfileCompleted = true;
+    _isProfileApproved = true;
+    _isLoggedIn = true;
+    if (updatedDetails.containsKey('profileImageUrl') && updatedDetails['profileImageUrl']!.isNotEmpty) {
+      _profileImageUrl = updatedDetails['profileImageUrl'];
+    }
+    notifyListeners();
+  }
+
   void addPost(
     String type,
     String content,
