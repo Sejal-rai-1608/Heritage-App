@@ -140,7 +140,6 @@ class _PropertyScreenState extends State<PropertyScreen> {
     final size = isGu ? prop['sizeGu'] : prop['sizeEn'];
     final beds = isGu ? prop['bedsGu'] : prop['bedsEn'];
     final baths = isGu ? prop['bathsGu'] : prop['bathsEn'];
-    final category = isGu ? prop['categoryGu'] : prop['categoryEn'];
     final ownerName = isGu ? prop['ownerNameGu'] : prop['ownerNameEn'];
     final desc = isGu ? prop['descGu'] : prop['descEn'];
     final image = prop['image'] as String?;
