@@ -13,6 +13,7 @@ import 'donation_causes_screen.dart';
 import 'support_screen.dart';
 import 'notifications_screen.dart';
 import 'family_tree_screen.dart';
+import 'obituary_screen.dart';
 import '../widgets/custom_bottom_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -833,7 +834,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             _handleVerifiedAction(() {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => const SupportScreen(),
+                                  builder: (_) => ObituaryScreen(userName: widget.userName),
                                 ),
                               );
                             });
