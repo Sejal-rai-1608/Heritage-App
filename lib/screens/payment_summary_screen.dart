@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
+import 'notifications_screen.dart';
 
 class PaymentSummaryScreen extends StatefulWidget {
   final String memberName;
@@ -29,8 +32,36 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     _currentPaymentMethod = widget.paymentMethod;
   }
 
+  String _getMemberName(String name, bool isGu) {
+    if (!isGu) return name;
+    if (name.contains('Soham')) {
+      return 'સોહમ આદિત્ય મોરે';
+    } else if (name.contains('Riya')) {
+      return 'રિયા આદિત્ય મોરે';
+    }
+    return name;
+  }
+
+  String _getPlanTitle(String title, bool isGu) {
+    if (!isGu) return title;
+    if (title.contains('6')) {
+      return '૬ મહિનાની પ્રીમિયમ સભ્યપદ';
+    }
+    return '૧૨ મહિનાની પ્રીમિયમ સભ્યપદ';
+  }
+
+  String _getPaymentMethodTitle(String method, bool isGu) {
+    if (!isGu) return method;
+    if (method.contains('UPI')) return 'UPI ચુકવણી';
+    if (method.contains('Online')) return 'ઓનલાઇન ચુકવણી';
+    return 'રોકડ દ્વારા ચુકવણી';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     final double gstAmount = widget.totalAmount * 0.15266; // Approx 18% GST calculation
     final double baseAmount = widget.totalAmount - gstAmount;
 
@@ -45,9 +76,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232D)),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Payment Summary',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'ચુકવણીનો સારાંશ' : 'Payment Summary',
+          style: const TextStyle(
             fontFamily: 'Serif',
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -56,7 +87,13 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const NotificationsScreen(),
+                ),
+              );
+            },
             icon: const Icon(
               Icons.notifications_none_outlined,
               color: Color(0xFF2D3139),
@@ -106,9 +143,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Membership\nSummary',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'સભ્યપદનો\nસારાંશ' : 'Membership\nSummary',
+                        style: const TextStyle(
                           fontFamily: 'Serif',
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -122,10 +159,10 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                           color: const Color(0xFFFFF8DF),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Text(
-                          'Active\nSelection',
+                        child: Text(
+                          isGu ? 'સક્રિય\nપસંદગી' : 'Active\nSelection',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF8B6B1B),
@@ -158,9 +195,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'PREMIUM PLAN',
-                              style: TextStyle(
+                            Text(
+                              isGu ? 'પ્રીમિયમ પ્લાન' : 'PREMIUM PLAN',
+                              style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
@@ -169,7 +206,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              widget.planTitle,
+                              _getPlanTitle(widget.planTitle, isGu),
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -177,9 +214,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                               ),
                             ),
                             const SizedBox(height: 2),
-                            const Text(
-                              'Access to all exclusive community features',
-                              style: TextStyle(
+                            Text(
+                              isGu ? 'તમામ વિશિષ્ટ સમુદાય સુવિધાઓની ઍક્સેસ' : 'Access to all exclusive community features',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Color(0xFF6B7280),
                               ),
@@ -192,16 +229,16 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   const SizedBox(height: 20),
 
                   // Member Name
-                  const Text(
-                    'Member Name',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'સભ્યનું નામ' : 'Member Name',
+                    style: const TextStyle(
                       fontSize: 11,
                       color: Color(0xFF9CA3AF),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    widget.memberName,
+                    _getMemberName(widget.memberName, isGu),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -211,17 +248,17 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   const SizedBox(height: 14),
 
                   // Valid Until
-                  const Text(
-                    'Valid Until',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'સુધી માન્ય' : 'Valid Until',
+                    style: const TextStyle(
                       fontSize: 11,
                       color: Color(0xFF9CA3AF),
                     ),
                   ),
                   const SizedBox(height: 2),
-                  const Text(
-                    'October 24, 2025',
-                    style: TextStyle(
+                  Text(
+                    isGu ? '૨૪ ઓક્ટોબર, ૨૦૨૫' : 'October 24, 2025',
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E232D),
@@ -250,9 +287,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Selected Payment Method',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'પસંદ કરેલ ચુકવણી પદ્ધતિ' : 'Selected Payment Method',
+                    style: const TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -290,7 +327,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _currentPaymentMethod,
+                                _getPaymentMethodTitle(_currentPaymentMethod, isGu),
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -298,9 +335,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              const Text(
-                                'Google Pay / BHIM app etc.',
-                                style: TextStyle(
+                              Text(
+                                isGu ? 'ગુગલ પે / ભીમ એપ વગેરે' : 'Google Pay / BHIM app etc.',
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Color(0xFF6B7280),
                                 ),
@@ -310,11 +347,11 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            _showChangePaymentBottomSheet();
+                            _showChangePaymentBottomSheet(isGu);
                           },
-                          child: const Text(
-                            'Change',
-                            style: TextStyle(
+                          child: Text(
+                            isGu ? 'બદલો' : 'Change',
+                            style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF8B6B1B),
@@ -340,9 +377,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Price Details',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'કિંમતની વિગતો' : 'Price Details',
+                    style: const TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -355,15 +392,15 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Base Subscription',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'મૂળ સબસ્ક્રિપ્શન' : 'Base Subscription',
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Color(0xFF9CA3AF),
                         ),
                       ),
                       Text(
-                        'Rs. ${baseAmount.round()}',
+                        isGu ? 'રૂ. ${baseAmount.round()}' : 'Rs. ${baseAmount.round()}',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,
@@ -378,15 +415,15 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'GST (18%)',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'જીએસટી (૧૮%)' : 'GST (18%)',
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Color(0xFF9CA3AF),
                         ),
                       ),
                       Text(
-                        'Rs. ${gstAmount.round()}',
+                        isGu ? 'રૂ. ${gstAmount.round()}' : 'Rs. ${gstAmount.round()}',
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,
@@ -401,9 +438,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'TOTAL AMOUNT',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'કુલ રકમ' : 'TOTAL AMOUNT',
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
@@ -411,7 +448,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                         ),
                       ),
                       Text(
-                        'Rs. ${widget.totalAmount}',
+                        isGu ? 'રૂ. ${widget.totalAmount}' : 'Rs. ${widget.totalAmount}',
                         style: const TextStyle(
                           fontFamily: 'Serif',
                           fontSize: 26,
@@ -426,7 +463,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   // Complete Payment Button
                   ElevatedButton(
                     onPressed: () {
-                      _showPaymentSuccessDialog();
+                      _showPaymentSuccessDialog(isGu);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFDE089),
@@ -439,17 +476,17 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
-                          'COMPLETE PAYMENT',
-                          style: TextStyle(
+                          isGu ? 'ચુકવણી પૂર્ણ કરો' : 'COMPLETE PAYMENT',
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(Icons.arrow_forward, size: 18),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward, size: 18),
                       ],
                     ),
                   ),
@@ -465,16 +502,16 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(
+                      children: [
+                        const Icon(
                           Icons.verified_user_outlined,
                           color: Color(0xFFFDE089),
                           size: 16,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
-                          'Secure Transaction via 256-bit SSL',
-                          style: TextStyle(
+                          isGu ? '૨૫૬-બીટ SSL દ્વારા સુરક્ષિત વ્યવહાર' : 'Secure Transaction via 256-bit SSL',
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF9CA3AF),
                           ),
@@ -508,19 +545,19 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'Tax Exemption Notice',
-                          style: TextStyle(
+                          isGu ? 'કર મુક્તિ સૂચના' : 'Tax Exemption Notice',
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF1E232D),
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'All donations and membership fees are eligible for tax exemption under Section 80G of the Income Tax Act. A receipt will be sent to your registered email address.',
-                          style: TextStyle(
+                          isGu ? 'તમામ દાન અને સભ્યપદ ફી આવકવેરા કાયદાની કલમ 80G હેઠળ કરમુક્તિ માટે પાત્ર છે. રસીદ તમારા રજિસ્ટર્ડ ઈમેઈલ સરનામે મોકલવામાં આવશે.' : 'All donations and membership fees are eligible for tax exemption under Section 80G of the Income Tax Act. A receipt will be sent to your registered email address.',
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF475569),
                             height: 1.4,
@@ -539,7 +576,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     );
   }
 
-  void _showChangePaymentBottomSheet() {
+  void _showChangePaymentBottomSheet(bool isGu) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -552,9 +589,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Select Payment Method',
-                style: TextStyle(
+              Text(
+                isGu ? 'ચુકવણી પદ્ધતિ પસંદ કરો' : 'Select Payment Method',
+                style: const TextStyle(
                   fontFamily: 'Serif',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -563,7 +600,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(Icons.account_balance_wallet_outlined),
-                title: const Text('UPI Payment (GPay, PhonePe, BHIM)'),
+                title: Text(isGu ? 'UPI ચુકવણી (GPay, PhonePe, BHIM)' : 'UPI Payment (GPay, PhonePe, BHIM)'),
                 onTap: () {
                   setState(() => _currentPaymentMethod = 'UPI Payment');
                   Navigator.pop(context);
@@ -571,7 +608,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.credit_card_outlined),
-                title: const Text('Online Payment (Cards / Netbanking)'),
+                title: Text(isGu ? 'ઓનલાઇન ચુકવણી (કાર્ડ્સ / નેટબેંકિંગ)' : 'Online Payment (Cards / Netbanking)'),
                 onTap: () {
                   setState(() => _currentPaymentMethod = 'Online Payment');
                   Navigator.pop(context);
@@ -579,7 +616,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.payments_outlined),
-                title: const Text('Pay using Cash (In-person)'),
+                title: Text(isGu ? 'રોકડ દ્વારા ચુકવણી (રૂબરૂ)' : 'Pay using Cash (In-person)'),
                 onTap: () {
                   setState(() => _currentPaymentMethod = 'Cash Payment');
                   Navigator.pop(context);
@@ -592,7 +629,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     );
   }
 
-  void _showPaymentSuccessDialog() {
+  void _showPaymentSuccessDialog(bool isGu) {
     showDialog(
       context: context,
       builder: (context) {
@@ -611,9 +648,9 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                 child: const Icon(Icons.check_circle_rounded, color: Color(0xFF059669), size: 40),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Payment Successful!',
-                style: TextStyle(
+              Text(
+                isGu ? 'ચુકવણી સફળ રહી!' : 'Payment Successful!',
+                style: const TextStyle(
                   fontFamily: 'Serif',
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -622,7 +659,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Thank you! ${widget.memberName} is now upgraded to ${widget.planTitle}.',
+                isGu ? 'આભાર! ${_getMemberName(widget.memberName, isGu)} હવે ${_getPlanTitle(widget.planTitle, isGu)} માં અપગ્રેડ થયા છે.' : 'Thank you! ${widget.memberName} is now upgraded to ${widget.planTitle}.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 14, color: Color(0xFF5E6573)),
               ),
@@ -636,7 +673,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   minimumSize: const Size(double.infinity, 44),
                 ),
-                child: const Text('Back to Home', style: TextStyle(color: Colors.white)),
+                child: Text(isGu ? 'મુખ્ય પૃષ્ઠ પર પાછા જાઓ' : 'Back to Home', style: const TextStyle(color: Colors.white)),
               ),
             ],
           ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,16 +13,75 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final Color primaryNavy = const Color(0xFF00005C);
+  final Color primaryYellow = const Color(0xFFE5A93C);
+  final Color darkYellow = const Color(0xFFC68A00);
+  final Color primaryDark = const Color(0xFF191C21);
+
+  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
+  void dispose() {
+    _mobileController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _onLogin() {
+    final mobile = _mobileController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (mobile.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your mobile number'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (mobile.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid 10-digit mobile number'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your password'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    // Success -> Redirect to HomeScreen
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Login successful! Redirecting...'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      (route) => false,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Access the localization provider
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Light background matching design
+      backgroundColor: const Color(0xFFFAFAFC),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -32,16 +92,23 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Top Icon and Title
+                // Top Icon and Title (Yellow Theme)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: primaryNavy,
+                    color: primaryYellow,
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryYellow.withValues(alpha: 0.35),
+                        blurRadius: 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: const Icon(
                     Icons.account_balance,
-                    color: Colors.white,
+                    color: Colors.black87,
                     size: 40,
                   ),
                 ),
@@ -50,8 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   languageProvider.getText('heritage_core'),
                   style: TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: primaryNavy,
+                    fontWeight: FontWeight.w900,
+                    color: primaryDark,
+                    letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -61,8 +129,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.grey.shade200),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,10 +148,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
+                          color: Color(0xFF191C21),
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _mobileController,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           prefixText: '+91  ',
@@ -95,12 +172,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             vertical: 16,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: primaryYellow, width: 2.0),
                           ),
                         ),
                       ),
@@ -112,10 +193,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
+                          color: Color(0xFF191C21),
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _passwordController,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           hintText: languageProvider.getText('enter_password'),
@@ -141,62 +224,62 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: primaryYellow, width: 2.0),
                           ),
                         ),
                       ),
                       const SizedBox(height: 24),
 
-                      // Login Button
+                      // Login Button (Yellow Background with Dark Text)
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 52,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (_) => const HomeScreen(),
-                              ),
-                              (route) => false,
-                            );
-                          },
+                          onPressed: _onLogin,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryNavy,
+                            backgroundColor: primaryYellow,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            elevation: 0,
+                            elevation: 1,
+                            shadowColor: primaryYellow.withValues(alpha: 0.4),
                           ),
-                          child: Text(
-                            languageProvider.getText('login'),
-                            style: const TextStyle(
-                              color: Colors.white,
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              color: Color(0xFF191C21),
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Forgot Password
+                      // Forgot Password Link (Dark Yellow Text)
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Forgot Password clicked (Ready for new UI)')),
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordScreen(),
+                              ),
                             );
                           },
                           child: Text(
                             languageProvider.getText('forgot_password'),
                             style: TextStyle(
-                              color: primaryNavy,
-                              fontWeight: FontWeight.w700,
+                              color: darkYellow,
+                              fontWeight: FontWeight.w800,
                               fontSize: 13,
                             ),
                           ),
@@ -224,10 +307,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      // Register Button (simple outlined, no hover effect)
+                      // Register Button (Yellow Border & Dark Text)
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 52,
                         child: OutlinedButton(
                           onPressed: () {
                             Navigator.of(context).push(
@@ -237,18 +320,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: primaryNavy, width: 1.5),
+                            side: BorderSide(color: primaryYellow, width: 2.0),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             splashFactory: NoSplash.splashFactory,
                           ),
                           child: Text(
                             languageProvider.getText('register_new'),
-                            style: TextStyle(
-                              color: primaryNavy,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                            style: const TextStyle(
+                              color: Color(0xFF191C21),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
@@ -269,7 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // Toggle Buttons for Language
+                // Toggle Buttons for Language (Yellow Theme Selection)
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -343,12 +426,12 @@ class _LoginScreenState extends State<LoginScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? primaryYellow : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: primaryYellow.withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -359,9 +442,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Text(
             label,
             style: TextStyle(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
               fontSize: 13,
-              color: isSelected ? primaryNavy : Colors.black54,
+              color: isSelected ? const Color(0xFF191C21) : Colors.black54,
             ),
           ),
         ),

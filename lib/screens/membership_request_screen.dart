@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'home_screen.dart';
 
 class MembershipRequestScreen extends StatelessWidget {
@@ -8,7 +11,11 @@ class MembershipRequestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String displayName = userName != null && userName!.isNotEmpty ? userName! : 'Riya Mehta';
+    final lang = Provider.of<LanguageProvider>(context);
+    final String displayName = (lang.registeredName.isNotEmpty)
+        ? lang.registeredName
+        : (userName != null && userName!.isNotEmpty ? userName! : 'Riya Mehta');
+    final bool hasImage = lang.profileImageUrl != null && lang.profileImageUrl!.isNotEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -16,17 +23,18 @@ class MembershipRequestScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Title
+              // 1. Header Title: "Membership Request"
               const Text(
                 'Membership Request',
                 style: TextStyle(
@@ -37,20 +45,24 @@ class MembershipRequestScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // User Info Card (Avatar, Name, Date, IN PROCESS Tag)
+              // 2. User Info Row (Avatar, Name, Date, IN PROCESS Tag)
               Row(
                 children: [
                   Container(
                     width: 64,
                     height: 64,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE2E8F0),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE2E8F0),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.image_outlined,
-                      color: Color(0xFF94A3B8),
-                      size: 32,
+                    child: ClipOval(
+                      child: hasImage && File(lang.profileImageUrl!).existsSync()
+                          ? Image.file(File(lang.profileImageUrl!), fit: BoxFit.cover)
+                          : const Icon(
+                              Icons.image_outlined,
+                              color: Color(0xFF94A3B8),
+                              size: 32,
+                            ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -96,7 +108,7 @@ class MembershipRequestScreen extends StatelessWidget {
               ),
               const SizedBox(height: 28),
 
-              // Status Card
+              // 3. Status Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -130,7 +142,7 @@ class MembershipRequestScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Admin Comments Card
+              // 4. Admin Comments Card
               Container(
                 width: double.infinity,
                 height: 120,
@@ -156,7 +168,7 @@ class MembershipRequestScreen extends StatelessWidget {
               ),
               const SizedBox(height: 36),
 
-              // Support Contact Footer
+              // 5. Support Contact Helpline Footer
               Row(
                 children: [
                   Container(
@@ -199,19 +211,24 @@ class MembershipRequestScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
 
-              // Action Buttons (Close & Edit)
+              // 6. Action Buttons (Close & Edit)
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 50,
+                      height: 52,
                       child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (_) => HomeScreen(userName: displayName),
+                            ),
+                            (route) => false,
+                          );
+                        },
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.black, width: 1.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                          side: const BorderSide(color: Colors.black, width: 1.8),
+                          shape: const StadiumBorder(),
                         ),
                         child: const Text(
                           'Close',
@@ -227,16 +244,15 @@ class MembershipRequestScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: SizedBox(
-                      height: 50,
+                      height: 52,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                          foregroundColor: Colors.white,
+                          shape: const StadiumBorder(),
                           elevation: 0,
                         ),
                         child: const Text(
@@ -252,18 +268,21 @@ class MembershipRequestScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // BYPASS BUTTON FOR ADMIN APPROVAL (TESTING / DEV)
-              Container(
+              // 7. BYPASS BUTTON FOR ADMIN APPROVAL (YELLOW THEME)
+              SizedBox(
                 width: double.infinity,
-                margin: const EdgeInsets.only(top: 8),
+                height: 50,
                 child: ElevatedButton.icon(
                   onPressed: () {
+                    final lp = Provider.of<LanguageProvider>(context, listen: false);
+                    lp.simulateAdminApproval();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Admin Approved Registration Request! Redirecting to Home...'),
-                        backgroundColor: Colors.green,
+                        content: Text('Account Verified & Approved! Unlocking Community Hub...'),
+                        backgroundColor: Color(0xFF191C21),
+                        duration: Duration(seconds: 2),
                       ),
                     );
                     Navigator.of(context).pushAndRemoveUntil(
@@ -273,21 +292,19 @@ class MembershipRequestScreen extends StatelessWidget {
                       (route) => false,
                     );
                   },
-                  icon: const Icon(Icons.flash_on, color: Colors.black, size: 20),
+                  icon: const Icon(Icons.flash_on, color: Color(0xFF191C21), size: 20),
                   label: const Text(
                     'Bypass Verification (Simulate Admin Approval)',
                     style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
+                      color: Color(0xFF191C21),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13.5,
+                      letterSpacing: 0.3,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF3D276),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    backgroundColor: const Color(0xFFE5A93C),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 2,
                   ),
                 ),

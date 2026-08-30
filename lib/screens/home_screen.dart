@@ -11,6 +11,8 @@ import 'settings_screen.dart';
 import 'samuhik_vivaah_screen.dart';
 import 'donation_causes_screen.dart';
 import 'support_screen.dart';
+import 'notifications_screen.dart';
+import 'family_tree_screen.dart';
 import '../widgets/custom_bottom_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   PageController _pageController = PageController(initialPage: 0);
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   bool _isCategoriesExpanded = true;
 
   @override
@@ -47,6 +49,258 @@ class _HomeScreenState extends State<HomeScreen> {
   final Color softBluePill = const Color(0xFFEFF3FA);
   final Color iconContainerBg = const Color(0xFF1E232D);
 
+
+  void _showInviteMembersModal() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Row(
+          children: const [
+            Icon(Icons.person_add_rounded, color: Color(0xFFE5A93C), size: 26),
+            SizedBox(width: 10),
+            Text(
+              'Invite Members',
+              style: TextStyle(fontFamily: 'Serif', fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Share your exclusive community referral link to invite family & friends to Heritage App:',
+              style: TextStyle(fontSize: 13.5, color: Color(0xFF4A4E57), height: 1.4),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7DB),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE5A93C)),
+              ),
+              child: const Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'https://heritageapp.com/invite?ref=COMMUNITY2024',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF8B6B00)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Invite link copied to clipboard! Share it with your community.'),
+                  backgroundColor: Color(0xFF191C21),
+                ),
+              );
+            },
+            icon: const Icon(Icons.copy_rounded, size: 16, color: Color(0xFF191C21)),
+            label: const Text('Copy Link', style: TextStyle(color: Color(0xFF191C21), fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE5A93C),
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showShareAppModal() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Row(
+          children: const [
+            Icon(Icons.share_rounded, color: Color(0xFFE5A93C), size: 26),
+            SizedBox(width: 10),
+            Text(
+              'Share Heritage App',
+              style: TextStyle(fontFamily: 'Serif', fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Help expand our Gujarati community network! Share the Heritage App download link with your contacts:',
+              style: TextStyle(fontSize: 13.5, color: Color(0xFF4A4E57), height: 1.4),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7DB),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE5A93C)),
+              ),
+              child: const Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'https://heritageapp.com/download',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF8B6B00)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('App share link copied! Share via WhatsApp or SMS.'),
+                  backgroundColor: Color(0xFF191C21),
+                ),
+              );
+            },
+            icon: const Icon(Icons.share_rounded, size: 16, color: Color(0xFF191C21)),
+            label: const Text('Share Now', style: TextStyle(color: Color(0xFF191C21), fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE5A93C),
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleVerifiedAction(VoidCallback onVerifiedSuccess) {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    if (!lang.isProfileApproved) {
+      _showCompleteRegistrationDialog();
+    } else {
+      onVerifiedSuccess();
+    }
+  }
+
+  Widget _buildUnverifiedUserBanner() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8E7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5A93C), width: 1.8),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFE5A93C).withValues(alpha: 0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE5A93C),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.assignment_ind_rounded,
+                  color: Color(0xFF191C21),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Complete Your Registration',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF191C21),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Your profile is currently unverified. Please submit your full registration details to access directory, matrimony, and community benefits.',
+            style: TextStyle(
+              fontSize: 13,
+              color: Color(0xFF4A4E57),
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const RegistrationFormScreen(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE5A93C),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 0,
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Complete Registration Now',
+                    style: TextStyle(
+                      color: Color(0xFF191C21),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Icon(Icons.arrow_forward_rounded, color: Color(0xFF191C21), size: 16),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showCompleteRegistrationDialog() {
     showDialog(
       context: context,
@@ -57,21 +311,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           title: Row(
             children: const [
-              Icon(Icons.assignment_ind_outlined, color: Color(0xFF00005C), size: 24),
+              Icon(Icons.assignment_ind_outlined, color: Color(0xFFE5A93C), size: 26),
               SizedBox(width: 10),
-              Text(
-                'Complete Registration',
-                style: TextStyle(
-                  fontFamily: 'Serif',
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E232D),
+              Expanded(
+                child: Text(
+                  'Registration Required',
+                  style: TextStyle(
+                    fontFamily: 'Serif',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E232D),
+                  ),
                 ),
               ),
             ],
           ),
           content: const Text(
-            'Please complete your registration profile to access full features and community benefits.',
+            'Your account is currently unverified. Please complete your registration profile to access full community features, directory, and matrimony.',
             style: TextStyle(
               fontSize: 14,
               color: Color(0xFF5A6270),
@@ -80,20 +336,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           actions: [
-            OutlinedButton(
+            TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.grey.shade300),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
               child: const Text(
                 'Later',
                 style: TextStyle(
-                  color: Colors.black87,
+                  color: Colors.black54,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -109,17 +359,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00005C),
+                backgroundColor: const Color(0xFFE5A93C),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                elevation: 0,
               ),
               child: const Text(
-                'Proceed',
+                'Complete Registration',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF191C21),
+                  fontWeight: FontWeight.w900,
                   fontSize: 14,
                 ),
               ),
@@ -141,11 +392,13 @@ class _HomeScreenState extends State<HomeScreen> {
       // --- Floating Action Button ---
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const NewMessageScreen(),
-            ),
-          );
+          _handleVerifiedAction(() {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const NewMessageScreen(),
+              ),
+            );
+          });
         },
         backgroundColor: Colors.black,
         elevation: 4,
@@ -160,7 +413,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeBody() {
     final lang = Provider.of<LanguageProvider>(context);
-    final bool isGu = lang.currentLanguage == 'gu';
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -175,9 +427,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // --- Greeting ---
             Text(
-              isGu
-                  ? 'નમસ્તે, ${widget.userName != null && widget.userName!.isNotEmpty ? widget.userName : 'સોહમ'}!'
-                  : 'Namaste, ${widget.userName != null && widget.userName!.isNotEmpty ? widget.userName : 'Soham'}!',
+              lang.currentLanguage == 'gu'
+                  ? 'નમસ્તે, ${lang.registeredFirstName.isNotEmpty ? (lang.registeredFirstName == 'Soham' ? 'સોહમ' : lang.registeredFirstName) : (widget.userName != null && widget.userName!.isNotEmpty ? (widget.userName == 'Soham' ? 'સોહમ' : widget.userName) : 'સોહમ')}!'
+                  : 'Namaste, ${lang.registeredFirstName.isNotEmpty ? lang.registeredFirstName : (widget.userName != null && widget.userName!.isNotEmpty ? widget.userName : 'Soham')}!',
               style: const TextStyle(
                 fontFamily: 'Serif',
                 fontSize: 30,
@@ -188,8 +440,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              isGu
-                  ? 'કમ્યુનિટી હબમાં તમારું સ્વાગત છે'
+              lang.currentLanguage == 'gu'
+                  ? 'તમારા સમુદાય કેન્દ્રમાં આપનું સ્વાગત છે.'
                   : 'Welcome back to your community hub.',
               style: const TextStyle(
                 fontSize: 15,
@@ -197,34 +449,56 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontWeight: FontWeight.w400,
               ),
             ),
+            if (!lang.isProfileApproved) ...[
+              const SizedBox(height: 16),
+              _buildUnverifiedUserBanner(),
+            ],
             const SizedBox(height: 24),
 
             // --- Action Cards (My Profile, Family Tree, Community Directory) ---
             _buildMainActionCard(
               icon: Icons.person,
-              title: isGu ? 'મારું પ્રોફાઇલ' : 'MY PROFILE',
-              subtitle: isGu ? 'તમારી પ્રોફાઇલ અને વિગતો મેનેજ કરો' : 'Manage your personal legacy',
+              title: lang.currentLanguage == 'gu' ? 'મારી પ્રોફાઇલ' : 'MY PROFILE',
+              subtitle: lang.currentLanguage == 'gu' ? 'તમારો વ્યક્તિગત વારસો મેનેજ કરો' : 'Manage your personal legacy',
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ProfileScreen(userName: widget.userName),
-                  ),
-                );
+                _handleVerifiedAction(() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ProfileScreen(userName: widget.userName),
+                    ),
+                  );
+                });
               },
             ),
             const SizedBox(height: 12),
             _buildMainActionCard(
               icon: Icons.account_tree,
-              title: isGu ? 'ફેમિલી ટ્રી' : 'FAMILY TREE',
-              subtitle: isGu ? 'તમારા વંશાવળી અને કુટુંબ વૃક્ષને જુઓ' : 'Explore your ancestral roots',
-              onTap: _showCompleteRegistrationDialog,
+              title: lang.currentLanguage == 'gu' ? 'કૌટુંબિક વૃક્ષ' : 'FAMILY TREE',
+              subtitle: lang.currentLanguage == 'gu' ? 'તમારા પૂર્વજોના મૂળ શોધો' : 'Explore your ancestral roots',
+              onTap: () {
+                _handleVerifiedAction(() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => FamilyTreeScreen(userName: widget.userName),
+                    ),
+                  );
+                });
+              },
             ),
             const SizedBox(height: 12),
             _buildMainActionCard(
               icon: Icons.groups,
-              title: isGu ? 'સમુદાય ડિરેક્ટરી' : 'COMMUNITY DIRECTORY',
-              subtitle: isGu ? 'સમુદાયના સ્થાનિક સભ્યો સાથે જોડાઓ' : 'Connect with local members',
-              onTap: _showCompleteRegistrationDialog,
+              title: lang.currentLanguage == 'gu' ? 'સમુદાય ડિરેક્ટરી' : 'COMMUNITY DIRECTORY',
+              subtitle: lang.currentLanguage == 'gu' ? 'સ્થાનિક સભ્યો સાથે જોડાઓ' : 'Connect with local members',
+              onTap: () {
+                _handleVerifiedAction(() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => MemberDirectoryScreen(userName: widget.userName),
+                    ),
+                  );
+                });
+              },
             ),
             const SizedBox(height: 24),
 
@@ -261,45 +535,95 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTopHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // Top Left: 3-Line Hamburger Menu Button
+        IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+          icon: const Icon(
+            Icons.menu_rounded,
+            color: Color(0xFF1E232D),
+            size: 28,
+          ),
+          tooltip: 'Open Menu',
+        ),
+
+        // Center: Heritage App Title
+        const Text(
+          'Heritage App',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Serif',
+            fontSize: 21,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E232D),
+          ),
+        ),
+
+        // Top Right: Notification Bell + Profile Picture Avatar
         Row(
           children: [
-            InkWell(
-              onTap: () {
-                _scaffoldKey.currentState?.openDrawer();
+            IconButton(
+              onPressed: () {
+                _handleVerifiedAction(() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                });
               },
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.grey.shade300, width: 1),
-                  image: const DecorationImage(
-                    image: AssetImage('assets/images/sanjay_profile.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+              icon: const Icon(
+                Icons.notifications_none_outlined,
+                color: Color(0xFF2D3139),
+                size: 24,
               ),
+              tooltip: 'Notifications',
             ),
-            const SizedBox(width: 12),
-            const Text(
-              'Heritage App',
-              style: TextStyle(
-                fontFamily: 'Serif',
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E232D),
-              ),
+            const SizedBox(width: 4),
+            Consumer<LanguageProvider>(
+              builder: (context, lang, child) {
+                final hasImage = lang.profileImageUrl != null && lang.profileImageUrl!.isNotEmpty;
+                return InkWell(
+                  onTap: () {
+                    _handleVerifiedAction(() {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ProfileScreen(userName: widget.userName),
+                        ),
+                      );
+                    });
+                  },
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: hasImage ? Colors.transparent : const Color(0xFFFFF7DB),
+                      border: Border.all(color: const Color(0xFFE5A93C), width: 1.5),
+                      image: hasImage
+                          ? DecorationImage(
+                              image: NetworkImage(lang.profileImageUrl!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: hasImage
+                        ? null
+                        : const Center(
+                            child: Icon(
+                              Icons.person_rounded,
+                              color: Color(0xFF191C21),
+                              size: 22,
+                            ),
+                          ),
+                  ),
+                );
+              },
             ),
           ],
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.notifications_none_outlined,
-            color: Color(0xFF2D3139),
-            size: 26,
-          ),
         ),
       ],
     );
@@ -379,6 +703,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 3. Explore Categories Dropdown Tile
   Widget _buildCategoriesTile() {
+    final lang = Provider.of<LanguageProvider>(context);
+
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
@@ -411,10 +737,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: 22,
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Explore Categories',
-                      style: TextStyle(
+                      lang.currentLanguage == 'gu' ? 'શ્રેણીઓ શોધો' : 'Explore Categories',
+                      style: const TextStyle(
                         fontFamily: 'Serif',
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -450,29 +776,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: _buildCategoryGridItem(
                           icon: Icons.work_outline_rounded,
-                          label: 'Jobs',
-                          onTap: _showCompleteRegistrationDialog,
+                          label: lang.currentLanguage == 'gu' ? 'નોકરીઓ' : 'Jobs',
+                          onTap: () {
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const BusinessDirectoryScreen(),
+                                ),
+                              );
+                            });
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildCategoryGridItem(
                           icon: Icons.apartment_rounded,
-                          label: 'Property',
-                          onTap: _showCompleteRegistrationDialog,
+                          label: lang.currentLanguage == 'gu' ? 'મિલકત' : 'Property',
+                          onTap: () {
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const BusinessDirectoryScreen(),
+                                ),
+                              );
+                            });
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildCategoryGridItem(
                           icon: Icons.favorite_border_rounded,
-                          label: 'Matrimony',
+                          label: lang.currentLanguage == 'gu' ? 'લગ્ન' : 'Matrimony',
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => MatchesScreen(userName: widget.userName),
-                              ),
-                            );
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => MatchesScreen(userName: widget.userName),
+                                ),
+                              );
+                            });
                           },
                         ),
                       ),
@@ -484,29 +828,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: _buildCategoryGridItem(
                           icon: Icons.church_outlined,
-                          label: 'Obituary',
-                          onTap: _showCompleteRegistrationDialog,
+                          label: lang.currentLanguage == 'gu' ? 'શ્રદ્ધાંજલિ' : 'Obituary',
+                          onTap: () {
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const SupportScreen(),
+                                ),
+                              );
+                            });
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildCategoryGridItem(
                           icon: Icons.celebration_outlined,
-                          label: 'Events',
-                          onTap: _showCompleteRegistrationDialog,
+                          label: lang.currentLanguage == 'gu' ? 'ઇવેન્ટ્સ' : 'Events',
+                          onTap: () {
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SamuhikVivaahScreen(userName: widget.userName),
+                                ),
+                              );
+                            });
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildCategoryGridItem(
                           icon: Icons.business_center_outlined,
-                          label: 'Business',
+                          label: lang.currentLanguage == 'gu' ? 'વ્યાપાર' : 'Business',
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const BusinessDirectoryScreen(),
-                              ),
-                            );
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const BusinessDirectoryScreen(),
+                                ),
+                              );
+                            });
                           },
                         ),
                       ),
@@ -579,6 +941,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 4. Featured Event Card
   Widget _buildFeaturedEventCard() {
+    final lang = Provider.of<LanguageProvider>(context);
     return Container(
       height: 380,
       width: double.infinity,
@@ -628,8 +991,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: accentGold,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    'મુખ્ય ઇવેન્ટ',
+                  child: Text(
+                    lang.currentLanguage == 'gu' ? 'મુખ્ય ઇવેન્ટ' : 'FEATURED EVENT',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -641,8 +1004,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 12),
 
                 // Title
-                const Text(
-                  'ભવ્ય સમૂહ લગ્ન ૨૦૨૪',
+                Text(
+                  lang.currentLanguage == 'gu' ? 'વાર્ષિક સમૂહ લગ્ન ૨૦૨૪' : 'Grand Mass Marriage 2024',
                   style: TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 26,
@@ -655,7 +1018,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Description
                 Text(
-                  'દાયકાના સૌથી પ્રતિષ્ઠિત સામુદાયિક લગ્ન સમારોહમાં જોડાઓ. એકતા અને સંસ્કૃતિની ઉજવણી.',
+                  lang.currentLanguage == 'gu' ? 'સૌથી પ્રતિષ્ઠિત સામુદાયિક લગ્ન સમારોહમાં જોડાઓ. એકતા અને સંસ્કૃતિની ઉજવણી.' : 'Join the most prestigious community wedding ceremony of the decade. Celebrating unity and culture.',
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.white.withValues(alpha: 0.85),
@@ -670,7 +1033,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Icon(Icons.calendar_today, color: Colors.white70, size: 14),
                     const SizedBox(width: 8),
                     Text(
-                      '૧૫ ડિસેમ્બર, ૨૦૨૪',
+                      lang.currentLanguage == 'gu' ? '૧૫ ડિસેમ્બર, ૨૦૨૪' : '15 December, 2024',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withValues(alpha: 0.9),
@@ -687,11 +1050,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SamuhikVivaahScreen(userName: widget.userName),
-                        ),
-                      );
+                      _handleVerifiedAction(() {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => SamuhikVivaahScreen(userName: widget.userName),
+                          ),
+                        );
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accentGold,
@@ -700,8 +1065,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'વધુ જુઓ',
+                    child: Text(
+                      lang.currentLanguage == 'gu' ? 'વધુ જુઓ' : 'See More',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -720,6 +1085,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 5. Community Stats Card
   Widget _buildCommunityStatsCard() {
+    final lang = Provider.of<LanguageProvider>(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -736,8 +1102,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'સમુદાયના આંકડા અને પ્રગતિ',
+          Text(
+            lang.currentLanguage == 'gu' ? 'સમુદાયના આંકડા અને પ્રગતિ' : 'Community Stats & Progress',
             style: TextStyle(
               fontFamily: 'Serif',
               fontSize: 20,
@@ -746,9 +1112,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _buildStatRow('સક્રિય સભ્યો', '૨,૫૦૦+'),
+          _buildStatRow(lang.currentLanguage == 'gu' ? 'સક્રિય સભ્યો' : 'Active Members', '2,500+'),
           const SizedBox(height: 10),
-          _buildStatRow('લગ્ન વિષયક પ્રોફાઇલ', '૭૨૦+'),
+          _buildStatRow(lang.currentLanguage == 'gu' ? 'લગ્ન પ્રોફાઇલ્સ' : 'Matrimonial Profiles', '720+'),
         ],
       ),
     );
@@ -787,6 +1153,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 6. Engagement Analytics Card
   Widget _buildEngagementAnalyticsCard() {
+    final lang = Provider.of<LanguageProvider>(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -808,9 +1175,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'સહભાગિતા વિશ્લેષણ',
+                    lang.currentLanguage == 'gu' ? 'એંગેજમેન્ટ એનાલિટિક્સ' : 'ENGAGEMENT ANALYTICS',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -820,8 +1187,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'સાપ્તાહિક ભાગીદારી વલણો',
-                    style: TextStyle(
+                    lang.currentLanguage == 'gu' ? 'સાપ્તાહિક ભાગીદારી વલણો' : 'WEEKLY PARTICIPATION TRENDS',
+                    style: const TextStyle(
                       fontSize: 9,
                       color: Color(0xFF9AA2B0),
                       fontWeight: FontWeight.w600,
@@ -831,7 +1198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               Text(
-                '+૧૨%',
+                '+12%',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
@@ -876,31 +1243,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 7. Donation Banner Section (Shape the Future of Our Legacy)
   Widget _buildDonationBannerSection() {
+    final lang = Provider.of<LanguageProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'સમુદાયના હેતુઓ (દાન)',
-              style: TextStyle(
-                fontFamily: 'Serif',
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E232D),
+            Expanded(
+              child: Text(
+                lang.currentLanguage == 'gu' ? 'સમુદાયના કારણો (દાન)' : 'Community Causes (Donation)',
+                style: TextStyle(
+                  fontFamily: 'Serif',
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E232D),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             TextButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => DonationCausesScreen(userName: widget.userName),
-                  ),
-                );
+                _handleVerifiedAction(() {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => DonationCausesScreen(userName: widget.userName),
+                    ),
+                  );
+                });
               },
-              child: const Text(
-                'બધા જુઓ →',
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                lang.currentLanguage == 'gu' ? 'બધા જુઓ →' : 'See All →',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
@@ -915,11 +1295,13 @@ class _HomeScreenState extends State<HomeScreen> {
         // Hero Cause Card
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => DonationCausesScreen(userName: widget.userName),
-              ),
-            );
+            _handleVerifiedAction(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => DonationCausesScreen(userName: widget.userName),
+                ),
+              );
+            });
           },
           child: Container(
             decoration: BoxDecoration(
@@ -956,8 +1338,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: const Color(0xFFDC2626),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Text(
-                          '! તાત્કાલિક',
+                        child: Text(
+                          lang.currentLanguage == 'gu' ? '! અત્યંત જરૂરી' : '! URGENT',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -973,18 +1355,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'ગામડાની પ્રાથમિક શાળાનું નવીનીકરણ',
+                      Text(
+                        lang.currentLanguage == 'gu' ? 'ગામડાની પ્રાથમિક શાળાનું નવીનીકરણ' : 'Renovation of Village Primary School',
                         style: TextStyle(
                           fontFamily: 'Serif',
-                          fontSize: 20,
+                          fontSize: 19,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E232D),
                         ),
                       ),
                       const SizedBox(height: 6),
-                      const Text(
-                        'આપણા સ્થાનિક શિક્ષણના પાયાને પુનર્જીવિત કરી રહ્યા છીએ, ૨૦૦+ બાળકો માટે સુરક્ષિત વાતાવરણ.',
+                      Text(
+                        lang.currentLanguage == 'gu' ? 'સ્થાનિક શિક્ષણના પાયાને પુનર્જીવિત કરવું, ૨૦૦+ બાળકો માટે સુરક્ષિત વાતાવરણ.' : 'Revitalizing the foundation of our local education, safe environment for 200+ children.',
                         style: TextStyle(
                           fontSize: 13,
                           color: Color(0xFF687385),
@@ -995,9 +1377,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text('₹૪,૫૦,૦૦૦ એકત્રિત', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1E232D))),
-                          Text('લક્ષ્ય: ₹૧૦,૦૦,૦૦૦', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                        children: [
+                          Flexible(
+                            child: Text(
+                              lang.currentLanguage == 'gu' ? '₹૪,૫૦,૦૦૦ એકત્રિત' : '₹4,50,000 Raised',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1E232D)),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              lang.currentLanguage == 'gu' ? 'લક્ષ્ય: ₹૧૦,૦૦,૦૦૦' : 'Target: ₹10,00,000',
+                              style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -1017,11 +1412,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 46,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => DonationCausesScreen(userName: widget.userName),
-                              ),
-                            );
+                            _handleVerifiedAction(() {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => DonationCausesScreen(userName: widget.userName),
+                                ),
+                              );
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFDE047),
@@ -1030,8 +1427,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(23),
                             ),
                           ),
-                          child: const Text(
-                            'હમણાં જ દાન કરો',
+                          child: Text(
+                            lang.currentLanguage == 'gu' ? 'હમણાં જ દાન કરો' : 'Donate Now',
                             style: TextStyle(
                               color: Color(0xFF1E232D),
                               fontWeight: FontWeight.bold,
@@ -1051,29 +1448,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildAvatarDot(double left, Color color) {
-    return Positioned(
-      left: left,
-      child: Container(
-        width: 22,
-        height: 22,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2),
-        ),
-      ),
-    );
-  }
+
 
   // 8. Quick Directory Section
   Widget _buildQuickDirectorySection() {
+    final lang = Provider.of<LanguageProvider>(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'ઝડપી ડિરેક્ટરી',
-          style: TextStyle(
+        Text(
+          lang.currentLanguage == 'gu' ? 'ઝડપી ડિરેક્ટરી' : 'Quick Directory',
+          style: const TextStyle(
             fontFamily: 'Serif',
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -1083,23 +1469,47 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 16),
         _buildDirectoryItem(
           icon: Icons.storefront_outlined,
-          title: 'વ્યાપાર ડિરેક્ટરી',
-          subtitle: 'સમુદાયના વ્યવસાયો શોધો',
-          onTap: _showCompleteRegistrationDialog,
+          title: lang.currentLanguage == 'gu' ? 'વ્યાપાર ડિરેક્ટરી' : 'Business Directory',
+          subtitle: lang.currentLanguage == 'gu' ? 'સમુદાયના વ્યવસાયો શોધો' : 'Discover community businesses',
+          onTap: () {
+            _handleVerifiedAction(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const BusinessDirectoryScreen(),
+                ),
+              );
+            });
+          },
         ),
         const SizedBox(height: 12),
         _buildDirectoryItem(
           icon: Icons.work_outline,
-          title: 'નોકરીઓ અને કારકિર્દી',
-          subtitle: 'સભ્યો માટે ખાસ તકો',
-          onTap: _showCompleteRegistrationDialog,
+          title: lang.currentLanguage == 'gu' ? 'નોકરીઓ અને કારકિર્દી' : 'Jobs & Careers',
+          subtitle: lang.currentLanguage == 'gu' ? 'સભ્યો માટે વિશેષ તકો' : 'Exclusive opportunities for members',
+          onTap: () {
+            _handleVerifiedAction(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const BusinessDirectoryScreen(),
+                ),
+              );
+            });
+          },
         ),
         const SizedBox(height: 12),
         _buildDirectoryItem(
           icon: Icons.volunteer_activism_outlined,
-          title: 'સેવા અને સહાય',
-          subtitle: 'સમુદાય મદદ કેન્દ્ર અને ચેરિટી',
-          onTap: _showCompleteRegistrationDialog,
+          title: lang.currentLanguage == 'gu' ? 'સેવા અને સહાય' : 'Service & Support',
+          subtitle: lang.currentLanguage == 'gu' ? 'સમુદાય મદદ કેન્દ્ર અને સદભાવના' : 'Community help center and charity',
+          onTap: () {
+            _handleVerifiedAction(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SupportScreen(),
+                ),
+              );
+            });
+          },
         ),
       ],
     );
@@ -1187,152 +1597,218 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // --- Profile Side Drawer Widget (matching screenshot) ---
   Widget _buildProfileDrawer() {
-    final String displayName = (widget.userName != null && widget.userName!.isNotEmpty)
-        ? widget.userName!
-        : 'Sanjay Patel';
-
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.78,
       backgroundColor: Colors.white,
       child: Column(
         children: [
           // Top Header Banner with Cover Image, Dark Gradient & Close Button
-          Stack(
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ProfileScreen(userName: widget.userName),
-                    ),
-                  );
-                },
-                child: Container(
-                  height: 220,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/sanjay_profile.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.85),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+          Consumer<LanguageProvider>(
+            builder: (context, lang, child) {
+              final bool isGu = lang.currentLanguage == 'gu';
+              String rawName = lang.registeredName.isNotEmpty
+                  ? lang.registeredName
+                  : ((widget.userName != null && widget.userName!.isNotEmpty)
+                      ? widget.userName!
+                      : 'Sanjay Patel');
+              
+              if (isGu) {
+                if (rawName.toLowerCase().contains('soham')) {
+                  rawName = 'સોહમ જી';
+                } else if (rawName.toLowerCase().contains('sanjay')) {
+                  rawName = 'સંજય પટેલ';
+                }
+              }
+
+              final String displayName = rawName;
+              final hasImage = lang.profileImageUrl != null && lang.profileImageUrl!.isNotEmpty;
+
+              return Stack(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _handleVerifiedAction(() {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ProfileScreen(userName: widget.userName),
+                          ),
+                        );
+                      });
+                    },
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF191C21),
+                        image: hasImage
+                            ? DecorationImage(
+                                image: NetworkImage(lang.profileImageUrl!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.85),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              width: 52,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color(0xFFE5A93C),
+                                border: Border.all(color: Colors.white, width: 2),
+                                image: hasImage
+                                    ? DecorationImage(
+                                        image: NetworkImage(lang.profileImageUrl!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                              ),
+                              child: hasImage
+                                  ? null
+                                  : const Center(
+                                      child: Icon(
+                                        Icons.person_rounded,
+                                        color: Color(0xFF191C21),
+                                        size: 30,
+                                      ),
+                                    ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    displayName,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Serif',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  const Text(
+                                    'GUJARATI COMMUNITY',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          displayName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Serif',
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        const Text(
-                          'GUJARATI COMMUNITY',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
 
           // Drawer Menu List Items
           Expanded(
             child: Consumer<LanguageProvider>(
               builder: (context, lang, child) {
-                final bool isGu = lang.currentLanguage == 'gu';
                 return ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   children: [
                     _DrawerHoverItem(
                       icon: Icons.send_outlined,
-                      title: isGu ? 'સંદેશા મોકલો' : 'Send Messages',
+                      title: lang.currentLanguage == 'gu' ? 'સંદેશ મોકલો' : 'Send Messages',
                       onTap: () {
                         Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const NewMessageScreen(),
-                          ),
-                        );
+                        _handleVerifiedAction(() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const NewMessageScreen(),
+                            ),
+                          );
+                        });
                       },
                     ),
                     _DrawerHoverItem(
                       icon: Icons.groups_outlined,
-                      title: isGu ? 'સભ્ય ડિરેક્ટરી' : 'Directory',
+                      title: lang.currentLanguage == 'gu' ? 'ડિરેક્ટરી' : 'Directory',
                       onTap: () {
                         Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => MemberDirectoryScreen(userName: widget.userName),
-                          ),
-                        );
+                        _handleVerifiedAction(() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => MemberDirectoryScreen(userName: widget.userName),
+                            ),
+                          );
+                        });
                       },
                     ),
 
                     // Matrimony Item
                     _DrawerHoverItem(
                       icon: Icons.favorite_outline,
-                      title: isGu ? 'લગ્ન વિષયક' : 'Matrimony',
+                      title: lang.currentLanguage == 'gu' ? 'લગ્ન' : 'Matrimony',
                       onTap: () {
                         Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => MatchesScreen(userName: widget.userName),
-                          ),
-                        );
+                        _handleVerifiedAction(() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => MatchesScreen(userName: widget.userName),
+                            ),
+                          );
+                        });
                       },
                     ),
 
                     _DrawerHoverItem(
                       icon: Icons.storefront_outlined,
-                      title: isGu ? 'વ્યાપાર ડિરેક્ટરી' : 'Business Directory',
+                      title: lang.currentLanguage == 'gu' ? 'વ્યાપાર ડિરેક્ટરી' : 'Business Directory',
                       onTap: () {
                         Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const BusinessDirectoryScreen(),
-                          ),
-                        );
+                        _handleVerifiedAction(() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const BusinessDirectoryScreen(),
+                            ),
+                          );
+                        });
                       },
                     ),
                     _DrawerHoverItem(
                       icon: Icons.person_add_outlined,
-                      title: isGu ? 'સભ્યોને આમંત્રિત કરો' : 'Invite Members',
+                      title: lang.currentLanguage == 'gu' ? 'સભ્યોને આમંત્રણ આપો' : 'Invite Members',
                       onTap: () {
                         Navigator.of(context).pop();
-                        _showCompleteRegistrationDialog();
+                        _handleVerifiedAction(() {
+                          _showInviteMembersModal();
+                        });
                       },
                     ),
                     _DrawerHoverItem(
                       icon: Icons.share_outlined,
-                      title: isGu ? 'એપ્લિકેશન શેર કરો' : 'Share App',
+                      title: lang.currentLanguage == 'gu' ? 'એપ શેર કરો' : 'Share App',
                       onTap: () {
                         Navigator.of(context).pop();
-                        _showCompleteRegistrationDialog();
+                        _handleVerifiedAction(() {
+                          _showShareAppModal();
+                        });
                       },
                     ),
                     const Padding(
@@ -1341,7 +1817,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     _DrawerHoverItem(
                       icon: Icons.settings_outlined,
-                      title: isGu ? 'સેટિંગ્સ' : 'Settings',
+                      title: lang.currentLanguage == 'gu' ? 'સેટિંગ્સ' : 'Settings',
                       onTap: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).push(
@@ -1353,7 +1829,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     _DrawerHoverItem(
                       icon: Icons.help_outline,
-                      title: isGu ? 'મદદ અને પ્રતિસાદ' : 'Help & Feedback',
+                      title: lang.currentLanguage == 'gu' ? 'મદદ અને પ્રતિસાદ' : 'Help & Feedback',
                       onTap: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).push(
@@ -1372,14 +1848,18 @@ class _HomeScreenState extends State<HomeScreen> {
           // Drawer Footer
           Container(
             padding: const EdgeInsets.only(bottom: 24, top: 12),
-            child: const Text(
-              'HERITAGE LUXE V1.2.0',
-              style: TextStyle(
-                color: Color(0xFF94A3B8),
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
-              ),
+            child: Consumer<LanguageProvider>(
+              builder: (context, lang, child) {
+                return Text(
+                  lang.currentLanguage == 'gu' ? 'હેરિટેજ એપ વર્ઝન ૧.૨.૦' : 'HERITAGE APP V1.2.0',
+                  style: const TextStyle(
+                    color: Color(0xFF94A3B8),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                  ),
+                );
+              },
             ),
           ),
         ],

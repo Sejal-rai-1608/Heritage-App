@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'couple_registration_screen.dart';
 
 class SamuhikVivaahScreen extends StatelessWidget {
@@ -8,6 +10,9 @@ class SamuhikVivaahScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -17,9 +22,9 @@ class SamuhikVivaahScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Color(0xFF1E232D)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'સમૂહ લગ્ન',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'સમૂહ લગ્ન' : 'Samuhik Vivaah',
+          style: const TextStyle(
             fontFamily: 'Serif',
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -34,9 +39,11 @@ class SamuhikVivaahScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top Header Subtitle
-            const Text(
-              'સમુદાયના નેતૃત્વમાં સમૂહ લગ્ન સમારોહ દ્વારા પરંપરાની ઉજવણી, દરેક યુગલ ગૌરવ અને સામુદાયિક સમર્થન સાથે તેમની સફર શરૂ કરે તેની ખાતરી કરે છે.',
-              style: TextStyle(
+            Text(
+              isGu
+                  ? 'સમુદાયના નેતૃત્વમાં સમૂહ લગ્ન સમારોહ દ્વારા પરંપરાની ઉજવણી, દરેક યુગલ ગૌરવ અને સામુદાયિક સમર્થન સાથે તેમની સફર શરૂ કરે તેની ખાતરી કરે છે.'
+                  : 'Celebrating tradition through community-led mass marriage ceremonies, ensuring every couple begins their journey with dignity and communal support.',
+              style: const TextStyle(
                 fontSize: 13,
                 color: Color(0xFF64748B),
                 height: 1.4,
@@ -45,320 +52,224 @@ class SamuhikVivaahScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // MAIN EVENT CARD (Annual Community Mass Marriage 2024)
-            _buildMainEventCard(context),
+            _buildMainEventCard(context, isGu),
             const SizedBox(height: 24),
 
-            // UPCOMING CEREMONIES SECTION
+            // SECTION 1: UPCOMING CEREMONIES
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'આગામી સમારોહ',
-                  style: TextStyle(
+                Text(
+                  isGu ? 'આગામી સમારોહ' : 'Upcoming Ceremonies',
+                  style: const TextStyle(
                     fontFamily: 'Serif',
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1E232D),
                   ),
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: Row(
-                    children: const [
-                      Text(
-                        'બધા જુઓ',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF856404)),
-                      ),
-                      SizedBox(width: 4),
-                      Icon(Icons.arrow_forward, size: 14, color: Color(0xFF856404)),
-                    ],
+                  child: Text(
+                    isGu ? 'બધા જુઓ' : 'See All',
+                    style: const TextStyle(
+                      color: Color(0xFF1E232D),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            _buildUpcomingCeremonyCard(context),
-            const SizedBox(height: 28),
+            const SizedBox(height: 8),
+            _buildUpcomingEventItem(context, isGu),
+            const SizedBox(height: 24),
 
-            // PAST SUCCESSES SECTION
-            const Text(
-              'ભૂતકાળની સફળતાઓ',
-              style: TextStyle(
+            // SECTION 2: PAST SUCCESSES / GALLERY
+            Text(
+              isGu ? 'ભૂતકાળની સફળતાઓ' : 'Past Successes',
+              style: const TextStyle(
                 fontFamily: 'Serif',
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1E232D),
               ),
             ),
-            const SizedBox(height: 14),
-            _buildPastSuccessesCard(context),
-            const SizedBox(height: 32),
+            const SizedBox(height: 12),
+            _buildPastSuccessCard(context, isGu),
+            const SizedBox(height: 24),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMainEventCard(BuildContext context) {
+  Widget _buildMainEventCard(BuildContext context, bool isGu) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Stack(
-          children: [
-            // Background Image
-            Image.network(
-              'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=80',
-              height: 440,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            // Gradient Overlay
-            Container(
-              height: 440,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.25),
-                    Colors.black.withValues(alpha: 0.85),
-                  ],
-                ),
-              ),
-            ),
-
-            // Card Body Content
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Top Tag: MAIN EVENT
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFDE047),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'મુખ્ય ઇવેન્ટ',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E232D),
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title
-                        const Text(
-                          'વાર્ષિક સામુદાયિક\nસમૂહ લગ્ન ૨૦૨૪',
-                          style: TextStyle(
-                            fontFamily: 'Serif',
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            height: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Funding Progress Glass Box
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text(
-                                    'ફંડિંગ પ્રગતિ',
-                                    style: TextStyle(fontSize: 12, color: Colors.white70),
-                                  ),
-                                  Text(
-                                    '૩૩% એકત્રિત',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFFDE047),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: const LinearProgressIndicator(
-                                  value: 0.33,
-                                  minHeight: 6,
-                                  backgroundColor: Colors.white24,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFDE047)),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text(
-                                    '₹ ૫,૦૦,૦૦૦ એકત્રિત',
-                                    style: TextStyle(fontSize: 10, color: Colors.white70),
-                                  ),
-                                  Text(
-                                    'લક્ષ્ય: ₹ ૧૫,૦૦,૦૦૦',
-                                    style: TextStyle(fontSize: 10, color: Colors.white70),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Button: REGISTER AS COUPLE
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => CoupleRegistrationScreen(userName: userName),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFDE047),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.person_add_alt_1_outlined, color: Color(0xFF1E232D), size: 18),
-                                SizedBox(width: 8),
-                                Text(
-                                  'દંપતી તરીકે નોંધણી કરો',
-                                  style: TextStyle(
-                                    color: Color(0xFF1E232D),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                    letterSpacing: 0.8,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUpcomingCeremonyCard(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'પ્રાદેશિક સમૂહ લગ્ન - સુરત',
-            style: TextStyle(
-              fontFamily: 'Serif',
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E232D),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: const [
-              Icon(Icons.calendar_today_outlined, size: 14, color: Color(0xFF64748B)),
-              SizedBox(width: 8),
-              Text('૧૫ ડિસેમ્બર ૨૦૨૪', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: const [
-              Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF64748B)),
-              SizedBox(width: 8),
-              Text('સરદાર પટેલ હોલ, સુરત', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: OutlinedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('સુરત ઇવેન્ટની સ્પોન્સરશિપ વિગતો ખુલી છે')),
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Color(0xFF1E232D)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.handshake_outlined, color: Color(0xFF1E232D), size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    'એક દંપતીને સ્પોન્સર કરો',
-                    style: TextStyle(
-                      color: Color(0xFF1E232D),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      letterSpacing: 0.8,
+          // Event Banner Image with Badges
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Container(
+                  height: 180,
+                  width: double.infinity,
+                  color: const Color(0xFFFFF7DB),
+                  child: Image.asset(
+                    'assets/images/image1.jpeg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const Center(
+                      child: Icon(Icons.volunteer_activism, size: 60, color: Color(0xFFE5A93C)),
                     ),
                   ),
-                ],
+                ),
               ),
+              Positioned(
+                top: 14,
+                left: 14,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E232D),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    isGu ? 'મુખ્ય ઇવેન્ટ' : 'FLAGSHIP EVENT',
+                    style: const TextStyle(
+                      color: Color(0xFFE5A93C),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isGu ? 'વાર્ષિક સામુદાયિક\nસમૂહ લગ્ન ૨૦૨૪' : 'Annual Community\nMass Marriage 2024',
+                  style: const TextStyle(
+                    fontFamily: 'Serif',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E232D),
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Date & Location Info
+                Row(
+                  children: const [
+                    Icon(Icons.calendar_today_outlined, size: 15, color: Color(0xFF64748B)),
+                    SizedBox(width: 6),
+                    Text(
+                      '25-Nov-2024',
+                      style: TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 16),
+                    Icon(Icons.location_on_outlined, size: 16, color: Color(0xFF64748B)),
+                    SizedBox(width: 4),
+                    Text(
+                      'Ahmedabad, Gujarat',
+                      style: TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+
+                // Progress Indicator (Funding Progress)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isGu ? 'ફંડિંગ પ્રગતિ' : 'Funding Progress',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                    ),
+                    Text(
+                      isGu ? '૩૩% એકત્રિત' : '33% Raised',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1E232D)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: const LinearProgressIndicator(
+                    value: 0.33,
+                    minHeight: 7,
+                    backgroundColor: Color(0xFFF1F5F9),
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE5A93C)),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isGu ? '₹ ૫,૦૦,૦૦૦ એકત્રિત' : '₹ 5,00,000 Raised',
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                    ),
+                    Text(
+                      isGu ? 'લક્ષ્ય: ₹ ૧૫,૦૦,૦૦૦' : 'Goal: ₹ 15,00,000',
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // REGISTER AS COUPLE Button (Yellow Theme)
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CoupleRegistrationScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE5A93C),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      isGu ? 'દંપતી તરીકે નોંધણી કરો' : 'REGISTER AS COUPLE',
+                      style: const TextStyle(
+                        color: Color(0xFF191C21),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -366,65 +277,114 @@ class SamuhikVivaahScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPastSuccessesCard(BuildContext context) {
+  Widget _buildUpcomingEventItem(BuildContext context, bool isGu) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF111827),
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Row(
         children: [
           Container(
-            width: 54,
-            height: 54,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+              color: const Color(0xFFFFF7DB),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.groups, color: Colors.white, size: 28),
+            child: const Icon(Icons.favorite_rounded, color: Color(0xFFE5A93C), size: 26),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '૫૦+ યુગલો',
-                  style: TextStyle(
-                    fontFamily: 'Serif',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                Text(
+                  isGu ? 'પ્રાદેશિક સમૂહ લગ્ન - સુરત' : 'Regional Vivaah - Surat',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF1E232D)),
                 ),
-                const SizedBox(height: 2),
-                const Text(
-                  '૨૦૨૩ ના સમારોહમાં જોડાયા',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
-                ),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('૨૦૨૩ સમારોહ ગેલેરી ખુલી રહી છે...')),
-                    );
-                  },
-                  child: Row(
-                    children: const [
-                      Text(
-                        'ગેલેરી જુઓ ↗',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFFDE047),
-                        ),
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 4),
+                Text(
+                  isGu ? '૧૫ ડિસેમ્બર ૨૦૨૪ • સરદાર પટેલ હોલ, સુરત' : '15-Dec-2024 • Sardar Patel Hall, Surat',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                 ),
               ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(isGu ? 'સુરત ઇવેન્ટની વિગતો' : 'Surat Event Details'),
+                  backgroundColor: const Color(0xFF191C21),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF191C21),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text(
+              isGu ? 'સ્પોન્સર કરો' : 'Sponsor',
+              style: const TextStyle(color: Color(0xFFE5A93C), fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPastSuccessCard(BuildContext context, bool isGu) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF1F5F9),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.groups_rounded, color: Color(0xFF475569), size: 24),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isGu ? '૫૦+ યુગલો' : '50+ Couples United',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF1E232D)),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isGu ? '૨૦૨૩ ના સમારોહમાં જોડાયા' : 'United in 2023 ceremony',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(isGu ? 'ગેલેરી ઓપન થાય છે...' : 'Opening Gallery...'),
+                  backgroundColor: const Color(0xFF191C21),
+                ),
+              );
+            },
+            child: Text(
+              isGu ? 'ગેલેરી જુઓ ↗' : 'View Gallery ↗',
+              style: const TextStyle(color: Color(0xFF1E232D), fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ),
         ],

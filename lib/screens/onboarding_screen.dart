@@ -40,7 +40,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _onNext() {
-    // Stop the timer and navigate to the Heritage Core screen
     _timer?.cancel();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const HeritageCoreScreen()),
@@ -49,8 +48,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    int currentPage = _realPage % 3;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -58,7 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             children: [
-              // Page View for sliding content (Infinite Loop)
+              const SizedBox(height: 16),
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
@@ -68,68 +65,59 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     });
                   },
                   itemBuilder: (context, index) {
-                    int slideIndex = index % 3;
-                    if (slideIndex == 0) return _buildPage1();
-                    if (slideIndex == 1) return _buildPage2();
-                    return _buildPage3();
+                    final pageIndex = index % 3;
+                    if (pageIndex == 0) {
+                      return _buildPage1();
+                    } else if (pageIndex == 1) {
+                      return _buildPage2();
+                    } else {
+                      return _buildPage3();
+                    }
                   },
                 ),
               ),
 
-              const SizedBox(height: 32),
-
-              // Pagination Dots
+              // Page Indicator Dots
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildDot(isActive: currentPage == 0),
-                  const SizedBox(width: 8),
-                  _buildDot(isActive: currentPage == 1),
-                  const SizedBox(width: 8),
-                  _buildDot(isActive: currentPage == 2),
-                ],
+                children: List.generate(3, (index) {
+                  final pageIndex = _realPage % 3;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    height: 8.0,
+                    width: pageIndex == index ? 24.0 : 8.0,
+                    decoration: BoxDecoration(
+                      color: pageIndex == index ? primaryNavy : inactiveDot,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  );
+                }),
               ),
               const SizedBox(height: 32),
 
-              // Next Button (Always static "Next" here, takes user to the Heritage Core screen)
+              // Next Button (Primary Action)
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 52,
                 child: ElevatedButton(
                   onPressed: _onNext,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryNavy,
+                    backgroundColor: const Color(0xFFE5A93C),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                     elevation: 0,
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Next',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-                    ],
+                  child: const Text(
+                    'Get Started',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF191C21),
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Bottom Gujarati Text
-              const Text(
-                'આગળ વધો',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 16),
@@ -156,8 +144,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
                   child: Text(
-                    'Please save the image as\n"onboarding_people.jpg"\nin the assets/images/ folder',
-                    textAlign: TextAlign.center,
+                    'Heritage Community',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -177,13 +164,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Text(
-          'તમારા સમુદાય સાથે જોડાઓ',
+        const Text(
+          'Discover family members, matrimony & heritage',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: primaryGold,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF64748B),
           ),
         ),
       ],
@@ -207,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
                   child: Text(
-                    'Image 2 Placeholder',
+                    'Heritage Traditions',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -238,13 +225,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Text(
-          'આપણો ગૌરવશાળી વારસો સાચવો',
+        const Text(
+          'Preserving ancestral lineage and cultural bonds',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: primaryGold,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF64748B),
           ),
         ),
       ],
@@ -268,7 +255,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Center(
                   child: Text(
-                    'Image 3 Placeholder',
+                    'Community Events',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -299,55 +286,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Text(
-          'સમાજના સમાચાર અને ઇવેન્ટ્સ',
+        const Text(
+          'Stay updated with upcoming mass marriages and news',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: primaryGold,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF64748B),
           ),
         ),
       ],
     );
   }
 
-  // Helper for feature icons
   Widget _buildFeatureIcon(IconData iconData, String label) {
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: primaryNavy.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: primaryNavy.withValues(alpha: 0.1)),
+            color: const Color(0xFFFFF7DB),
+            shape: BoxShape.circle,
           ),
-          child: Icon(iconData, color: primaryNavy, size: 28),
+          child: Icon(iconData, color: const Color(0xFFE5A93C), size: 24),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
-            color: primaryNavy.withValues(alpha: 0.8),
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E232D),
           ),
         ),
       ],
-    );
-  }
-
-  // Helper for pagination dot
-  Widget _buildDot({required bool isActive}) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: isActive ? 24 : 10,
-      height: 10,
-      decoration: BoxDecoration(
-        color: isActive ? primaryNavy : inactiveDot,
-        borderRadius: BorderRadius.circular(5),
-      ),
     );
   }
 }
