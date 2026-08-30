@@ -4,6 +4,192 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import 'image_picker_dialog.dart';
 
+String _getCategoryNameLabel(String catName, bool isGu) {
+  if (!isGu) return catName;
+  switch (catName) {
+    case 'Accountant':
+      return 'અકાઉન્ટન્ટ';
+    case 'Administration Professional':
+      return 'એડમિનિસ્ટ્રેશન પ્રોફેશનલ';
+    case 'Advertising Professional':
+      return 'એડવર્ટાઇઝિંગ પ્રોફેશનલ';
+    case 'Agriculture & Farming':
+      return 'કૃષિ અને ખેતી';
+    case 'Architectural & Civil Engineering':
+      return 'આર્કિટેક્ચરલ અને સિવિલ એન્જિનિયરિંગ';
+    case 'Ayurvedic & Herbal Products':
+      return 'આયુર્વેદિક અને હર્બલ પ્રોડક્ટ્સ';
+    case 'Baby / Pre School':
+      return 'બેબી / પ્રી સ્કૂલ';
+    case 'Banker':
+      return 'બેંકર';
+    case 'Battery & Storage Devices':
+      return 'બેટરી અને સ્ટોરેજ સાધનો';
+    case 'Beautician':
+      return 'બ્યુટીશિયન';
+    case 'Books & Stationery':
+      return 'બુક્સ અને સ્ટેશનરી';
+    case 'Building & Construction':
+      return 'બિલ્ડિંગ અને કન્સ્ટ્રક્શન';
+    case 'Business':
+      return 'વ્યવસાય (બિઝનેસ)';
+    case 'Chartered Accountant':
+      return 'ચાર્ટર્ડ અકાઉન્ટન્ટ';
+    case 'Civil Engineer':
+      return 'સિવિલ એન્જિનિયર';
+    case 'Computer & IT Solutions':
+      return 'કોમ્પ્યુટર અને આઇટી સોલ્યુશન્સ';
+    case 'Computer Hardware & System':
+      return 'કોમ્પ્યુટર હાર્ડવેર અને સિસ્ટમ';
+    case 'Computer Manufacturers & Assemblers':
+      return 'કોમ્પ્યુટર મેન્યુફેક્ચરર્સ';
+    case 'Computer/IT Professional':
+      return 'કોમ્પ્યુટર/આઇટી પ્રોફેશનલ';
+    case 'Contractor':
+      return 'કોન્ટ્રાક્ટર';
+    case 'Contractors & Freelancers':
+      return 'કોન્ટ્રાક્ટર્સ અને ફ્રીલાન્સર્સ';
+    case 'Cosmetics & Personal Care':
+      return 'કોસ્મેટિક્સ અને પર્સનલ કેર';
+    case 'Creative Person':
+      return 'ક્રિએટિવ પર્સન';
+    case 'Customer Support Professional':
+      return 'કસ્ટમર સપોર્ટ પ્રોફેશનલ';
+    case 'Designer':
+      return 'ડિઝાઇનર';
+    default:
+      return catName;
+  }
+}
+
+String _getSectorNameLabel(String sector, bool isGu) {
+  if (!isGu) return sector;
+  switch (sector) {
+    case 'All Sectors':
+      return 'બધા ક્ષેત્રો';
+    case 'Tech':
+      return 'ટેકનોલોજી';
+    case 'Finance':
+      return 'નાણાકીય';
+    case 'Creative':
+      return 'રચનાત્મક';
+    case 'Healthcare':
+      return 'આરોગ્ય';
+    case 'Engineering':
+      return 'એન્જિનિયરિંગ';
+    default:
+      return sector;
+  }
+}
+
+String _getBusinessMemberNameLabel(String name, bool isGu) {
+  if (!isGu) return name;
+  switch (name) {
+    case 'Deepak Jayesh Trivedi':
+      return 'દીપક જયેશ ત્રિવેદી';
+    case 'Nisha Rajesh Parikh':
+      return 'નિશા રાજેશ પરીખ';
+    case 'Bharat Gandhi':
+      return 'ભરત ગાંધી';
+    case 'Karan Desai':
+      return 'કરણ દેસાઈ';
+    case 'Ramesh H. Patel':
+      return 'રમેશ એચ. પટેલ';
+    case 'Sunita K. Joshi':
+      return 'સુનિતા કે. જોશી';
+    case 'Akshaykumar Rajkumar Kadam':
+      return 'અક્ષયકુમાર રાજકુમાર કદમ';
+    case 'Pravin Mahadeo Modak':
+      return 'પ્રવિણ મહાદેવ મોડક';
+    case 'Aparna Vidhyadhar Khamkar':
+      return 'અપર્ણા વિદ્યાધર ખામકર';
+    case 'Akshay Prakash Jadhav':
+      return 'અક્ષય પ્રકાશ જાધવ';
+    case 'Madhuri Santosh Mane':
+      return 'માધુરી સંતોષ માને';
+    case 'Swati Anil Satpute':
+      return 'સ્વાતી અનિલ સાતપુતે';
+    case 'Ajitbhai Vinayak Beloshe':
+      return 'અજિતભાઈ વિનાયક બેલોશે';
+    default:
+      return name;
+  }
+}
+
+String _getBusinessLocationLabel(String city, String area, bool isGu) {
+  if (!isGu) return '$city, $area';
+  
+  String translateCity(String c) {
+    switch (c) {
+      case 'Kolhapur': return 'કોલ્હાપુર';
+      case 'Kharghar': return 'ખારઘર';
+      case 'Modakwadi': return 'મોડકવાડી';
+      case 'Ghansoli': return 'ઘનસોલી';
+      case 'Vilavade': return 'વિલવડે';
+      case 'Satara': return 'સાતારા';
+      case 'Girewadi': return 'ગીરેવાડી';
+      case 'Shive': return 'શિવે';
+      case 'Vesava': return 'વેસવા';
+      case 'Ruighar': return 'રૂઈઘર';
+      case 'Ahmedabad': return 'અમદાવાદ';
+      case 'Surat': return 'સુરત';
+      case 'Rajkot': return 'રાજકોટ';
+      case 'Vadodara': return 'વડોદરા';
+      default: return c;
+    }
+  }
+
+  String translateArea(String a) {
+    switch (a) {
+      case 'Kolhapur': return 'કોલ્હાપુર';
+      case 'Kharghar': return 'ખારઘર';
+      case 'J.M. Road': return 'જે.એમ. રોડ';
+      case 'Panvel City': return 'પનવેલ સિટી';
+      case 'Kopar Khairne': return 'કોપર ખેરણે';
+      case 'C.G. Road': return 'સી.જી. રોડ';
+      case 'Adajan': return 'અડાજણ';
+      case 'Kalavad Road': return 'કાલાવડ રોડ';
+      case 'Alkapuri': return 'અલકાપુરી';
+      case 'Paldi': return 'પાલડી';
+      case 'Gotri': return 'ગોત્રી';
+      default: return a;
+    }
+  }
+
+  return '${translateCity(city)}, ${translateArea(area)}';
+}
+
+String _getBusinessRoleLabel(String role, bool isGu) {
+  if (!isGu) return role;
+  switch (role) {
+    case 'SENIOR ACCOUNTANT':
+      return 'વરિષ્ઠ અકાઉન્ટન્ટ';
+    case 'ACCOUNTANT':
+      return 'અકાઉન્ટન્ટ';
+    case 'SENIOR BANKER':
+      return 'વરિષ્ઠ બેંકર';
+    case 'BRANCH MANAGER':
+      return 'બ્રાન્ચ મેનેજર';
+    case 'CIVIL ENGINEER':
+      return 'સિવિલ એન્જિનિયર';
+    case 'STRUCTURAL ENGINEER':
+      return 'સ્ટ્રક્ચરલ એન્જિનિયર';
+    default:
+      return role;
+  }
+}
+
+String _getGujaratiNumberString(String numStr, bool isGu) {
+  if (!isGu) return numStr;
+  const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const gujarati = ['૦', '૧', '૨', '૩', '૪', '૫', '૬', '૭', '૮', '૯'];
+  String result = numStr;
+  for (int i = 0; i < english.length; i++) {
+    result = result.replaceAll(english[i], gujarati[i]);
+  }
+  return result;
+}
+
 class BusinessDirectoryScreen extends StatefulWidget {
   const BusinessDirectoryScreen({super.key});
 
@@ -16,7 +202,6 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // List of categories and default counts matching the 1st image
   static const List<Map<String, dynamic>> _categoriesData = [
     {'name': 'Accountant', 'defaultCount': 7},
     {'name': 'Administration Professional', 'defaultCount': 2},
@@ -51,7 +236,7 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
     super.dispose();
   }
 
-  void _showAddBusinessDialog(BuildContext context) {
+  void _showAddBusinessDialog(BuildContext context, bool isGu) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -74,7 +259,6 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Top Golden Accent Bar
                 Container(
                   height: 4,
                   decoration: const BoxDecoration(
@@ -86,7 +270,6 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                   padding: const EdgeInsets.fromLTRB(24, 26, 24, 26),
                   child: Column(
                     children: [
-                      // Briefcase Icon Badge
                       Container(
                         width: 58,
                         height: 58,
@@ -101,10 +284,9 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      // Title
-                      const Text(
-                        'Business',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'વ્યવસાય' : 'Business',
+                        style: const TextStyle(
                           color: Color(0xFF0F172A),
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -112,18 +294,18 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Body text
-                      const Text(
-                        'To add your business details please fill occupation section in your profile.',
+                      Text(
+                        isGu
+                            ? 'તમારો વ્યવસાય ઉમેરવા માટે કૃપા કરીને તમારી પ્રોફાઇલમાં વ્યવસાય વિભાગ ભરો.'
+                            : 'To add your business details please fill occupation section in your profile.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF64748B),
                           fontSize: 13.5,
                           height: 1.45,
                         ),
                       ),
                       const SizedBox(height: 24),
-                      // Buttons Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -132,9 +314,9 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
-                            child: const Text(
-                              'CANCEL',
-                              style: TextStyle(
+                            child: Text(
+                              isGu ? 'રદ કરો' : 'CANCEL',
+                              style: const TextStyle(
                                 color: Color(0xFF64748B),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
@@ -162,9 +344,9 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text(
-                              'ADD',
-                              style: TextStyle(
+                            child: Text(
+                              isGu ? 'ઉમેરો' : 'ADD',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
@@ -241,8 +423,8 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
 
-    // Compute dynamic count based on businesses in state
     int getCategoryCount(String categoryName) {
       final stateCount = lang.businesses
           .where((b) => b['category'] == categoryName)
@@ -258,11 +440,11 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
       return base + stateCount;
     }
 
-    // Filter categories based on search query and selected sector
     final filteredCategories = _categoriesData.where((cat) {
       final String name = cat['name'] as String;
       final matchesSearch = _searchQuery.isEmpty ||
-          name.toLowerCase().contains(_searchQuery.toLowerCase());
+          name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          _getCategoryNameLabel(name, isGu).toLowerCase().contains(_searchQuery.toLowerCase());
 
       bool matchesSector = true;
       if (_selectedSector == 'Tech') {
@@ -289,9 +471,9 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Business',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'વ્યવસાય ડિરેક્ટરી' : 'Business',
+          style: const TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -301,7 +483,7 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
         actions: [
           Center(
             child: GestureDetector(
-              onTap: () => _showAddBusinessDialog(context),
+              onTap: () => _showAddBusinessDialog(context, isGu),
               child: Container(
                 width: 28,
                 height: 28,
@@ -328,15 +510,16 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Header Section: Title & Subtitle
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Professional\nDirectory',
-                    style: TextStyle(
+                    isGu ? 'વ્યાવસાયિક
+ડિરેક્ટરી' : 'Professional
+Directory',
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Serif',
@@ -344,10 +527,12 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                       height: 1.15,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
-                    'Connect with the elite network of heritage business leaders and community specialists within our curated professional ecosystem.',
-                    style: TextStyle(
+                    isGu
+                        ? 'અમારા સમુદાયના વિશિષ્ટ વ્યાવસાયિકો અને વ્યવસાયિક નેતાઓ સાથે જોડાઓ.'
+                        : 'Connect with the elite network of heritage business leaders and community specialists within our curated professional ecosystem.',
+                    style: const TextStyle(
                       color: Color(0xFF64748B),
                       fontSize: 13.5,
                       height: 1.45,
@@ -357,7 +542,6 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
               ),
             ),
 
-            // 2. Search Input
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Container(
@@ -375,22 +559,21 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: (val) => setState(() => _searchQuery = val),
-                  decoration: const InputDecoration(
-                    hintText: 'Search occupations...',
-                    hintStyle: TextStyle(
+                  decoration: InputDecoration(
+                    hintText: isGu ? 'વ્યવસાયો શોધો...' : 'Search occupations...',
+                    hintStyle: const TextStyle(
                       color: Color(0xFF94A3B8),
                       fontSize: 14,
                     ),
-                    prefixIcon: Icon(Icons.search, color: Color(0xFF64748B), size: 22),
+                    prefixIcon: const Icon(Icons.search, color: Color(0xFF64748B), size: 22),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // 3. Horizontal Sector Filter Chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -406,12 +589,12 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFFFCD34D) // Bright warm yellow/gold
-                              : const Color(0xFFF1F5F9), // Light grey
+                              ? const Color(0xFFFCD34D)
+                              : const Color(0xFFF1F5F9),
                           borderRadius: BorderRadius.circular(24),
                         ),
                         child: Text(
-                          sector,
+                          _getSectorNameLabel(sector, isGu),
                           style: TextStyle(
                             color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF475569),
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
@@ -426,7 +609,6 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
             ),
             const SizedBox(height: 24),
 
-            // 4. Main White Card Container: A - Z INDUSTRY BREAKDOWN
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -444,9 +626,9 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'A - Z INDUSTRY BREAKDOWN',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'A - Z ઉદ્યોગ યાદી' : 'A - Z INDUSTRY BREAKDOWN',
+                    style: const TextStyle(
                       fontSize: 11,
                       letterSpacing: 1.2,
                       fontWeight: FontWeight.bold,
@@ -456,12 +638,12 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                   const SizedBox(height: 16),
 
                   if (filteredCategories.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40.0),
                       child: Center(
                         child: Text(
-                          'No occupations found.',
-                          style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                          isGu ? 'કોઈ વ્યવસાય મળ્યા નથી.' : 'No occupations found.',
+                          style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
                         ),
                       ),
                     )
@@ -485,17 +667,17 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                             width: 44,
                             height: 44,
                             decoration: const BoxDecoration(
-                              color: Color(0xFFFEF9C3), // Soft yellow circular icon container
+                              color: Color(0xFFFEF9C3),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               icon,
-                              color: const Color(0xFF854D0E), // Olive gold icon
+                              color: const Color(0xFF854D0E),
                               size: 20,
                             ),
                           ),
                           title: Text(
-                            catName,
+                            _getCategoryNameLabel(catName, isGu),
                             style: const TextStyle(
                               color: Color(0xFF0F172A),
                               fontWeight: FontWeight.w600,
@@ -508,11 +690,11 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF6FF), // Light soft blue pill
+                                  color: const Color(0xFFEFF6FF),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Text(
-                                  '$count',
+                                  _getGujaratiNumberString('$count', isGu),
                                   style: const TextStyle(
                                     color: Color(0xFF1E40AF),
                                     fontWeight: FontWeight.bold,
@@ -551,43 +733,11 @@ class _BusinessDirectoryScreenState extends State<BusinessDirectoryScreen> {
   }
 }
 
-// --- CATEGORY DETAIL LIST SCREEN (2nd Image) ---
-// --- CATEGORY DETAIL LIST SCREEN (Matching attached screenshot) ---
 class BusinessCategoryDetailScreen extends StatelessWidget {
   final String categoryName;
   const BusinessCategoryDetailScreen({super.key, required this.categoryName});
 
-  static const Color primaryNavy = Color(0xFF00005C);
-
-  static const Map<String, String> _gujaratiCategoryTitles = {
-    'Accountant': 'અકાઉન્ટન્ટ',
-    'Administration Professional': 'એડમિનિસ્ટ્રેશન પ્રોફેશનલ',
-    'Advertising Professional': 'એડવર્ટાઇઝિંગ પ્રોફેશનલ',
-    'Agriculture & Farming': 'કૃષિ અને ખેતી',
-    'Architectural & Civil Engineering': 'આર્કિટેક્ચરલ અને સિવિલ એન્જિનિયરિંગ',
-    'Ayurvedic & Herbal Products': 'આયુર્વેદિક અને હર્બલ પ્રોડક્ટ્સ',
-    'Baby / Pre School': 'બેબી / પ્રી સ્કૂલ',
-    'Banker': 'બેંકર',
-    'Battery & Storage Devices': 'બેટરી અને સ્ટોરેજ',
-    'Beautician': 'બ્યુટીશિયન',
-    'Books & Stationery': 'બુક્સ અને સ્ટેશનરી',
-    'Building & Construction': 'બિલ્ડિંગ અને કન્સ્ટ્રક્શન',
-    'Business': 'બિઝનેસ',
-    'Chartered Accountant': 'ચાર્ટર્ડ અકાઉન્ટન્ટ',
-    'Civil Engineer': 'સિવિલ એન્જિનિયર',
-    'Computer & IT Solutions': 'કોમ્પ્યુટર અને આઇટી સોલ્યુશન્સ',
-    'Computer Hardware & System': 'કોમ્પ્યુટર હાર્ડવેર',
-    'Computer Manufacturers & Assemblers': 'કોમ્પ્યુટર મેન્યુફેક્ચરર્સ',
-    'Computer/IT Professional': 'આઇટી પ્રોફેશનલ',
-    'Contractor': 'કોન્ટ્રાક્ટર',
-    'Contractors & Freelancers': 'ફ્રીલાન્સર્સ',
-    'Cosmetics & Personal Care': 'કોસ્મેટિક્સ',
-    'Creative Person': 'ક્રિએટિવ પર્સન',
-    'Customer Support Professional': 'કસ્ટમર સપોર્ટ',
-    'Designer': 'ડિઝાઇનર',
-  };
-
-  void _showAddBusinessDialog(BuildContext context) {
+  void _showAddBusinessDialog(BuildContext context, bool isGu) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -610,7 +760,6 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Top Golden Accent Bar
                 Container(
                   height: 4,
                   decoration: const BoxDecoration(
@@ -622,7 +771,6 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(24, 26, 24, 26),
                   child: Column(
                     children: [
-                      // Briefcase Icon Badge
                       Container(
                         width: 58,
                         height: 58,
@@ -637,10 +785,9 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      // Title
-                      const Text(
-                        'Business',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'વ્યવસાય' : 'Business',
+                        style: const TextStyle(
                           color: Color(0xFF0F172A),
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -648,18 +795,18 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Body text
-                      const Text(
-                        'To add your business details please fill occupation section in your profile.',
+                      Text(
+                        isGu
+                            ? 'તમારો વ્યવસાય ઉમેરવા માટે કૃપા કરીને તમારી પ્રોફાઇલમાં વ્યવસાય વિભાગ ભરો.'
+                            : 'To add your business details please fill occupation section in your profile.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF64748B),
                           fontSize: 13.5,
                           height: 1.45,
                         ),
                       ),
                       const SizedBox(height: 24),
-                      // Buttons Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -668,9 +815,9 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
-                            child: const Text(
-                              'CANCEL',
-                              style: TextStyle(
+                            child: Text(
+                              isGu ? 'રદ કરો' : 'CANCEL',
+                              style: const TextStyle(
                                 color: Color(0xFF64748B),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
@@ -698,9 +845,9 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text(
-                              'ADD',
-                              style: TextStyle(
+                            child: Text(
+                              isGu ? 'ઉમેરો' : 'ADD',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
@@ -778,8 +925,8 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
 
-    // Filter businesses by selected category
     List<Map<String, dynamic>> categoryList = lang.businesses
         .where((b) => b['category'] == categoryName)
         .toList();
@@ -788,7 +935,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
       categoryList = _getFallbackMembers(categoryName);
     }
 
-    final gujaratiTitle = _gujaratiCategoryTitles[categoryName] ?? categoryName;
+    final displayTitle = _getCategoryNameLabel(categoryName, isGu);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -799,9 +946,9 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Heritage App',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'હેરિટેજ એપ' : 'Heritage App',
+          style: const TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -811,7 +958,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: Color(0xFF8B6B23), size: 24),
-            onPressed: () => _showAddBusinessDialog(context),
+            onPressed: () => _showAddBusinessDialog(context, isGu),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0, left: 4.0),
@@ -828,13 +975,12 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           children: [
-            // 1. Hero Header Section
             Center(
               child: Column(
                 children: [
-                  const Text(
-                    'PREMIUM DIRECTORY',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'પ્રીમિયમ ડિરેક્ટરી' : 'PREMIUM DIRECTORY',
+                    style: const TextStyle(
                       color: Color(0xFF9A7B38),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -843,7 +989,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    gujaratiTitle,
+                    displayTitle,
                     style: const TextStyle(
                       color: Color(0xFF0F172A),
                       fontSize: 28,
@@ -855,9 +1001,11 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
-                      categoryName == 'Accountant'
-                          ? 'Connect with our elite network of verified financial professionals specializing in heritage-scale asset management and corporate accounting.'
-                          : 'Connect with our elite network of verified ${categoryName.toLowerCase()} professionals in our curated ecosystem.',
+                      isGu
+                          ? 'અમારા વિશ્વસનીય વ્યાવસાયિકોના નેટવર્ક સાથે જોડાઓ.'
+                          : (categoryName == 'Accountant'
+                              ? 'Connect with our elite network of verified financial professionals specializing in heritage-scale asset management and corporate accounting.'
+                              : 'Connect with our elite network of verified ${categoryName.toLowerCase()} professionals in our curated ecosystem.'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Color(0xFF64748B),
@@ -871,12 +1019,14 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // 2. Member Cards List
             ...categoryList.map((biz) {
-              final name = biz['name'] ?? '';
+              final rawName = biz['name'] ?? '';
+              final name = _getBusinessMemberNameLabel(rawName, isGu);
               final city = biz['city'] ?? '';
               final area = biz['area'] ?? '';
-              final role = (biz['role'] ?? (name.contains('Akshaykumar') ? 'SENIOR ACCOUNTANT' : 'ACCOUNTANT')).toString().toUpperCase();
+              final location = _getBusinessLocationLabel(city, area, isGu);
+              final rawRole = (biz['role'] ?? (rawName.contains('Akshaykumar') ? 'SENIOR ACCOUNTANT' : 'ACCOUNTANT')).toString().toUpperCase();
+              final role = _getBusinessRoleLabel(rawRole, isGu);
               final image = biz['image'] as String?;
 
               return Container(
@@ -897,7 +1047,6 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Top Row: Image & Name/Role
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -954,7 +1103,6 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
 
-                    // Middle Row: Location
                     Row(
                       children: [
                         const Icon(
@@ -964,7 +1112,7 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '$city, $area',
+                          location,
                           style: const TextStyle(
                             color: Color(0xFF475569),
                             fontSize: 13,
@@ -975,20 +1123,23 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
 
-                    // Bottom Row: View Profile Golden Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Opening $name\'s profile...'),
+                              content: Text(
+                                isGu
+                                    ? '$name ની પ્રોફાઇલ ખોલી રહ્યા છીએ...'
+                                    : 'Opening $name's profile...',
+                              ),
                               backgroundColor: const Color(0xFF0F172A),
                             ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFCD34D), // Warm light gold
+                          backgroundColor: const Color(0xFFFCD34D),
                           foregroundColor: const Color(0xFF0F172A),
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -998,16 +1149,16 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
-                              'View Profile',
-                              style: TextStyle(
+                              isGu ? 'પ્રોફાઇલ જુઓ' : 'View Profile',
+                              style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 6),
-                            Icon(
+                            const SizedBox(width: 6),
+                            const Icon(
                               Icons.arrow_forward,
                               size: 16,
                               color: Color(0xFF0F172A),
@@ -1027,7 +1178,6 @@ class BusinessCategoryDetailScreen extends StatelessWidget {
   }
 }
 
-// --- ADD BUSINESS SCREEN ---
 class AddBusinessScreen extends StatefulWidget {
   const AddBusinessScreen({super.key});
 
@@ -1045,7 +1195,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
   final TextEditingController _descController = TextEditingController();
 
   String _selectedCategory = 'Accountant';
-  bool _isPublic = true; // true = public, false = private
+  bool _isPublic = true;
   String? _selectedBusinessImagePath;
 
   final List<String> _categories = [
@@ -1080,6 +1230,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final bool isGu = lang.currentLanguage == 'gu';
 
     final newBusiness = {
       'name': _nameController.text.trim(),
@@ -1141,9 +1292,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Broadcast Active',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'પ્રસારણ સક્રિય' : 'Broadcast Active',
+                        style: const TextStyle(
                           color: Color(0xFF0F172A),
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -1152,7 +1303,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Heritage App community members!',
+                        isGu
+                            ? 'તમારો વ્યવસાય "${newBusiness['name']}" જાહેર ડિરેક્ટરીમાં પ્રકાશિત કરવામાં આવ્યો છે.'
+                            : 'Your business "${newBusiness['name']}" has been published to the Public Directory. A notification has been broadcasted to all Heritage App community members!',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 13.5,
@@ -1165,8 +1318,8 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context); // Pop dialog
-                            Navigator.pop(context); // Pop Add Screen
+                            Navigator.pop(context);
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFCD34D),
@@ -1177,9 +1330,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child: const Text(
-                            'OK',
-                            style: TextStyle(
+                          child: Text(
+                            isGu ? 'બરાબર' : 'OK',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                             ),
@@ -1198,7 +1351,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Private Business "${newBusiness['name']}" created successfully.',
+            isGu
+                ? 'ખાનગી વ્યવસાય "${newBusiness['name']}" સફળતાપૂર્વક બનાવવામાં આવ્યો.'
+                : 'Private Business "${newBusiness['name']}" created successfully.',
           ),
           backgroundColor: const Color(0xFF0F172A),
         ),
@@ -1209,6 +1364,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -1218,9 +1376,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Add Business Details',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'વ્યવસાયની વિગતો ઉમેરો' : 'Add Business Details',
+          style: const TextStyle(
             color: Color(0xFF0F172A),
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -1245,10 +1403,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Hero Title Section
-              const Text(
-                'BUSINESS ECOSYSTEM',
-                style: TextStyle(
+              Text(
+                isGu ? 'વ્યવસાયિક ઇકોસિસ્ટમ' : 'BUSINESS ECOSYSTEM',
+                style: const TextStyle(
                   color: Color(0xFF9A7B38),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -1256,9 +1413,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Register Your Business',
-                style: TextStyle(
+              Text(
+                isGu ? 'તમારો વ્યવસાય નોંધાવો' : 'Register Your Business',
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Serif',
@@ -1266,9 +1423,11 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Share your professional expertise and expand your business reach within our elite heritage community network.',
-                style: TextStyle(
+              Text(
+                isGu
+                    ? 'તમારા વ્યવસાયની માહિતી શેર કરો અને નેટવર્ક વિસ્તારો.'
+                    : 'Share your professional expertise and expand your business reach within our elite heritage community network.',
+                style: const TextStyle(
                   color: Color(0xFF64748B),
                   fontSize: 13.5,
                   height: 1.45,
@@ -1276,7 +1435,6 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 2. Main Form Card Container
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -1294,15 +1452,15 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildFormLabel('Business Name'),
+                    _buildFormLabel(isGu ? 'વ્યવસાયનું નામ' : 'Business Name'),
                     _buildTextField(
                       controller: _nameController,
-                      hint: 'e.g. Patel Textiles',
-                      validator: (v) => v!.isEmpty ? 'Business name is required' : null,
+                      hint: isGu ? 'દા.ત. પટેલ ટેક્સટાઇલ' : 'e.g. Patel Textiles',
+                      validator: (v) => v!.isEmpty ? (isGu ? 'વ્યવસાયનું નામ જરૂરી છે' : 'Business name is required') : null,
                     ),
                     const SizedBox(height: 16),
 
-                    _buildFormLabel('Business Category'),
+                    _buildFormLabel(isGu ? 'વ્યવસાયની શ્રેણી' : 'Business Category'),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       decoration: BoxDecoration(
@@ -1321,7 +1479,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                           items: _categories.map((c) {
-                            return DropdownMenuItem(value: c, child: Text(c));
+                            return DropdownMenuItem(value: c, child: Text(_getCategoryNameLabel(c, isGu)));
                           }).toList(),
                           onChanged: (val) {
                             if (val != null) {
@@ -1341,11 +1499,11 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildFormLabel('City'),
+                              _buildFormLabel(isGu ? 'શહેર' : 'City'),
                               _buildTextField(
                                 controller: _cityController,
-                                hint: 'e.g. Ahmedabad',
-                                validator: (v) => v!.isEmpty ? 'Required' : null,
+                                hint: isGu ? 'દા.ત. અમદાવાદ' : 'e.g. Ahmedabad',
+                                validator: (v) => v!.isEmpty ? (isGu ? 'જરૂરી છે' : 'Required') : null,
                               ),
                             ],
                           ),
@@ -1355,11 +1513,11 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildFormLabel('Area / Street'),
+                              _buildFormLabel(isGu ? 'વિસ્તાર / રસ્તો' : 'Area / Street'),
                               _buildTextField(
                                 controller: _areaController,
-                                hint: 'e.g. C.G. Road',
-                                validator: (v) => v!.isEmpty ? 'Required' : null,
+                                hint: isGu ? 'દા.ત. સી.જી. રોડ' : 'e.g. C.G. Road',
+                                validator: (v) => v!.isEmpty ? (isGu ? 'જરૂરી છે' : 'Required') : null,
                               ),
                             ],
                           ),
@@ -1368,17 +1526,16 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    _buildFormLabel('Contact Phone / WhatsApp'),
+                    _buildFormLabel(isGu ? 'સંપર્ક ફોન / વોટ્સએપ' : 'Contact Phone / WhatsApp'),
                     _buildTextField(
                       controller: _phoneController,
-                      hint: 'Enter 10-digit number',
+                      hint: isGu ? '૧૦-અંકનો નંબર લખો' : 'Enter 10-digit number',
                       keyboardType: TextInputType.phone,
-                      validator: (v) => v!.isEmpty ? 'Contact number is required' : null,
+                      validator: (v) => v!.isEmpty ? (isGu ? 'સંપર્ક નંબર જરૂરી છે' : 'Contact number is required') : null,
                     ),
                     const SizedBox(height: 16),
 
-                    // Photo Picker Section
-                    _buildFormLabel('Business Image'),
+                    _buildFormLabel(isGu ? 'વ્યવસાય ચિત્ર' : 'Business Image'),
                     const SizedBox(height: 6),
                     GestureDetector(
                       onTap: () async {
@@ -1446,9 +1603,11 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 10),
-                                  const Text(
-                                    'Tap to choose or capture business photo',
-                                    style: TextStyle(
+                                  Text(
+                                    isGu
+                                        ? 'વ્યવસાય ફોટો પસંદ કરવા માટે ટેપ કરો'
+                                        : 'Tap to choose or capture business photo',
+                                    style: const TextStyle(
                                       color: Color(0xFF64748B),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
@@ -1460,15 +1619,16 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    _buildFormLabel('Description / Service Info'),
+                    _buildFormLabel(isGu ? 'વર્ણન / સેવા વિગતો' : 'Description / Service Info'),
                     _buildTextField(
                       controller: _descController,
-                      hint: 'Explain what services your business provides...',
+                      hint: isGu
+                          ? 'તમારો વ્યવસાય શું સેવાઓ પૂરી પાડે છે તે વર્ણવો...'
+                          : 'Explain what services your business provides...',
                       maxLines: 3,
                     ),
                     const SizedBox(height: 20),
 
-                    // Privacy Settings
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
@@ -1479,9 +1639,9 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Privacy Configuration',
-                            style: TextStyle(
+                          Text(
+                            isGu ? 'ગોપનીયતા ગોઠવણી' : 'Privacy Configuration',
+                            style: const TextStyle(
                               color: Color(0xFF0F172A),
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -1501,10 +1661,12 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                                       value: true,
                                       activeColor: const Color(0xFF8B6B23),
                                     ),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        'Public (Visible to all members, triggers notification)',
-                                        style: TextStyle(fontSize: 13, color: Color(0xFF475569)),
+                                        isGu
+                                            ? 'જાહેર (બધા સભ્યોને દૃશ્યમાન)'
+                                            : 'Public (Visible to all members, triggers notification)',
+                                        style: const TextStyle(fontSize: 13, color: Color(0xFF475569)),
                                       ),
                                     ),
                                   ],
@@ -1515,10 +1677,12 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                                       value: false,
                                       activeColor: const Color(0xFF8B6B23),
                                     ),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        'Private (Visible to family & relatives only)',
-                                        style: TextStyle(fontSize: 13, color: Color(0xFF475569)),
+                                        isGu
+                                            ? 'ખાનગી (ફક્ત પરિવાર અને સગાંસંબંધીઓ)'
+                                            : 'Private (Visible to family & relatives only)',
+                                        style: const TextStyle(fontSize: 13, color: Color(0xFF475569)),
                                       ),
                                     ),
                                   ],
@@ -1531,13 +1695,12 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    // Golden Publish Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _submitForm,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFCD34D), // Golden yellow pill
+                          backgroundColor: const Color(0xFFFCD34D),
                           foregroundColor: const Color(0xFF0F172A),
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -1547,16 +1710,16 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
-                              'Publish Business Details',
-                              style: TextStyle(
+                              isGu ? 'વ્યવસાય વિગતો પ્રકાશિત કરો' : 'Publish Business Details',
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Icon(
+                            const SizedBox(width: 8),
+                            const Icon(
                               Icons.arrow_forward,
                               size: 18,
                               color: Color(0xFF0F172A),
