@@ -15,6 +15,7 @@ import 'notifications_screen.dart';
 import 'family_tree_screen.dart';
 import 'obituary_screen.dart';
 import 'jobs_screen.dart';
+import 'property_screen.dart';
 import '../widgets/custom_bottom_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -799,7 +800,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             _handleVerifiedAction(() {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => const BusinessDirectoryScreen(),
+                                  builder: (_) => PropertyScreen(userName: widget.userName),
                                 ),
                               );
                             });
