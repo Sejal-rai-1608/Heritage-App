@@ -146,7 +146,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _activeTab = widget.initialTab;
-    _selectedImage = widget.profileImagePath;
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    _selectedImage = widget.profileImagePath ?? lang.profileImageUrl;
     _familyMembers = [
       {'name': 'Aaditya Shantanu', 'relation': 'Father', 'gender': 'male'},
       {'name': 'Vaishali', 'relation': 'Mother', 'gender': 'female'},
@@ -200,8 +201,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               border: Border.all(color: const Color(0xFFD9B854), width: 2),
                             ),
                             child: ClipOval(
-                              child: _selectedImage != null && File(_selectedImage!).existsSync()
-                                  ? Image.file(File(_selectedImage!), fit: BoxFit.cover)
+                              child: (_selectedImage ?? lang.profileImageUrl) != null && File((_selectedImage ?? lang.profileImageUrl)!).existsSync()
+                                  ? Image.file(File((_selectedImage ?? lang.profileImageUrl)!), fit: BoxFit.cover)
                                   : Image.asset(
                                       'assets/images/image1.jpeg',
                                       fit: BoxFit.cover,
@@ -466,8 +467,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border: Border.all(color: const Color(0xFFD9B854), width: 2.5),
                         ),
                         child: ClipOval(
-                          child: _selectedImage != null && File(_selectedImage!).existsSync()
-                              ? Image.file(File(_selectedImage!), fit: BoxFit.cover)
+                          child: (_selectedImage ?? lang.profileImageUrl) != null && File((_selectedImage ?? lang.profileImageUrl)!).existsSync()
+                              ? Image.file(File((_selectedImage ?? lang.profileImageUrl)!), fit: BoxFit.cover)
                               : Image.asset(
                                   'assets/images/image1.jpeg',
                                   fit: BoxFit.cover,
@@ -748,6 +749,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (result != null && result.isNotEmpty) {
       setState(() {
         _selectedImage = result;
+        Provider.of<LanguageProvider>(context, listen: false).setProfileImageUrl(result);
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -999,16 +1001,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             // Profile Image (Asset or File)
             Positioned.fill(
-              child: _selectedImage != null && File(_selectedImage!).existsSync()
-                  ? Image.file(File(_selectedImage!), fit: BoxFit.cover)
-                  : Image.asset(
-                      'assets/images/image1.jpeg',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Image.asset(
-                        'assets/images/sanjay_profile.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              child: () {
+                final currentImg = _selectedImage ?? lang.profileImageUrl;
+                if (currentImg != null && currentImg.isNotEmpty) {
+                  if (currentImg.startsWith('http')) {
+                    return Image.network(currentImg, fit: BoxFit.cover);
+                  }
+                  if (File(currentImg).existsSync()) {
+                    return Image.file(File(currentImg), fit: BoxFit.cover);
+                  }
+                }
+                return Image.asset(
+                  'assets/images/image1.jpeg',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Image.asset(
+                    'assets/images/sanjay_profile.png',
+                    fit: BoxFit.cover,
+                  ),
+                );
+              }(),
             ),
 
             // Dark Gradient Overlay
@@ -2513,8 +2524,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           border: Border.all(color: const Color(0xFFD9B854), width: 2),
                                         ),
                                         child: ClipOval(
-                                          child: _selectedImage != null && File(_selectedImage!).existsSync()
-                                              ? Image.file(File(_selectedImage!), fit: BoxFit.cover)
+                                          child: (_selectedImage ?? lang.profileImageUrl) != null && File((_selectedImage ?? lang.profileImageUrl)!).existsSync()
+                                              ? Image.file(File((_selectedImage ?? lang.profileImageUrl)!), fit: BoxFit.cover)
                                               : Container(
                                                   color: const Color(0xFFE5A93C),
                                                   child: const Center(
