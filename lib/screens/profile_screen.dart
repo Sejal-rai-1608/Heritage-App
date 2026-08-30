@@ -107,12 +107,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   String _getNameLabel(String name, bool isGu) {
-    if (!isGu) return name;
-    if (name.contains('Soham')) return 'સોહમ આદિત્ય મોરે';
-    if (name.contains('Aaditya')) return 'આદિત્ય શાંતનુ';
-    if (name.contains('Vaishali')) return 'બૈશાલી';
-    if (name.contains('Riya')) return 'રિયા આદિત્ય મોરે';
+    if (!isGu || name.isEmpty) return name;
+    if (name.contains('Soham') || name.contains('soham')) {
+      return (name.contains('More') || name.contains('more') || name.contains('Aaditya')) ? 'સોહમ આદિત્ય મોરે' : 'સોહમ';
+    }
+    if (name.contains('Aaditya') || name.contains('Aditya')) {
+      return (name.contains('Shantanu') || name.contains('More')) ? 'આદિત્ય શાંતનુ મોરે' : 'આદિત્ય';
+    }
+    if (name.contains('Vaishali')) return 'વૈશાલી આદિત્ય મોરે';
+    if (name.contains('Riya') || name.contains('Riyaa')) return 'રીયા આદિત્ય મોરે';
+    if (name.contains('Shantaram')) return 'શાંતારામ ગોવિંદ મોરે';
     if (name.contains('Shantanu')) return 'શાંતનુ મોરે';
+    if (name.contains('Sanjay')) return 'સંજય પટેલ';
+    if (name.contains('Ramesh')) return 'રમેશ પરીખ';
+    if (name.contains('Jayeshbhai')) return 'જયેશભાઈ પટેલ';
+    if (name.contains('More')) return name.replaceAll('More', 'મોરે');
+    if (name.contains('Patel')) return name.replaceAll('Patel', 'પટેલ');
+    if (name.contains('Parikh')) return name.replaceAll('Parikh', 'પરીખ');
+    if (name.contains('Joshi')) return name.replaceAll('Joshi', 'જોશી');
+    if (name.contains('Kadam')) return name.replaceAll('Kadam', 'કદમ');
     return name;
   }
 
@@ -1427,7 +1440,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      member['name'] ?? '',
+                      _getNameLabel(member['name'] ?? '', isGu),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
