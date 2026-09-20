@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'donation_checkout_screen.dart';
 
 class DonationCausesScreen extends StatefulWidget {
@@ -13,12 +15,15 @@ class DonationCausesScreen extends StatefulWidget {
 class _DonationCausesScreenState extends State<DonationCausesScreen> {
   int _activeTab = 0; // 0 = Community Causes, 1 = My Giving History
 
-  void _navigateToCheckout(String title, String image, String amount) {
+  void _navigateToCheckout(String titleEn, String titleGu, String image, String amount) {
+    final lang = Provider.of<LanguageProvider>(context, listen: false);
+    final isGu = lang.currentLanguage == 'gu';
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => DonationCheckoutScreen(
           userName: widget.userName,
-          causeTitle: title,
+          causeTitle: isGu ? titleGu : titleEn,
           imagePath: image,
           defaultAmount: amount,
         ),
@@ -28,6 +33,9 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -37,9 +45,9 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Color(0xFF1E232D)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'હેરિટેજ લક્સ',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'હેરિટેજ લક્સ' : 'HERITAGE LUXE',
+          style: const TextStyle(
             fontFamily: 'Serif',
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -71,6 +79,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _navigateToCheckout(
+            'Renovation of Village Primary School',
             'ગામડાની પ્રાથમિક શાળાનું નવીનીકરણ',
             'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&auto=format&fit=crop&q=80',
             '1000',
@@ -85,10 +94,10 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Page Header Title & Subtitle (Screenshot 2)
-            const Text(
-              'આપણા વારસાના ભવિષ્યને\nઆકાર આપો',
-              style: TextStyle(
+            // Page Header Title & Subtitle
+            Text(
+              isGu ? 'આપણા વારસાના ભવિષ્યને\nઆકાર આપો' : 'Shape the Future of\nOur Legacy',
+              style: const TextStyle(
                 fontFamily: 'Serif',
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -97,9 +106,11 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'તમારું યોગદાન સુનિશ્ચિત કરે છે કે આપણો સાંસ્કૃતિક વારસો અને સામુદાયિક પાયો આવનારી પેઢીઓ માટે મજબૂત રહે.',
-              style: TextStyle(
+            Text(
+              isGu
+                  ? 'તમારું યોગદાન સુનિશ્ચિત કરે છે કે આપણો સાંસ્કૃતિક વારસો અને સામુદાયિક પાયો આવનારી પેઢીઓ માટે મજબૂત રહે.'
+                  : 'Your contribution ensures that our cultural heritage and community foundation remains strong for generations to come.',
+              style: const TextStyle(
                 fontSize: 13,
                 color: Color(0xFF64748B),
                 height: 1.45,
@@ -115,7 +126,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'સમુદાયના હેતુઓ',
+                        isGu ? 'સમુદાયના હેતુઓ' : 'Community Causes',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -137,7 +148,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'મારો દાન ઇતિહાસ',
+                        isGu ? 'મારો દાન ઇતિહાસ' : 'My Giving History',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -158,18 +169,18 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
             const SizedBox(height: 20),
 
             if (_activeTab == 0) ...[
-              // HERO CAUSE CARD: Village Primary School Renovation (Screenshot 2)
-              _buildHeroCauseCard(),
+              // HERO CAUSE CARD
+              _buildHeroCauseCard(isGu),
               const SizedBox(height: 28),
 
-              // YOUR GIVING IMPACT CARD (Dark Navy - Screenshot 3)
-              _buildGivingImpactCard(),
+              // YOUR GIVING IMPACT CARD
+              _buildGivingImpactCard(isGu),
               const SizedBox(height: 28),
 
-              // COMMUNITY INITIATIVES SECTION (Screenshots 3 & 4)
-              const Text(
-                'સામુદાયિક પહેલ',
-                style: TextStyle(
+              // COMMUNITY INITIATIVES SECTION
+              Text(
+                isGu ? 'સામુદાયિક પહેલ' : 'Community Initiatives',
+                style: const TextStyle(
                   fontFamily: 'Serif',
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -181,15 +192,18 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
               // Initiative 1: Heritage Temple Restoration
               _buildInitiativeCard(
                 icon: Icons.temple_hindu_outlined,
-                title: 'હેરિટેજ મંદિરનું પુનરુદ્ધાર',
-                tagText: '૮૦% પૂર્ણ',
+                title: isGu ? 'હેરિટેજ મંદિરનું પુનરુદ્ધાર' : 'Heritage Temple Restoration',
+                tagText: isGu ? '૮૦% પૂર્ણ' : '80% Complete',
                 tagBg: const Color(0xFFFEF9C3),
                 tagTextColor: const Color(0xFF856404),
-                subtitle: 'આપણા સેન્ટ્રલ કમ્યુનિટી મંદિરના ૨૦૦ વર્ષ જૂના સ્થાપત્યનું જતન.',
-                progressText: 'એકત્રિત\n₹૧૨,૮૦,૦૦૦',
-                buttonText: 'વધુ યોગદાન આપો',
+                subtitle: isGu
+                    ? 'આપણા સેન્ટ્રલ કમ્યુનિટી મંદિરના ૨૦૦ વર્ષ જૂના સ્થાપત્યનું જતન.'
+                    : 'Preserving the 200-year-old architecture of our central community temple.',
+                progressText: isGu ? 'એકત્રિત\n₹૧૨,૮૦,૦૦૦' : 'Raised\n₹12,80,000',
+                buttonText: isGu ? 'વધુ યોગદાન આપો' : 'Give More',
                 onPressed: () {
                   _navigateToCheckout(
+                    'Heritage Temple Restoration',
                     'હેરિટેજ મંદિરનું પુનરુદ્ધાર',
                     'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&auto=format&fit=crop&q=80',
                     '2000',
@@ -201,15 +215,18 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
               // Initiative 2: Senior Healthcare Fund
               _buildInitiativeCard(
                 icon: Icons.local_hospital_outlined,
-                title: 'વરિષ્ઠ નાગરિક આરોગ્ય ભંડોળ',
-                tagText: 'ચાલુ ભંડોળ',
+                title: isGu ? 'વરિષ્ઠ નાગરિક આરોગ્ય ભંડોળ' : 'Senior Healthcare Fund',
+                tagText: isGu ? 'ચાલુ ભંડોળ' : 'Ongoing Fund',
                 tagBg: const Color(0xFFDBEAFE),
                 tagTextColor: const Color(0xFF1E40AF),
-                subtitle: 'આપણા સમુદાયના વડીલો માટે વિશેષ તબીબી સાધનો અને નિયમિત તપાસ પ્રદાન કરવી.',
-                progressText: 'પ્રગતિ\n₹૫,૦૦,૦૦૦ માંથી ₹૧,૨૦,૦૦૦',
-                buttonText: 'હેતુને ટેકો આપો',
+                subtitle: isGu
+                    ? 'આપણા સમુદાયના વડીલો માટે વિશેષ તબીબી સાધનો અને નિયમિત તપાસ પ્રદાન કરવી.'
+                    : 'Providing specialized medical equipment and regular checkups for community elders.',
+                progressText: isGu ? 'પ્રગતિ\n₹૫,૦૦,૦૦૦ માંથી ₹૧,૨૦,૦૦૦' : 'Progress\n₹1,20,000 of ₹5,00,000',
+                buttonText: isGu ? 'હેતુને ટેકો આપો' : 'Support Cause',
                 onPressed: () {
                   _navigateToCheckout(
+                    'Senior Healthcare Fund',
                     'વરિષ્ઠ નાગરિક આરોગ્ય ભંડોળ',
                     'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
                     '500',
@@ -218,12 +235,12 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
               ),
               const SizedBox(height: 28),
 
-              // QUOTE CARD (Dark Navy - Screenshot 4)
-              _buildQuoteCard(),
+              // QUOTE CARD
+              _buildQuoteCard(isGu),
               const SizedBox(height: 40),
             ] else ...[
               // Giving History View
-              _buildGivingHistoryTab(),
+              _buildGivingHistoryTab(isGu),
             ],
           ],
         ),
@@ -231,7 +248,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
     );
   }
 
-  Widget _buildHeroCauseCard() {
+  Widget _buildHeroCauseCard(bool isGu) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -269,17 +286,13 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                     color: const Color(0xFFDC2626),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Row(
-                    children: const [
-                      Text(
-                        '! તાત્કાલિક',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    isGu ? '! તાત્કાલિક' : '! URGENT',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -292,9 +305,9 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'ગામડાની પ્રાથમિક શાળાનું\nનવીનીકરણ',
-                  style: TextStyle(
+                Text(
+                  isGu ? 'ગામડાની પ્રાથમિક શાળાનું\nનવીનીકરણ' : 'Renovation of Village\nPrimary School',
+                  style: const TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -303,9 +316,11 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'આપણા સ્થાનિક શિક્ષણના પાયાને પુનર્જીવિત કરી રહ્યા છીએ, ૨૦૦+ બાળકો માટે સુરક્ષિત અને પ્રેરણાદાયી વાતાવરણ.',
-                  style: TextStyle(
+                Text(
+                  isGu
+                      ? 'આપણા સ્થાનિક શિક્ષણના પાયાને પુનર્જીવિત કરી રહ્યા છીએ, ૨૦૦+ બાળકો માટે સુરક્ષિત અને પ્રેરણાદાયી વાતાવરણ.'
+                      : 'Revitalizing the foundation of our local education, creating a safe and inspiring environment for 200+ children.',
+                  style: const TextStyle(
                     fontSize: 13,
                     color: Color(0xFF64748B),
                     height: 1.4,
@@ -315,14 +330,14 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text(
-                      '₹૪,૫૦,૦૦૦ એકત્રિત',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1E232D)),
+                      isGu ? '₹૪,૫૦,૦૦૦ એકત્રિત' : '₹4,50,000 Raised',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1E232D)),
                     ),
                     Text(
-                      'લક્ષ્ય: ₹૧૦,૦૦,૦૦૦',
-                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                      isGu ? 'લક્ષ્ય: ₹૧૦,૦૦,૦૦૦' : 'Target: ₹10,00,000',
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
@@ -344,6 +359,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       _navigateToCheckout(
+                        'Renovation of Village Primary School',
                         'ગામડાની પ્રાથમિક શાળાનું નવીનીકરણ',
                         'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&auto=format&fit=crop&q=80',
                         '1000',
@@ -356,9 +372,9 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                         borderRadius: BorderRadius.circular(23),
                       ),
                     ),
-                    child: const Text(
-                      'હમણાં જ દાન કરો',
-                      style: TextStyle(
+                    child: Text(
+                      isGu ? 'હમણાં જ દાન કરો' : 'Donate Now',
+                      style: const TextStyle(
                         color: Color(0xFF1E232D),
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -374,7 +390,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
     );
   }
 
-  Widget _buildGivingImpactCard() {
+  Widget _buildGivingImpactCard(bool isGu) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -386,12 +402,12 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Icon(Icons.volunteer_activism_outlined, color: Color(0xFFFDE047), size: 22),
-              SizedBox(width: 10),
+            children: [
+              const Icon(Icons.volunteer_activism_outlined, color: Color(0xFFFDE047), size: 22),
+              const SizedBox(width: 10),
               Text(
-                'તમારા દાનની અસર',
-                style: TextStyle(
+                isGu ? 'તમારા દાનની અસર' : 'Your Giving Impact',
+                style: const TextStyle(
                   fontFamily: 'Serif',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -412,19 +428,19 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  '૧૨',
+              children: [
+                const Text(
+                  '12',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFFFDE047),
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'આ વર્ષે સપોર્ટ કરેલ હેતુઓ',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                  isGu ? 'આ વર્ષે સપોર્ટ કરેલ હેતુઓ' : 'Causes Supported This Year',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
                 ),
               ],
             ),
@@ -442,9 +458,9 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'તાજેતરની સિદ્ધિ',
-                  style: TextStyle(
+                Text(
+                  isGu ? 'તાજેતરની સિદ્ધિ' : 'LATEST MILESTONE',
+                  style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF64748B),
@@ -452,25 +468,25 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'વાર્ષિક યુવા શિષ્યવૃત્તિ ૨૦૨૩',
-                  style: TextStyle(
+                Text(
+                  isGu ? 'વાર્ષિક યુવા શિષ્યવૃત્તિ ૨૦૨૩' : 'Annual Youth Scholarship 2023',
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
-                  'પ્રોજેક્ટ સફળતાપૂર્વક ભંડોળ પૂરું પડાયેલ અને સક્રિય.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
+                Text(
+                  isGu ? 'પ્રોજેક્ટ સફળતાપૂર્વક ભંડોળ પૂરું પડાયેલ અને સક્રિય.' : 'Project successfully funded and active.',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {},
-                  child: const Text(
-                    'અસર અહેવાલ જુઓ ↗',
-                    style: TextStyle(
+                  child: Text(
+                    isGu ? 'અસર અહેવાલ જુઓ ↗' : 'View Impact Report ↗',
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFFFDE047),
@@ -586,7 +602,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
     );
   }
 
-  Widget _buildQuoteCard() {
+  Widget _buildQuoteCard(bool isGu) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -595,21 +611,21 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
-        children: const [
+        children: [
           Text(
-            '"ઉદારતા એ માનવતાનું પુષ્પ છે."',
+            isGu ? '"ઉદારતા એ માનવતાનું પુષ્પ છે."' : '"Generosity is the blossom of humanity."',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Serif',
               fontStyle: FontStyle.italic,
               fontSize: 18,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            '— હેરિટેજ કાઉન્સિલ',
-            style: TextStyle(
+            isGu ? '— હેરિટેજ કાઉન્સિલ' : '— HERITAGE COUNCIL',
+            style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               color: Color(0xFFFDE047),
@@ -621,7 +637,7 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
     );
   }
 
-  Widget _buildGivingHistoryTab() {
+  Widget _buildGivingHistoryTab(bool isGu) {
     return Column(
       children: [
         const SizedBox(height: 20),
@@ -633,18 +649,20 @@ class _DonationCausesScreenState extends State<DonationCausesScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
-            children: const [
-              Icon(Icons.history_outlined, size: 48, color: Color(0xFF64748B)),
-              SizedBox(height: 12),
+            children: [
+              const Icon(Icons.history_outlined, size: 48, color: Color(0xFF64748B)),
+              const SizedBox(height: 12),
               Text(
-                'દાન ઇતિહાસ',
-                style: TextStyle(fontFamily: 'Serif', fontSize: 18, fontWeight: FontWeight.bold),
+                isGu ? 'દાન ઇતિહાસ' : 'Giving History',
+                style: const TextStyle(fontFamily: 'Serif', fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               Text(
-                'તમે ૨૦૨૪ માં ૧૨ સામુદાયિક હેતુઓમાં યોગદાન આપ્યું છે. તમારી ઉદારતા માટે આભાર.',
+                isGu
+                    ? 'તમે ૨૦૨૪ માં ૧૨ સામુદાયિક હેતુઓમાં યોગદાન આપ્યું છે. તમારી ઉદારતા માટે આભાર.'
+                    : 'You have contributed to 12 community causes in 2024. Thank you for your generosity.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
               ),
             ],
           ),

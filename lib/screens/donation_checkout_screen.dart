@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import 'home_screen.dart';
 
 class DonationCheckoutScreen extends StatefulWidget {
@@ -10,7 +12,7 @@ class DonationCheckoutScreen extends StatefulWidget {
   const DonationCheckoutScreen({
     super.key,
     this.userName,
-    this.causeTitle = 'ગામડાની પ્રાથમિક શાળાનું નવીનીકરણ',
+    this.causeTitle = 'Renovation of Village Primary School',
     this.imagePath = 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&auto=format&fit=crop&q=80',
     this.defaultAmount = '1000',
   });
@@ -24,13 +26,6 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
   final _customAmountController = TextEditingController();
   bool _isAnonymous = false;
   String _selectedPaymentMethod = 'upi'; // 'upi', 'card', 'netbanking'
-
-  final List<Map<String, String>> _amountOptions = [
-    {'title': 'નાની ભેટ', 'amount': '500'},
-    {'title': 'અસરકારક', 'amount': '1000'},
-    {'title': 'ઉદાર', 'amount': '2000'},
-    {'title': 'સંરક્ષક', 'amount': '5000'},
-  ];
 
   @override
   void initState() {
@@ -46,7 +41,7 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
     return parsed.toStringAsFixed(2);
   }
 
-  void _handleConfirmDonation() {
+  void _handleConfirmDonation(bool isGu) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -73,10 +68,10 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'દાનની પુષ્ટિ થઈ!',
+                Text(
+                  isGu ? 'દાનની પુષ્ટિ થઈ!' : 'Donation Confirmed!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Serif',
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -85,7 +80,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  ' "${widget.causeTitle}" માટે ₹$_finalAmountFormatted ના તમારા ઉદાર યોગદાન બદલ આભાર. ${_isAnonymous ? "તમારું દાન અનામી રીતે નોંધાયેલ છે." : "તમારો સપોર્ટ એક વાસ્તવિક તફાવત બનાવે છે!"}',
+                  isGu
+                      ? ' "${widget.causeTitle}" માટે ₹$_finalAmountFormatted ના તમારા ઉદાર યોગદાન બદલ આભાર. ${_isAnonymous ? "તમારું દાન અનામી રીતે નોંધાયેલ છે." : "તમારો સપોર્ટ એક વાસ્તવિક તફાવત બનાવે છે!"}'
+                      : 'Thank you for your generous contribution of ₹$_finalAmountFormatted towards "${widget.causeTitle}". ${_isAnonymous ? "Your donation is registered anonymously." : "Your support makes a real difference!"}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 13,
@@ -113,9 +110,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    child: const Text(
-                      'હોમ પેજ પર પાછા જાઓ',
-                      style: TextStyle(
+                    child: Text(
+                      isGu ? 'હોમ પેજ પર પાછા જાઓ' : 'Back to Home',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -133,6 +130,16 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<LanguageProvider>(context);
+    final bool isGu = lang.currentLanguage == 'gu';
+
+    final List<Map<String, String>> amountOptions = [
+      {'title': isGu ? 'નાની ભેટ' : 'Small Gift', 'amount': '500'},
+      {'title': isGu ? 'અસરકારક' : 'Impactful', 'amount': '1000'},
+      {'title': isGu ? 'ઉદાર' : 'Generous', 'amount': '2000'},
+      {'title': isGu ? 'સંરક્ષક' : 'Patron', 'amount': '5000'},
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -142,9 +149,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: Color(0xFF1E232D)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'હેરિટેજ લક્સ',
-          style: TextStyle(
+        title: Text(
+          isGu ? 'હેરિટેજ લક્સ' : 'HERITAGE LUXE',
+          style: const TextStyle(
             fontFamily: 'Serif',
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -216,9 +223,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                             color: const Color(0xFFFDE047),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text(
-                            'ઇમ્પેક્ટ પ્રોજેક્ટ',
-                            style: TextStyle(
+                          child: Text(
+                            isGu ? 'ઇમ્પેક્ટ પ્રોજેક્ટ' : 'IMPACT PROJECT',
+                            style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF1E232D),
@@ -245,9 +252,11 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text(
-                          'આપણા સમુદાયના ભવિષ્યના હૃદયને પુનર્જીવિત કરી રહ્યા છીએ. આ પહેલ માળખાકીય મજબૂતીકરણ, ડિજિટલ સાધનો સાથે વર્ગખંડોના આધુનિકીકરણ અને ૪૫૦ વંચિત બાળકો માટે શિક્ષણ વાતાવરણ ઊભું કરવા પર ધ્યાન કેન્દ્રિત કરે છે.',
-                          style: TextStyle(
+                        Text(
+                          isGu
+                              ? 'આપણા સમુદાયના ભવિષ્યના હૃદયને પુનર્જીવિત કરી રહ્યા છીએ. આ પહેલ માળખાકીય મજબૂતીકરણ, ડિજિટલ સાધનો સાથે વર્ગખંડોના આધુનિકીકરણ અને ૪૫૦ વંચિત બાળકો માટે શિક્ષણ વાતાવરણ ઊભું કરવા પર ધ્યાન કેન્દ્રિત કરે છે.'
+                              : 'Revitalizing the heart of our community future. This initiative focuses on structural reinforcement, classroom modernization with digital tools, and fostering an empowering environment for 450 children.',
+                          style: const TextStyle(
                             fontSize: 13,
                             color: Color(0xFF64748B),
                             height: 1.45,
@@ -256,9 +265,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                         const SizedBox(height: 18),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text('ભંડોળ પૂરું પડાએલ', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
-                            Text('લક્ષ્ય', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
+                          children: [
+                            Text(isGu ? 'ભંડોળ પૂરું પડાએલ' : 'FUNDED', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
+                            Text(isGu ? 'લક્ષ્ય' : 'TARGET', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF64748B))),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -288,9 +297,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                         const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text('૬૨% હાંસલ કરેલ', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF856404))),
-                            Text('૧૪ દિવસ બાકી', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
+                          children: [
+                            Text(isGu ? '૬૨% હાંસલ કરેલ' : '62% Achieved', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF856404))),
+                            Text(isGu ? '૧૪ દિવસ બાકી' : '14 Days Left', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
                           ],
                         ),
                       ],
@@ -319,9 +328,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'દાનની રકમ પસંદ કરો',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'દાનની રકમ પસંદ કરો' : 'Select Donation Amount',
+                    style: const TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -340,9 +349,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                     ),
-                    itemCount: _amountOptions.length,
+                    itemCount: amountOptions.length,
                     itemBuilder: (ctx, idx) {
-                      final item = _amountOptions[idx];
+                      final item = amountOptions[idx];
                       final isSelected = _selectedAmount == item['amount'] && _customAmountController.text.isEmpty;
 
                       return InkWell(
@@ -392,9 +401,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   const SizedBox(height: 18),
 
                   // Label: CUSTOM AMOUNT
-                  const Text(
-                    'અન્ય રકમ',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'અન્ય રકમ' : 'CUSTOM AMOUNT',
+                    style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF64748B),
@@ -422,7 +431,7 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                         ),
                       ),
                       prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-                      hintText: 'અન્ય રકમ દાખલ કરો',
+                      hintText: isGu ? 'અન્ય રકમ દાખલ કરો' : 'Enter custom amount',
                       hintStyle: const TextStyle(
                         fontFamily: 'Serif',
                         color: Color(0xFF94A3B8),
@@ -458,19 +467,19 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
-                                'અનામી દાન કરો',
-                                style: TextStyle(
+                                isGu ? 'અનામી દાન કરો' : 'Donate Anonymously',
+                                style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF1E232D),
                                 ),
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
-                                'જાહેર દાન આપનારની યાદીમાંથી તમારું નામ છુપાવો',
-                                style: TextStyle(
+                                isGu ? 'જાહેર દાન આપનારની યાદીમાંથી તમારું નામ છુપાવો' : 'Hide your name from the public donor list',
+                                style: const TextStyle(
                                   fontSize: 11,
                                   color: Color(0xFF64748B),
                                 ),
@@ -510,9 +519,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'ચુકવણી પદ્ધતિ',
-                    style: TextStyle(
+                  Text(
+                    isGu ? 'ચુકવણી પદ્ધતિ' : 'Payment Method',
+                    style: const TextStyle(
                       fontFamily: 'Serif',
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -525,7 +534,7 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   _buildPaymentOptionTile(
                     id: 'upi',
                     icon: Icons.account_balance_wallet_outlined,
-                    title: 'UPI ચુકવણીઓ',
+                    title: isGu ? 'UPI ચુકવણીઓ' : 'UPI Payments',
                     subtitle: 'Google Pay, PhonePe, Paytm',
                   ),
                   const SizedBox(height: 12),
@@ -534,7 +543,7 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   _buildPaymentOptionTile(
                     id: 'card',
                     icon: Icons.credit_card_outlined,
-                    title: 'ક્રેડિટ / ડેબિટ કાર્ડ',
+                    title: isGu ? 'ક્રેડિટ / ડેબિટ કાર્ડ' : 'Credit / Debit Card',
                     subtitle: 'Visa, Mastercard, Amex',
                   ),
                   const SizedBox(height: 12),
@@ -543,8 +552,8 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   _buildPaymentOptionTile(
                     id: 'netbanking',
                     icon: Icons.account_balance_outlined,
-                    title: 'નેટ બેંકિંગ',
-                    subtitle: 'બધી મુખ્ય ભારતીય બેંકો',
+                    title: isGu ? 'નેટ બેંકિંગ' : 'Net Banking',
+                    subtitle: isGu ? 'બધી મુખ્ય ભારતીય બેંકો' : 'All Major Indian Banks',
                   ),
                   const SizedBox(height: 24),
 
@@ -555,7 +564,7 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('દાનની રકમ', style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                      Text(isGu ? 'દાનની રકમ' : 'Donation Amount', style: const TextStyle(fontSize: 13, color: Color(0xFF64748B))),
                       Text('₹$_finalAmountFormatted', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E232D))),
                     ],
                   ),
@@ -563,11 +572,11 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('પ્રોસેસિંગ ફી', style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                    children: [
+                      Text(isGu ? 'પ્રોસેસિંગ ફી' : 'Processing Fee', style: const TextStyle(fontSize: 13, color: Color(0xFF64748B))),
                       Text(
-                        'હેરિટેજ ફાઉન્ડેશન દ્વારા આવરી લેવાયેલ',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF856404)),
+                        isGu ? 'હેરિટેજ ફાઉન્ડેશન દ્વારા આવરી લેવાયેલ' : 'Covered by Heritage Foundation',
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF856404)),
                       ),
                     ],
                   ),
@@ -576,9 +585,9 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'કુલ ચૂકવવાપાત્ર રકમ',
-                        style: TextStyle(
+                      Text(
+                        isGu ? 'કુલ ચૂકવવાપાત્ર રકમ' : 'Total Payable',
+                        style: const TextStyle(
                           fontFamily: 'Serif',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -603,7 +612,7 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: _handleConfirmDonation,
+                      onPressed: () => _handleConfirmDonation(isGu),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFDE047),
                         elevation: 0,
@@ -613,28 +622,30 @@ class _DonationCheckoutScreenState extends State<DonationCheckoutScreen> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            'દાનની પુષ્ટિ કરો',
-                            style: TextStyle(
+                            isGu ? 'દાનની પુષ્ટિ કરો' : 'Confirm Donation',
+                            style: const TextStyle(
                               color: Color(0xFF1E232D),
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),
                           ),
-                          SizedBox(width: 8),
-                          Icon(Icons.arrow_forward, color: Color(0xFF1E232D), size: 18),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward, color: Color(0xFF1E232D), size: 18),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 14),
 
-                  const Center(
+                  Center(
                     child: Text(
-                      'પુષ્ટિ કરીને, તમે અમારી સેવા ક્ષમતાની શરતો સાથે સંમત થાઓ છો. તમારું\nદાન કલમ 80G હેઠળ કરમુક્ત છે.',
+                      isGu
+                          ? 'પુષ્ટિ કરીને, તમે અમારી સેવા ક્ષમતાની શરતો સાથે સંમત થાઓ છો. તમારું\nદાન કલમ 80G હેઠળ કરમુક્ત છે.'
+                          : 'By confirming, you agree to our terms of service. Your\ndonation is tax-exempt under Section 80G.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 10,
                         color: Color(0xFF94A3B8),
                         height: 1.35,

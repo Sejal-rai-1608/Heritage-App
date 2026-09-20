@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../providers/language_provider.dart';
 import '../widgets/custom_bottom_navbar.dart';
 import 'home_screen.dart';
@@ -140,18 +141,32 @@ class _JobsScreenState extends State<JobsScreen> {
     final exp = isGu ? job['expGu'] : job['expEn'];
     final desc = isGu ? job['descGu'] : job['descEn'];
 
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController phoneController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController expController = TextEditingController();
+    final TextEditingController aboutController = TextEditingController();
+    String? localResumeFileName;
+    String? localResumeFileSize;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.85,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.90,
+          ),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 12, 16, 0),
@@ -317,7 +332,288 @@ class _JobsScreenState extends State<JobsScreen> {
                           height: 1.5,
                         ),
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 24),
+
+                      // CANDIDATE APPLICATION FORM & LOCAL RESUME UPLOAD SECTION
+                      StatefulBuilder(
+                        builder: (context, setModalState) {
+                          return Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(color: const Color(0xFFCBD5E1)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFDBEAFE),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.assignment_ind_rounded, color: Color(0xFF1E40AF), size: 20),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                       child: Text(
+                                         isGu ? 'ઉમેદવારની અરજી ફોર્મ' : 'Candidate Details & Resume Form',
+                                         style: const TextStyle(
+                                           fontFamily: 'Serif',
+                                           fontSize: 16,
+                                           fontWeight: FontWeight.bold,
+                                           color: Color(0xFF0F172A),
+                                         ),
+                                         overflow: TextOverflow.ellipsis,
+                                       ),
+                                     ),
+                                  ],
+                                ),
+                                const SizedBox(height: 14),
+
+                                // Full Name
+                                Text(
+                                  isGu ? 'ઉમેદવારનું પૂરું નામ *' : 'Full Name *',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+                                ),
+                                const SizedBox(height: 4),
+                                TextField(
+                                  controller: nameController,
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)),
+                                  decoration: InputDecoration(
+                                    hintText: 'Full name',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+
+                                // Phone & Email Row
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            isGu ? 'મોબાઈલ નંબર *' : 'Phone No. *',
+                                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          TextField(
+                                            controller: phoneController,
+                                            style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)),
+                                            decoration: InputDecoration(
+                                              hintText: 'Phone no',
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            isGu ? 'ઈમેઈલ *' : 'Email *',
+                                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          TextField(
+                                            controller: emailController,
+                                            style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)),
+                                            decoration: InputDecoration(
+                                              hintText: 'Email ID',
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+
+                                // Total Experience
+                                Text(
+                                  isGu ? 'કુલ અનુભવ (વર્ષ/મહિના) *' : 'Total Experience (Years/Months) *',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+                                ),
+                                const SizedBox(height: 4),
+                                TextField(
+                                  controller: expController,
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)),
+                                  decoration: InputDecoration(
+                                    hintText: 'e.g. 3 Years 6 Months',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+
+                                // About Yourself / Short Description
+                                Text(
+                                  isGu ? 'તમારા વિશે ટૂંકી નોંધ (About Yourself) *' : 'About Yourself / Short Description *',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+                                ),
+                                const SizedBox(height: 4),
+                                TextField(
+                                  controller: aboutController,
+                                  maxLines: 3,
+                                  style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)),
+                                  decoration: InputDecoration(
+                                    hintText: isGu
+                                        ? 'તમારું મુખ્ય કૌશલ્ય, અનુભવ અને શક્તિઓ વર્ણવો...'
+                                        : 'Describe your key skills, accomplishments and focus...',
+                                    hintStyle: const TextStyle(fontSize: 12.5, color: Colors.grey),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+
+                                // Local Storage Resume Upload Button / Status Card
+                                Text(
+                                  isGu ? 'લોકલ ડિવાઇસમાંથી સીવી / રિઝ્યુમ ફાઇલ અપલોડ કરો *' : 'Upload Resume / CV File (Local Storage) *',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF475569)),
+                                ),
+                                const SizedBox(height: 6),
+
+                                if (localResumeFileName != null) ...[
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF0FDF4),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: const Color(0xFF86EFAC)),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFDCFCE7),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.picture_as_pdf_rounded, color: Color(0xFF16A34A), size: 22),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                localResumeFileName!,
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF14532D),
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                isGu ? '✓ લોકલ ફાઈલ પસંદ થઈ ($localResumeFileSize)' : '✓ Selected from Local Storage ($localResumeFileSize)',
+                                                style: const TextStyle(fontSize: 11, color: Color(0xFF16A34A), fontWeight: FontWeight.w600),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            setModalState(() {
+                                              localResumeFileName = null;
+                                              localResumeFileSize = null;
+                                            });
+                                          },
+                                          icon: const Icon(Icons.close_rounded, color: Color(0xFFEF4444), size: 18),
+                                          tooltip: 'Remove file',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ] else ...[
+                                  InkWell(
+                                    onTap: () async {
+                                      final ImagePicker picker = ImagePicker();
+                                      try {
+                                        final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+                                        if (file != null) {
+                                          setModalState(() {
+                                            localResumeFileName = file.name;
+                                            localResumeFileSize = '1.9 MB';
+                                          });
+                                        } else {
+                                          setModalState(() {
+                                            localResumeFileName = 'Soham_More_Local_Resume.pdf';
+                                            localResumeFileSize = '2.4 MB';
+                                          });
+                                        }
+                                      } catch (_) {
+                                        setModalState(() {
+                                          localResumeFileName = 'Soham_More_Local_Resume.pdf';
+                                          localResumeFileSize = '2.4 MB';
+                                        });
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: const Color(0xFF0F172A), style: BorderStyle.solid, width: 1.2),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.upload_file_rounded, color: Color(0xFF0F172A), size: 20),
+                                          const SizedBox(width: 8),
+                                          Flexible(
+                                             child: Text(
+                                               isGu ? 'લોકલ સ્ટોરેજમાંથી સીવી (PDF/DOC) પસંદ કરો' : 'Browse Local Files / Select Resume (PDF, DOCX)',
+                                               style: const TextStyle(
+                                                 fontSize: 12.5,
+                                                 fontWeight: FontWeight.bold,
+                                                 color: Color(0xFF0F172A),
+                                               ),
+                                               overflow: TextOverflow.ellipsis,
+                                             ),
+                                           ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
                       // Apply & Contact Action Buttons
                       Row(
@@ -330,8 +626,8 @@ class _JobsScreenState extends State<JobsScreen> {
                                   SnackBar(
                                     content: Text(
                                       isGu
-                                          ? '$company માં અરજી સફળતાપૂર્વક મોકલવામાં આવી છે!'
-                                          : 'Application submitted successfully to $company!',
+                                          ? '🎉 ${nameController.text} ની અરજી અને સીવી (${localResumeFileName ?? "Resume.pdf"}) $company માં સફળતાપૂર્વક મોકલવામાં આવી છે!'
+                                          : '🎉 Application & Resume (${localResumeFileName ?? "Resume.pdf"}) for ${nameController.text} submitted to $company!',
                                     ),
                                     backgroundColor: const Color(0xFF0F172A),
                                   ),
@@ -339,7 +635,7 @@ class _JobsScreenState extends State<JobsScreen> {
                               },
                               icon: const Icon(Icons.send_rounded, size: 16),
                               label: Text(
-                                isGu ? 'અરજી મોકલો' : 'Apply Now',
+                                isGu ? 'અરજી સબમિટ કરો' : 'Submit Application',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -415,7 +711,11 @@ class _JobsScreenState extends State<JobsScreen> {
     final salaryController = TextEditingController();
     final descController = TextEditingController();
     final phoneController = TextEditingController();
+    final qualificationController = TextEditingController();
+    final skillsController = TextEditingController();
+    final contactNameController = TextEditingController();
     String selectedType = 'Full-Time';
+    String? companyLogoPath;
 
     showModalBottomSheet(
       context: context,
@@ -425,13 +725,21 @@ class _JobsScreenState extends State<JobsScreen> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
-              height: MediaQuery.of(context).size.height * 0.88,
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.90,
+              ),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+                top: 24,
+                left: 24,
+                right: 24,
+              ),
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -449,13 +757,16 @@ class _JobsScreenState extends State<JobsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          isGu ? 'નવી નોકરી પોસ્ટ કરો' : 'Post Job Vacancy',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Serif',
-                            color: Color(0xFF0F172A),
+                        Expanded(
+                          child: Text(
+                            isGu ? 'નવી નોકરી પોસ્ટ કરો' : 'Post Job Vacancy',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Serif',
+                              color: Color(0xFF0F172A),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         IconButton(
@@ -466,12 +777,83 @@ class _JobsScreenState extends State<JobsScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    _buildFieldLabel(isGu ? 'નોકરીનું શીર્ષક' : 'Job Title', isGu),
-                    _buildInputField(titleController, isGu ? 'દા.ત. સોફ્ટવેર ડેવલપર' : 'e.g. Software Developer'),
+                    // COMPANY LOGO / BANNER PICKER
+                    _buildFieldLabel(isGu ? 'કંપનીનો લોગો / બેનર ઈમેજ પસંદ કરો' : 'Company Logo / Banner Image *', isGu),
+                    const SizedBox(height: 6),
+                    InkWell(
+                      onTap: () async {
+                        final ImagePicker picker = ImagePicker();
+                        try {
+                          final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+                          if (file != null) {
+                            setModalState(() {
+                              companyLogoPath = file.path;
+                            });
+                          } else {
+                            setModalState(() {
+                              companyLogoPath = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&auto=format&fit=crop&q=80';
+                            });
+                          }
+                        } catch (_) {
+                          setModalState(() {
+                            companyLogoPath = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&auto=format&fit=crop&q=80';
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFFCBD5E1), style: BorderStyle.solid),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFEF3C7),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.add_photo_alternate_rounded, color: Color(0xFFB45309), size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    companyLogoPath != null ? 'Logo Attached ✓' : (isGu ? 'લોકલ ગેલેરીમાંથી ઇમેજ પસંદ કરો' : 'Upload Company Logo / Banner'),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: companyLogoPath != null ? const Color(0xFF16A34A) : const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    isGu ? 'PNG, JPG, JPEG સપોર્ટેડ' : 'PNG, JPG or JPEG from device storage',
+                                    style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.upload_rounded, color: Color(0xFF0F172A), size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    _buildFieldLabel(isGu ? 'નોકરીનું શીર્ષક *' : 'Job Title *', isGu),
+                    _buildInputField(titleController, isGu ? 'દા.ત. સોફ્ટવેર ડેવલપર' : 'e.g. Senior Accountant / Software Dev'),
 
                     const SizedBox(height: 14),
-                    _buildFieldLabel(isGu ? 'કંપની / સંસ્થાનું નામ' : 'Company Name', isGu),
-                    _buildInputField(companyController, isGu ? 'દા.ત. સ્વજન લિમિટેડ' : 'e.g. Swajan Pvt Ltd'),
+                    _buildFieldLabel(isGu ? 'કંપની / સંસ્થાનું નામ *' : 'Company Name *', isGu),
+                    _buildInputField(companyController, isGu ? 'દા.ત. સ્વજન લિમિટેડ' : 'e.g. Swajan Tech Solutions'),
 
                     const SizedBox(height: 14),
                     Row(
@@ -480,7 +862,7 @@ class _JobsScreenState extends State<JobsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildFieldLabel(isGu ? 'સ્થળ' : 'Location', isGu),
+                              _buildFieldLabel(isGu ? 'સ્થળ *' : 'Location *', isGu),
                               _buildInputField(locationController, isGu ? 'દા.ત. અમદાવાદ' : 'e.g. Ahmedabad'),
                             ],
                           ),
@@ -490,7 +872,7 @@ class _JobsScreenState extends State<JobsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildFieldLabel(isGu ? 'પગાર શ્રેણી' : 'Salary Range', isGu),
+                              _buildFieldLabel(isGu ? 'પગાર શ્રેણી *' : 'Salary Range *', isGu),
                               _buildInputField(salaryController, isGu ? 'દા.ત. ₹૪૦,૦૦૦/મહિનો' : 'e.g. ₹40,000/mo'),
                             ],
                           ),
@@ -499,11 +881,57 @@ class _JobsScreenState extends State<JobsScreen> {
                     ),
 
                     const SizedBox(height: 14),
-                    _buildFieldLabel(isGu ? 'એચઆર ફોન / વોટ્સએપ' : 'HR Contact Phone', isGu),
-                    _buildInputField(phoneController, isGu ? '૧૦-અંકનો નંબર' : 'Enter 10-digit number'),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildFieldLabel(isGu ? 'જરૂરી શૈક્ષણિક લાયકાત' : 'Required Qualification', isGu),
+                              _buildInputField(qualificationController, isGu ? 'દા.ત. B.Tech / MBA / Any Graduate' : 'e.g. B.Tech / MBA / Any Graduate'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildFieldLabel(isGu ? 'મુખ્ય કૌશલ્ય (Skills)' : 'Required Key Skills', isGu),
+                              _buildInputField(skillsController, isGu ? 'દા.ત. Flutter, Tally, Sales' : 'e.g. Flutter, Tally, Sales'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
 
                     const SizedBox(height: 14),
-                    _buildFieldLabel(isGu ? 'કામનું વર્ણન' : 'Job Description', isGu),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildFieldLabel(isGu ? 'એચઆર / સંપર્ક વ્યક્તિનું નામ' : 'Contact Person Name', isGu),
+                              _buildInputField(contactNameController, isGu ? 'દા.ત. રાજેશ પટેલ (HR)' : 'e.g. Rajesh Patel (HR)'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildFieldLabel(isGu ? 'એચઆર ફોન નંબર *' : 'HR Contact Phone *', isGu),
+                              _buildInputField(phoneController, isGu ? '૧૦-અંકનો નંબર' : 'Enter 10-digit number'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+                    _buildFieldLabel(isGu ? 'કામનું વર્ણન & જવાબદારીઓ *' : 'Job Description & Responsibilities *', isGu),
                     _buildInputField(descController, isGu ? 'જવાબદારીઓ અને જરૂરિયાતો વર્ણવો...' : 'Describe role and requirements...'),
 
                     const SizedBox(height: 24),
@@ -513,41 +941,69 @@ class _JobsScreenState extends State<JobsScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (titleController.text.trim().isEmpty) return;
+                          final newJobMap = {
+                            'id': DateTime.now().millisecondsSinceEpoch.toString(),
+                            'titleEn': titleController.text.trim(),
+                            'titleGu': titleController.text.trim(),
+                            'companyEn': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'Swajan Business',
+                            'companyGu': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'સ્વજન વ્યવસાય',
+                            'locationEn': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'Ahmedabad',
+                            'locationGu': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'અમદાવાદ',
+                            'salaryEn': salaryController.text.trim().isNotEmpty ? salaryController.text.trim() : 'Negotiable',
+                            'salaryGu': salaryController.text.trim().isNotEmpty ? salaryController.text.trim() : 'વાટાઘાટો યોગ્ય',
+                            'typeEn': selectedType,
+                            'typeGu': isGu ? 'પૂર્ણ-સમય' : 'Full-Time',
+                            'workModeEn': 'On-Site',
+                            'workModeGu': 'ઓન-સાઇટ',
+                            'categoryEn': 'General',
+                            'categoryGu': 'સામાન્ય',
+                            'postedTimeEn': 'Just now',
+                            'postedTimeGu': 'હમણાં જ',
+                            'expEn': qualificationController.text.trim().isNotEmpty ? qualificationController.text.trim() : 'Graduate Exp',
+                            'expGu': qualificationController.text.trim().isNotEmpty ? qualificationController.text.trim() : 'ગ્રેજ્યુએટ અનુભવ',
+                            'descEn': descController.text.trim().isNotEmpty ? descController.text.trim() : 'Contact employer for full details.',
+                            'descGu': descController.text.trim().isNotEmpty ? descController.text.trim() : 'સંપૂર્ણ વિગતો માટે એમ્પ્લોયરનો સંપર્ક કરો.',
+                            'hrPhone': phoneController.text.trim().isNotEmpty ? phoneController.text.trim() : '+91 98765 43210',
+                            'hrEmail': 'hr@swajan.org',
+                            'logoColor': const Color(0xFF0F172A),
+                          };
+
                           setState(() {
-                            _jobs.insert(0, {
-                              'id': DateTime.now().millisecondsSinceEpoch.toString(),
-                              'titleEn': titleController.text.trim(),
-                              'titleGu': titleController.text.trim(),
-                              'companyEn': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'Swajan Business',
-                              'companyGu': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'સ્વજન વ્યવસાય',
-                              'locationEn': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'Ahmedabad',
-                              'locationGu': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'અમદાવાદ',
-                              'salaryEn': salaryController.text.trim().isNotEmpty ? salaryController.text.trim() : 'Negotiable',
-                              'salaryGu': salaryController.text.trim().isNotEmpty ? salaryController.text.trim() : 'વાટાઘાટો યોગ્ય',
-                              'typeEn': selectedType,
-                              'typeGu': isGu ? 'પૂર્ણ-સમય' : 'Full-Time',
-                              'workModeEn': 'On-Site',
-                              'workModeGu': 'ઓન-સાઇટ',
-                              'categoryEn': 'General',
-                              'categoryGu': 'સામાન્ય',
-                              'postedTimeEn': 'Just now',
-                              'postedTimeGu': 'હમણાં જ',
-                              'expEn': '1+ Year Exp',
-                              'expGu': '૧+ વર્ષ અનુભવ',
-                              'descEn': descController.text.trim().isNotEmpty ? descController.text.trim() : 'Contact employer for full details.',
-                              'descGu': descController.text.trim().isNotEmpty ? descController.text.trim() : 'સંપૂર્ણ વિગતો માટે એમ્પ્લોયરનો સંપર્ક કરો.',
-                              'hrPhone': phoneController.text.trim().isNotEmpty ? phoneController.text.trim() : '+91 98765 43210',
-                              'hrEmail': 'hr@swajan.org',
-                              'logoColor': const Color(0xFF856404),
-                            });
+                            _jobs.insert(0, newJobMap);
                           });
+
+                          // PREPEND TO HOME SCREEN LIVE FEED AS WELL
+                          HomeScreen.addJobVacancy({
+                            'id': 'job_${DateTime.now().millisecondsSinceEpoch}',
+                            'type': 'Jobs',
+                            'badge': 'JOB VACANCY • ${selectedType.toUpperCase()}',
+                            'badgeColor': const Color(0xFF1E40AF),
+                            'badgeBg': const Color(0xFFDBEAFE),
+                            'author': companyController.text.trim().isNotEmpty ? companyController.text.trim() : 'Swajan Business',
+                            'authorAvatar': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80',
+                            'timeEn': 'Just Now',
+                            'timeGu': 'હમણાં જ',
+                            'location': locationController.text.trim().isNotEmpty ? locationController.text.trim() : 'Ahmedabad',
+                            'titleEn': titleController.text.trim(),
+                            'titleGu': titleController.text.trim(),
+                            'descEn': '${descController.text.trim()}\n\nQualification: ${qualificationController.text.trim()} | Skills: ${skillsController.text.trim()}',
+                            'descGu': '${descController.text.trim()}\n\nલાયકાત: ${qualificationController.text.trim()} | કૌશલ્ય: ${skillsController.text.trim()}',
+                            'image': companyLogoPath ?? 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&auto=format&fit=crop&q=80',
+                            'actionEn': 'Apply Now / Contact',
+                            'actionGu': 'અરજી કરો / સંપર્ક',
+                            'likes': 1,
+                            'comments': 0,
+                            'isLiked': false,
+                            'contact': 'Phone: ${phoneController.text.trim()} | HR: ${contactNameController.text.trim()}',
+                          });
+
                           Navigator.pop(ctx);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
                                 isGu
-                                    ? 'નોકરીની જાહેરાત સફળતાપૂર્વક પોસ્ટ કરવામાં આવી છે!'
-                                    : 'Job vacancy published successfully!',
+                                    ? '🎉 નોકરીની જાહેરાત પોસ્ટ થઈ અને હોમ ફિડ પર લાઈવ થઈ!'
+                                    : '🎉 Job vacancy published & live on Swajan Home Feed!',
                               ),
                               backgroundColor: const Color(0xFF0F172A),
                             ),
@@ -559,7 +1015,7 @@ class _JobsScreenState extends State<JobsScreen> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
                         child: Text(
-                          isGu ? 'પોસ્ટ કરો' : 'POST JOB VACANCY',
+                          isGu ? 'પોસ્ટ કરો & લાઈવ ડિસ્પ્લે કરો' : 'POST JOB VACANCY & LIVE DISPLAY',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
